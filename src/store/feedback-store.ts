@@ -177,12 +177,12 @@ function calculateStats(feedbacks: UserFeedback[]): FeedbackStats {
   const totalReviews = feedbacks.length
   const averageRating = feedbacks.reduce((sum, f) => sum + f.rating, 0) / totalReviews
   
-  const ratingDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  const ratingDistribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
   const categoryRatings: { [key: string]: number } = {}
   const categoryCounts: { [key: string]: number } = {}
 
   feedbacks.forEach(feedback => {
-    ratingDistribution[feedback.rating]++
+    ratingDistribution[feedback.rating as keyof typeof ratingDistribution]++
     
     if (!categoryRatings[feedback.category]) {
       categoryRatings[feedback.category] = 0

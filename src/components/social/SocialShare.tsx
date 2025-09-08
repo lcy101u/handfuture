@@ -250,7 +250,7 @@ export default function SocialShare({ result, className = "" }: SocialShareProps
 
   // Native Web Share API support
   const handleNativeShare = async () => {
-    if (navigator.share) {
+    if (typeof navigator !== 'undefined' && 'share' in navigator) {
       try {
         await navigator.share({
           title: result ? 
@@ -286,7 +286,7 @@ export default function SocialShare({ result, className = "" }: SocialShareProps
           
           <div className="flex items-center gap-2">
             {/* Native share button for mobile */}
-            {navigator.share && (
+            {typeof navigator !== 'undefined' && 'share' in navigator && (
               <Button
                 variant="outline"
                 size="sm"

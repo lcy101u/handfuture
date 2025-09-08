@@ -15,7 +15,7 @@ const languages = [
 ]
 
 export default function LanguageSwitcher() {
-  const { currentLanguage, setLanguage, t } = useLanguageStore()
+  const { currentLanguage, setLanguage } = useLanguageStore()
   const [isChanging, setIsChanging] = useState(false)
   const [displayLanguage, setDisplayLanguage] = useState(currentLanguage)
   
