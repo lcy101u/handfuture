@@ -5,6 +5,7 @@ import { BatchPage } from "@/pages/BatchPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Analytics } from "@vercel/analytics/react";
 // import { useThemeStore } from "@/store/theme-store";
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <Toaster />
+      <Analytics />
     </TooltipProvider>
   );
 }
