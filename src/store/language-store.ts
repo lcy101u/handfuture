@@ -102,7 +102,7 @@ const translations = {
     'footer.privacy': '隱私政策',
     'footer.terms': '使用條款',
     'footer.contact': '聯繫我們',
-    'footer.copyright': '© 2024 掌相解讀AI. 免費線上手相算命工具 - 僅供娛樂參考，請勿迷信',
+    'footer.copyright': '© 2025 掌相解讀AI. 免費線上手相算命工具 - 僅供娛樂參考，請勿迷信',
     'footer.disclaimer': '本服務僅供娛樂，不提供醫療、法律或投資建議。',
     
     // Footer sections
@@ -406,7 +406,7 @@ const translations = {
     'footer.links.about.item2': '隱私政策',
     'footer.links.about.item3': '使用條款',
     'footer.links.about.item4': '聯絡我們',
-    'footer.copyright_full': '© 2024 掌相解讀AI. 免費線上手相算命工具 - 僅供娛樂參考，請勿迷信',
+    'footer.copyright_full': '© 2025 掌相解讀AI. 免費線上手相算命工具 - 僅供娛樂參考，請勿迷信',
     'footer.keywords': '關鍵詞：手相算命, AI手相分析, 掌相解讀, 免費算命, 線上占卜, 運勢預測, 愛情運勢, 事業運勢'
   },
   en: {
@@ -500,7 +500,7 @@ const translations = {
     'footer.privacy': 'Privacy Policy',
     'footer.terms': 'Terms of Service',
     'footer.contact': 'Contact Us',
-    'footer.copyright': '© 2024 AI Palm Reading. Free online palmistry tool - for entertainment only.',
+    'footer.copyright': '© 2025 AI Palm Reading. Free online palmistry tool - for entertainment only.',
     'footer.disclaimer': 'This service is for entertainment only and does not provide medical, legal, or investment advice.',
     'footer.keywords': 'Keywords: palm reading, AI palm analysis, palmistry, free fortune telling, online divination, fortune prediction, love fortune, career fortune',
     
@@ -550,7 +550,7 @@ const translations = {
     'footer.links.about.item2': 'Privacy Policy',
     'footer.links.about.item3': 'Terms of Service',
     'footer.links.about.item4': 'Contact Us',
-    'footer.copyright_full': '© 2024 AI Palm Reading. Free online palmistry tool - for entertainment only.',
+    'footer.copyright_full': '© 2025 AI Palm Reading. Free online palmistry tool - for entertainment only.',
     
     // Common
     'common.cancel': 'Cancel',
