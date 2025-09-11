@@ -7,7 +7,6 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Build outputs
-dist/
 build/
 out/
 
@@ -86,11 +85,9 @@ jspm_packages/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
-public
 
 # Vuepress build output
 .vuepress/dist

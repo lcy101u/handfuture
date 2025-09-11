@@ -1,0 +1,31 @@
+{
+  "name": "免費AI手相算命 | 掌相解讀分析",
+  "short_name": "AI手相",
+  "description": "專業AI手相分析工具，免費解讀生命線、智慧線、感情線等掌紋特徵",
+  "icons": [
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#D4AF37",
+  "background_color": "#1a1a2e",
+  "display": "standalone",
+  "start_url": "/",
+  "orientation": "portrait-primary",
+  "categories": ["entertainment", "lifestyle", "utilities"],
+  "lang": "zh-TW"
+}
