@@ -85,23 +85,32 @@ function HomePage() {
 
   // Language transition animation with content flash prevention
   useEffect(() => {
+    let frameId1: number, frameId2: number, frameId3: number;
+
     setLanguageTransition(true);
 
-    // Add body class for global transition
-    document.body.classList.add("language-switching");
+    frameId1 = requestAnimationFrame(() => {
+      document.body.classList.add("language-switching");
+    });
 
     const midTransition = setTimeout(() => {
-      // Update any dynamic content here if needed
-      document.body.classList.remove("language-switching");
-      document.body.classList.add("language-switched");
+      frameId2 = requestAnimationFrame(() => {
+        document.body.classList.remove("language-switching");
+        document.body.classList.add("language-switched");
+      });
     }, 150);
 
     const endTransition = setTimeout(() => {
-      setLanguageTransition(false);
-      document.body.classList.remove("language-switched");
+      frameId3 = requestAnimationFrame(() => {
+        setLanguageTransition(false);
+        document.body.classList.remove("language-switched");
+      });
     }, 300);
 
     return () => {
+      cancelAnimationFrame(frameId1);
+      cancelAnimationFrame(frameId2);
+      cancelAnimationFrame(frameId3);
       clearTimeout(midTransition);
       clearTimeout(endTransition);
       document.body.classList.remove("language-switching", "language-switched");

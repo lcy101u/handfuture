@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
-import HomePage from "@/pages/HomePage";
-import { BatchPage } from "@/pages/BatchPage";
-import NotFoundPage from "@/pages/NotFoundPage";
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
-// import { useThemeStore } from "@/store/theme-store";
+
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const BatchPage = lazy(() => import("@/pages/BatchPage").then(module => ({ default: module.BatchPage })));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 function App() {
   // Initialize theme on app startup
@@ -25,11 +25,13 @@ function App() {
   return (
     <TooltipProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/batch" element={<BatchPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/batch" element={<BatchPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
       <Toaster />
       <Analytics />
