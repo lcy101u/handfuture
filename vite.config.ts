@@ -10,4 +10,20 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  publicDir: 'public',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          // Keep ads.txt in root without hash
+          if (assetInfo.name === 'ads.txt') {
+            return '[name][extname]'
+          }
+          return 'assets/[name]-[hash][extname]'
+        }
+      }
+    }
+  }
 })

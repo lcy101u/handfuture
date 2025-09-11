@@ -1,0 +1,32 @@
+{
+  "functions": {
+    "src/pages/api/*.ts": {
+      "runtime": "@vercel/node"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/ads.txt",
+      "destination": "/ads.txt"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/ads.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    }
+  ]
+}
