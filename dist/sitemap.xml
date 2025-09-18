@@ -1,109 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-    <!-- 主頁 - 免費AI手相算命 -->
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
-        <loc>https://palm-reading-ai.com/</loc>
-        <lastmod>2024-12-31</lastmod>
+        <loc>https://www.handfortune.com/</loc>
+        <lastmod>2025-09-18</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
-    
-    <!-- 手相知識頁面 -->
     <url>
-        <loc>https://palm-reading-ai.com/palm-reading-guide</loc>
-        <lastmod>2024-12-30</lastmod>
+        <loc>https://www.handfortune.com/batch</loc>
+        <lastmod>2025-09-18</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
-    </url>
-    
-    <!-- 生命線解讀 -->
-    <url>
-        <loc>https://palm-reading-ai.com/life-line-reading</loc>
-        <lastmod>2024-12-29</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <!-- 智慧線分析 -->
-    <url>
-        <loc>https://palm-reading-ai.com/head-line-analysis</loc>
-        <lastmod>2024-12-29</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <!-- 感情線占卜 -->
-    <url>
-        <loc>https://palm-reading-ai.com/heart-line-fortune</loc>
-        <lastmod>2024-12-29</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <!-- 事業線預測 -->
-    <url>
-        <loc>https://palm-reading-ai.com/career-line-prediction</loc>
-        <lastmod>2024-12-29</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <!-- 愛情運勢分析 -->
-    <url>
-        <loc>https://palm-reading-ai.com/love-fortune-analysis</loc>
-        <lastmod>2024-12-28</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    
-    <!-- 事業運勢預測 -->
-    <url>
-        <loc>https://palm-reading-ai.com/career-fortune-prediction</loc>
-        <lastmod>2024-12-28</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    
-    <!-- 健康運勢解讀 -->
-    <url>
-        <loc>https://palm-reading-ai.com/health-fortune-reading</loc>
-        <lastmod>2024-12-28</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    
-    <!-- AI技術說明 -->
-    <url>
-        <loc>https://palm-reading-ai.com/ai-technology</loc>
-        <lastmod>2024-12-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    
-    <!-- 常見問題 -->
-    <url>
-        <loc>https://palm-reading-ai.com/faq</loc>
-        <lastmod>2024-12-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    
-    <!-- 隱私政策 -->
-    <url>
-        <loc>https://palm-reading-ai.com/privacy-policy</loc>
-        <lastmod>2024-12-26</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-    
-    <!-- 使用條款 -->
-    <url>
-        <loc>https://palm-reading-ai.com/terms-of-service</loc>
-        <lastmod>2024-12-26</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
     </url>
 </urlset>

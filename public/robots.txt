@@ -1,5 +1,5 @@
 # Robots.txt for 免費AI手相算命網站
-# 掌相解讀分析工具 - palm-reading-ai.com
+# 掌相解讀分析工具 - www.handfortune.com
 
 # 允許所有搜索引擎爬蟲訪問
 User-agent: *
@@ -13,17 +13,11 @@ Allow: /
 # Disallow: /temp/
 
 # 允許訪問重要的SEO頁面
-Allow: /palm-reading-guide
-Allow: /life-line-reading
-Allow: /head-line-analysis
-Allow: /heart-line-fortune
-Allow: /career-line-prediction
-Allow: /love-fortune-analysis
-Allow: /career-fortune-prediction
-Allow: /health-fortune-reading
+Allow: /
+Allow: /batch
 
 # 指定站點地圖位置
-Sitemap: https://palm-reading-ai.com/sitemap.xml
+Sitemap: https://www.handfortune.com/sitemap.xml
 
 # 爬取延遲設置（可選）
 Crawl-delay: 1
