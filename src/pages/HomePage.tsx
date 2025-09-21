@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Hand,
   Upload,
@@ -29,6 +30,8 @@ import PalmAnalysis from "@/components/palm/PalmAnalysis";
 import DisclaimerModal from "@/components/palm/DisclaimerModal";
 import SocialShare from "@/components/social/SocialShare";
 import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
+import { PublisherContent } from "@/components/content/PublisherContent";
+import { GoogleAdBanner } from "@/components/ads/GoogleAdBanner";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import FeedbackSection from "@/components/feedback/FeedbackSection";
@@ -189,7 +192,7 @@ function HomePage() {
       {/* Header with proper SEO structure */}
       <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center gap-4">
             <div
               className="flex items-center gap-3 cursor-pointer"
               onClick={() => {
@@ -216,7 +219,26 @@ function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+
+            <nav className="flex flex-1 flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+              <Link to="/" className="transition-colors hover:text-primary">
+                {t("nav.home")}
+              </Link>
+              <Link to="/about" className="transition-colors hover:text-primary">
+                {t("nav.about")}
+              </Link>
+              <a href="#faq" className="transition-colors hover:text-primary">
+                {t("nav.faq")}
+              </a>
+              <Link to="/privacy" className="transition-colors hover:text-primary">
+                {t("nav.privacy")}
+              </Link>
+              <Link to="/terms" className="transition-colors hover:text-primary">
+                {t("nav.terms")}
+              </Link>
+            </nav>
+
+            <div className="flex flex-wrap items-center gap-2 ml-auto justify-end">
               <div className="hidden md:flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
                   <Star className="w-3 h-3 mr-1" />
@@ -247,6 +269,7 @@ function HomePage() {
       >
         {/* SEO-optimized introduction section */}
         <section
+          id="hero"
           className="text-center space-y-4 mb-8"
           aria-labelledby="main-heading"
         >
@@ -304,7 +327,7 @@ function HomePage() {
         {!image ? (
           <div className="space-y-8">
             {/* Upload Section */}
-            <section aria-labelledby="upload-section">
+            <section id="upload" aria-labelledby="upload-section">
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Upload Card */}
                 <Card className="palm-card mystical-glow md:col-span-2 lg:col-span-2">
@@ -428,8 +451,13 @@ function HomePage() {
               </div>
             </section>
 
+            {/* Sponsored Ad Unit */}
+            <section aria-label="sponsored content" className="max-w-3xl mx-auto">
+              <GoogleAdBanner />
+            </section>
+
             {/* Palm Reading Knowledge Section */}
-            <section aria-labelledby="knowledge-section">
+            <section id="knowledge" aria-labelledby="knowledge-section">
               <Card className="palm-card">
                 <CardHeader className="text-center">
                   <CardTitle id="knowledge-section" className="text-2xl">
@@ -567,7 +595,7 @@ function HomePage() {
             </section>
 
             {/* FAQ Section for SEO */}
-            <section aria-labelledby="faq-section">
+            <section id="faq" aria-labelledby="faq-section">
               <Card className="palm-card">
                 <CardHeader>
                   <CardTitle id="faq-section" className="text-xl">
@@ -716,6 +744,8 @@ function HomePage() {
             </div>
           </div>
         )}
+
+        <PublisherContent />
       </main>
 
       {/* User Feedback Section */}
@@ -731,24 +761,27 @@ function HomePage() {
               </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a href="#upload" className="hover:text-primary transition-colors">
                     {t("footer.links.tools.item1")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a href="#knowledge" className="hover:text-primary transition-colors">
                     {t("footer.links.tools.item2")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a
+                    href="#publisher-content-section"
+                    className="hover:text-primary transition-colors"
+                  >
                     {t("footer.links.tools.item3")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <Link to="/batch" className="hover:text-primary transition-colors">
                     {t("footer.links.tools.item4")}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -758,24 +791,27 @@ function HomePage() {
               </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a
+                    href="#publisher-content-section"
+                    className="hover:text-primary transition-colors"
+                  >
                     {t("footer.links.readings.item1")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a href="#faq" className="hover:text-primary transition-colors">
                     {t("footer.links.readings.item2")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a href="#feedback" className="hover:text-primary transition-colors">
                     {t("footer.links.readings.item3")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <Link to="/about" className="hover:text-primary transition-colors">
                     {t("footer.links.readings.item4")}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -785,24 +821,27 @@ function HomePage() {
               </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a href="#knowledge" className="hover:text-primary transition-colors">
                     {t("footer.links.knowledge.item1")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <a
+                    href="#publisher-content-section"
+                    className="hover:text-primary transition-colors"
+                  >
                     {t("footer.links.knowledge.item2")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <Link to="/about" className="hover:text-primary transition-colors">
                     {t("footer.links.knowledge.item3")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <Link to="/terms" className="hover:text-primary transition-colors">
                     {t("footer.links.knowledge.item4")}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -812,19 +851,19 @@ function HomePage() {
               </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <Link to="/about" className="hover:text-primary transition-colors">
                     {t("footer.links.about.item1")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <Link to="/privacy" className="hover:text-primary transition-colors">
                     {t("footer.links.about.item2")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
+                  <Link to="/terms" className="hover:text-primary transition-colors">
                     {t("footer.links.about.item3")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a

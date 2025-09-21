@@ -59,7 +59,7 @@ const FeedbackSection: React.FC = () => {
   }
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-amber-50/50 to-white">
+    <section id="feedback" className="py-16 px-4 bg-gradient-to-b from-amber-50/50 to-white">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
         <div className="text-center mb-12">

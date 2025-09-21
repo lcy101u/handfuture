@@ -19,6 +19,7 @@ const translations = {
     'nav.about': '關於我們',
     'nav.faq': '常見問題',
     'nav.privacy': '隱私政策',
+    'nav.terms': '使用條款',
     'language.switch': '切換語言',
     
     // Main Content
@@ -417,6 +418,7 @@ const translations = {
     'nav.about': 'About Us',
     'nav.faq': 'FAQ',
     'nav.privacy': 'Privacy Policy',
+    'nav.terms': 'Terms of Service',
     'language.switch': 'Switch Language',
     
     // Main Content
