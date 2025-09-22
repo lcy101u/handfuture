@@ -155,6 +155,7 @@ const translations = {
     'button.close': '關閉',
     'button.save': '保存',
     'button.cancel': '取消',
+    'button.startTour': '功能導覽',
     
     // Status Messages
     'status.uploading': '上傳中...',
@@ -631,6 +632,7 @@ const translations = {
     'button.close': 'Close',
     'button.save': 'Save',
     'button.cancel': 'Cancel',
+    'button.startTour': 'Product Tour',
     
     // Status Messages
     'status.uploading': 'Uploading...',

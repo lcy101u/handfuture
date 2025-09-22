@@ -50,12 +50,8 @@ function HomePage() {
   const { initSession, endSession, trackEvent, trackAnalysis, trackPageView } =
     useAnalyticsStore();
   const { t, currentLanguage } = useLanguageStore();
-  const {
-    hasCompletedOnboarding,
-    showWelcome,
-    showWelcomeModal,
-    hideWelcomeModal,
-  } = useOnboardingStore();
+  const { showWelcome, showWelcomeModal, hideWelcomeModal } =
+    useOnboardingStore();
   const [showDisclaimer, setShowDisclaimer] = useState(!disclaimerAccepted);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [logoClickCount, setLogoClickCount] = useState(0);
@@ -66,25 +62,11 @@ function HomePage() {
     initSession();
     trackPageView("/");
 
-    // Show welcome modal for first-time users
-    if (!hasCompletedOnboarding) {
-      const timer = setTimeout(() => {
-        showWelcomeModal();
-      }, 1500); // Show after 1.5 seconds to let the page load
-      return () => clearTimeout(timer);
-    }
-
     // Cleanup on unmount
     return () => {
       endSession();
     };
-  }, [
-    initSession,
-    endSession,
-    trackPageView,
-    hasCompletedOnboarding,
-    showWelcomeModal,
-  ]);
+  }, [initSession, endSession, trackPageView]);
 
   // Language transition animation with content flash prevention
   useEffect(() => {
@@ -254,6 +236,16 @@ function HomePage() {
                 </div>
                 <LanguageSwitcher />
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  trackEvent("guided_tour_requested");
+                  showWelcomeModal();
+                }}
+              >
+                {t("button.startTour")}
+              </Button>
               <SocialShare className="hidden md:block" />
             </div>
           </div>
