@@ -43,6 +43,9 @@ export default function RouteMeta() {
   const currentLanguage = useLanguageStore((state) => state.currentLanguage);
 
   useEffect(() => {
+    const htmlLanguage = currentLanguage === "zh" ? "zh-TW" : "en";
+    document.documentElement.lang = htmlLanguage;
+
     if (!isPublicPath(pathname)) {
       document.title =
         currentLanguage === "zh"
@@ -54,9 +57,7 @@ export default function RouteMeta() {
     }
 
     const meta = getRouteMetadata(pathname, currentLanguage);
-    const htmlLanguage = currentLanguage === "zh" ? "zh-TW" : "en";
     upsertMeta("name", "robots", "index, follow");
-    document.documentElement.lang = htmlLanguage;
     document.title = meta.title;
     upsertMeta("name", "title", meta.title);
     upsertMeta("name", "description", meta.description);

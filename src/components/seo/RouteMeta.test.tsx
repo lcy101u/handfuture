@@ -133,6 +133,38 @@ describe("RouteMeta", () => {
     ).toBe("WebApplication");
   });
 
+  it("normalizes the document language on a direct English unknown route", async () => {
+    useLanguageStore.setState({ currentLanguage: "en" });
+    document.documentElement.lang = "zh-TW";
+
+    renderMetadata("/missing");
+
+    await waitFor(() => expect(document.title).toBe("Page not found | HandFuture"));
+    expect(document.documentElement.lang).toBe("en");
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      "noindex, follow",
+    );
+    expect(document.querySelector("#route-structured-data")).not.toBeInTheDocument();
+  });
+
+  it("normalizes the document language after switching locale on an unknown route", async () => {
+    useLanguageStore.setState({ currentLanguage: "en" });
+    document.documentElement.lang = "en";
+    renderMetadata("/missing");
+
+    await waitFor(() => expect(document.title).toBe("Page not found | HandFuture"));
+    act(() => useLanguageStore.getState().setLanguage("zh"));
+
+    await waitFor(() => expect(document.title).toBe("找不到頁面｜HandFuture"));
+    expect(document.documentElement.lang).toBe("zh-TW");
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      "noindex, follow",
+    );
+    expect(document.querySelector("#route-structured-data")).not.toBeInTheDocument();
+  });
+
   it.each([
     {
       path: "/about",
