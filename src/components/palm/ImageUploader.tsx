@@ -1,7 +1,8 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, Camera, Image as ImageIcon } from 'lucide-react'
+import { AlertCircle, Upload, Camera, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
 import { usePalmStore } from '@/store/palm-store'
 import { useAnalyticsStore } from '@/store/analytics-store'
@@ -12,13 +13,32 @@ export default function ImageUploader() {
   const setImage = usePalmStore(state => state.setImage)
   const trackEvent = useAnalyticsStore(state => state.trackEvent)
   const { t, currentLanguage } = useLanguageStore()
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  const messages = currentLanguage === 'zh'
+    ? {
+        type: '請選擇 JPG、PNG 或 WebP 圖片。',
+        size: '圖片超過 10MB，請選擇較小的檔案。',
+        unreadable: '無法讀取圖片，請選擇其他檔案。',
+      }
+    : {
+        type: 'Choose a JPG, PNG, or WebP image.',
+        size: 'The image is larger than 10MB. Choose a smaller file.',
+        unreadable: 'The image could not be read. Choose another file.',
+      }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
     if (!file) return
 
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setUploadError(messages.type)
+      return
+    }
+
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
+      setUploadError(messages.size)
       toast({
         title: currentLanguage === 'zh' ? "檔案過大" : "File Too Large",
         description: currentLanguage === 'zh' ? "請選擇小於 10MB 的圖片" : "Please select an image smaller than 10MB",
@@ -30,8 +50,9 @@ export default function ImageUploader() {
     // Create image URL
     const reader = new FileReader()
     reader.onload = (e) => {
-      const result = e.target?.result as string
-      if (result) {
+      const result = e.target?.result
+      if (typeof result === 'string' && result) {
+        setUploadError(null)
         setImage(result)
         
         // Track image upload
@@ -45,13 +66,18 @@ export default function ImageUploader() {
           title: "圖片上傳成功",
           description: "正在分析手部特徵..."
         })
+      } else {
+        setUploadError(messages.unreadable)
       }
     }
+    reader.onerror = () => setUploadError(messages.unreadable)
+    reader.onabort = () => setUploadError(messages.unreadable)
     reader.readAsDataURL(file)
-  }, [setImage, toast])
+  }, [currentLanguage, messages.size, messages.type, messages.unreadable, setImage, toast, trackEvent])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    onDropRejected: () => setUploadError(messages.type),
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.webp']
     },
@@ -87,6 +113,12 @@ export default function ImageUploader() {
 
   return (
     <div className="space-y-4">
+      {uploadError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{uploadError}</AlertDescription>
+        </Alert>
+      )}
       {/* Dropzone */}
       <div
         {...getRootProps()}

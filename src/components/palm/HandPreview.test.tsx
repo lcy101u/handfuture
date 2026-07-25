@@ -1,0 +1,122 @@
+import { act, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type {
+  HandDetectionResult,
+  HandDetector,
+  HandLandmark,
+} from "@/lib/hand-detector";
+import { useLanguageStore } from "@/store/language-store";
+import { usePalmStore } from "@/store/palm-store";
+import HandPreview from "./HandPreview";
+
+const landmarks: HandLandmark[] = Array.from({ length: 21 }, (_, index) => ({
+  x: 0.2 + index * 0.01,
+  y: 0.8 - index * 0.015,
+  z: -index * 0.001,
+}));
+
+class DecodableImage {
+  src = "";
+  alt = "";
+  width = 640;
+  height = 480;
+  naturalWidth = 640;
+  naturalHeight = 480;
+  complete = true;
+  onload: null | (() => void) = null;
+  onerror: null | (() => void) = null;
+
+  decode() {
+    return Promise.resolve();
+  }
+}
+
+function detectorWith(result: HandDetectionResult): HandDetector {
+  return {
+    detect: vi.fn().mockResolvedValue(result),
+    close: vi.fn().mockResolvedValue(undefined),
+  };
+}
+
+describe("HandPreview", () => {
+  beforeEach(() => {
+    vi.stubGlobal("Image", DecodableImage);
+    useLanguageStore.getState().setLanguage("en");
+    usePalmStore.setState({
+      image: "data:image/png;base64,palm",
+      detection: null,
+      reflectionKey: null,
+      isDetecting: false,
+      error: null,
+      disclaimerAccepted: false,
+    });
+  });
+
+  it("shows real hand-joint detection success", async () => {
+    const factory = vi.fn().mockResolvedValue(
+      detectorWith({ status: "success", landmarks, handedness: "Right" }),
+    );
+
+    render(<HandPreview detectorFactory={factory} />);
+
+    expect(await screen.findByText(/21 hand joints detected/i)).toBeVisible();
+    expect(usePalmStore.getState().detection?.landmarks).toHaveLength(21);
+  });
+
+  it.each([
+    [
+      { status: "no-hand" } as const,
+      /show one fully visible hand against a plain background, then retry/i,
+    ],
+    [
+      { status: "multiple-hands", count: 2 } as const,
+      /keep only one hand in frame, then retry/i,
+    ],
+  ])("shows an actionable message for %s", async (result, message) => {
+    render(
+      <HandPreview
+        detectorFactory={vi.fn().mockResolvedValue(detectorWith(result))}
+      />,
+    );
+
+    expect(await screen.findByText(message)).toBeVisible();
+    expect(screen.getByRole("button", { name: /retry detection/i })).toBeVisible();
+  });
+
+  it("keeps the image and offers retry when detector initialization fails", async () => {
+    render(
+      <HandPreview
+        detectorFactory={vi.fn().mockRejectedValue(new Error("offline"))}
+      />,
+    );
+
+    expect(
+      await screen.findByText(
+        /the hand model or image could not be loaded\. keep this image and retry/i,
+      ),
+    ).toBeVisible();
+    expect(screen.getByRole("img", { name: /uploaded hand/i })).toHaveAttribute(
+      "src",
+      "data:image/png;base64,palm",
+    );
+  });
+
+  it("retries detection without replacing the image", async () => {
+    const factory = vi
+      .fn<() => Promise<HandDetector>>()
+      .mockRejectedValueOnce(new Error("offline"))
+      .mockResolvedValueOnce(
+        detectorWith({ status: "success", landmarks, handedness: "Left" }),
+      );
+
+    render(<HandPreview detectorFactory={factory} />);
+
+    await screen.findByText(/the hand model or image could not be loaded/i);
+    await act(async () => {
+      screen.getByRole("button", { name: /retry detection/i }).click();
+    });
+
+    expect(await screen.findByText(/21 hand joints detected/i)).toBeVisible();
+    await waitFor(() => expect(factory).toHaveBeenCalledTimes(2));
+  });
+});

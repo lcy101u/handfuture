@@ -11,7 +11,6 @@ import {
   Brain,
   Briefcase,
   Zap,
-  Share2,
   Grid,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import ImageUploader from "@/components/palm/ImageUploader";
 import HandPreview from "@/components/palm/HandPreview";
-import PalmAnalysis from "@/components/palm/PalmAnalysis";
+import ReflectionResult from "@/components/palm/ReflectionResult";
 import DisclaimerModal from "@/components/palm/DisclaimerModal";
 import SocialShare from "@/components/social/SocialShare";
 import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
@@ -43,15 +42,15 @@ import { useLanguageStore } from "@/store/language-store";
 import { useOnboardingStore } from "@/store/onboarding-store";
 
 function HomePage() {
-  const { image, landmarks, analysis, disclaimerAccepted, isAnalyzing } =
+  const { image, detection, reflectionKey, disclaimerAccepted, isDetecting } =
     usePalmStore();
 
-  const { initSession, endSession, trackEvent, trackAnalysis, trackPageView } =
+  const { initSession, endSession, trackEvent, trackPageView } =
     useAnalyticsStore();
   const { t, currentLanguage } = useLanguageStore();
   const { showWelcome, showWelcomeModal, hideWelcomeModal } =
     useOnboardingStore();
-  const [showDisclaimer, setShowDisclaimer] = useState(!disclaimerAccepted);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [logoClickCount, setLogoClickCount] = useState(0);
   const [languageTransition, setLanguageTransition] = useState(false);
@@ -69,11 +68,11 @@ function HomePage() {
 
   // Language transition animation with content flash prevention
   useEffect(() => {
-    let frameId1: number, frameId2: number, frameId3: number;
+    let frameId2: number, frameId3: number;
 
     setLanguageTransition(true);
 
-    frameId1 = requestAnimationFrame(() => {
+    const frameId1 = requestAnimationFrame(() => {
       document.body.classList.add("language-switching");
     });
 
@@ -101,53 +100,6 @@ function HomePage() {
     };
   }, [currentLanguage]);
 
-  // Track analysis completion
-  useEffect(() => {
-    if (analysis) {
-      trackAnalysis();
-      trackEvent("analysis_completed", {
-        topics: analysis.interpretation.map((i) => i.topic),
-        avgConfidence:
-          analysis.interpretation.reduce((sum, i) => sum + i.confidence, 0) /
-          analysis.interpretation.length,
-        qualityWarnings: analysis.qualityWarnings.length,
-      });
-    }
-  }, [analysis, trackAnalysis, trackEvent]);
-
-  // Dynamic meta tags update based on analysis results
-  useEffect(() => {
-    if (analysis && analysis.interpretation.length > 0) {
-      const topInterpretation = analysis.interpretation[0];
-      const confidence = Math.round(topInterpretation.confidence * 100);
-      const title = `我的AI手相分析結果 - 準確度${confidence}% | 免費掌相解讀`;
-      const description = `手相分析完成！${
-        topInterpretation.topic
-      }運勢: ${topInterpretation.text.slice(0, 80)}... 立即查看完整解讀結果。`;
-
-      document.title = title;
-
-      // Update Open Graph tags
-      const ogTitle = document.querySelector(
-        'meta[property="og:title"]'
-      ) as HTMLMetaElement;
-      const ogDescription = document.querySelector(
-        'meta[property="og:description"]'
-      ) as HTMLMetaElement;
-      const twitterTitle = document.querySelector(
-        'meta[property="twitter:title"]'
-      ) as HTMLMetaElement;
-      const twitterDescription = document.querySelector(
-        'meta[property="twitter:description"]'
-      ) as HTMLMetaElement;
-
-      if (ogTitle) ogTitle.content = title;
-      if (ogDescription) ogDescription.content = description;
-      if (twitterTitle) twitterTitle.content = title;
-      if (twitterDescription) twitterDescription.content = description;
-    }
-  }, [analysis]);
-
   // Show analytics dashboard if toggled
   if (showAnalytics) {
     return (
@@ -167,6 +119,19 @@ function HomePage() {
       </div>
     );
   }
+
+  const openDisclaimer = (source: string) => {
+    trackEvent("disclaimer_opened", { source });
+    setShowDisclaimer(true);
+  };
+
+  const handleAnalyzeClick = () => {
+    if (!disclaimerAccepted) {
+      openDisclaimer("reflection_button");
+      return;
+    }
+    usePalmStore.getState().createReflection();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-secondary/20">
@@ -311,6 +276,20 @@ function HomePage() {
           <AlertDescription className="text-amber-800 dark:text-amber-200">
             <strong>{t("disclaimer.notice")}</strong>
             {t("footer.disclaimer")}
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => openDisclaimer("alert_cta")}
+              >
+                {t("button.viewDisclaimer")}
+              </Button>
+              {!disclaimerAccepted && (
+                <span className="text-xs text-muted-foreground">
+                  {t("disclaimer.prompt")}
+                </span>
+              )}
+            </div>
           </AlertDescription>
         </Alert>
 
@@ -647,7 +626,7 @@ function HomePage() {
               <CardHeader>
                 <CardTitle>{t("analysis.card.title")}</CardTitle>
                 <CardDescription>
-                  {landmarks
+                  {detection
                     ? t("analysis.card.description_landmarks")
                     : t("analysis.card.description_no_landmarks")}
                 </CardDescription>
@@ -662,13 +641,13 @@ function HomePage() {
                   >
                     {t("analysis.card.button_reset")}
                   </Button>
-                  {landmarks && !analysis && (
+                  {detection && !reflectionKey && (
                     <Button
                       size="sm"
-                      onClick={() => usePalmStore.getState().analyzeFeatures()}
-                      disabled={isAnalyzing}
+                      onClick={handleAnalyzeClick}
+                      disabled={isDetecting}
                     >
-                      {isAnalyzing
+                      {isDetecting
                         ? t("analysis.card.button_analyzing")
                         : t("analysis.card.button_start")}
                     </Button>
@@ -679,33 +658,10 @@ function HomePage() {
 
             {/* Analysis Results */}
             <div className="space-y-6">
-              {analysis ? (
-                <>
-                  <div data-onboarding="analysis-section">
-                    <PalmAnalysis />
-                  </div>
-
-                  {/* Social Sharing Component */}
-                  <div data-onboarding="social-share">
-                    <SocialShare
-                      result={{
-                        palmType: "綜合手相",
-                        confidence:
-                          analysis.interpretation.length > 0
-                            ? analysis.interpretation[0].confidence
-                            : 0.8,
-                        interpretations: analysis.interpretation.map(
-                          (interp) => ({
-                            category: interp.topic,
-                            description: interp.text,
-                            confidence: interp.confidence,
-                          })
-                        ),
-                      }}
-                      className="mt-6"
-                    />
-                  </div>
-                </>
+              {reflectionKey ? (
+                <div data-onboarding="analysis-section">
+                  <ReflectionResult />
+                </div>
               ) : (
                 <Card className="palm-card">
                   <CardHeader>
