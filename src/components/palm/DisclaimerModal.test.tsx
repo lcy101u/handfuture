@@ -1,10 +1,15 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useLanguageStore } from "@/store/language-store";
+import { usePalmStore } from "@/store/palm-store";
 import DisclaimerModal from "./DisclaimerModal";
 
 describe("DisclaimerModal", () => {
-  beforeEach(() => useLanguageStore.getState().setLanguage("en"));
+  beforeEach(() => {
+    vi.stubGlobal("PointerEvent", MouseEvent);
+    useLanguageStore.getState().setLanguage("en");
+    usePalmStore.setState({ disclaimerAccepted: false });
+  });
 
   it("renders only when explicitly opened", () => {
     const { rerender } = render(
@@ -38,6 +43,29 @@ describe("DisclaimerModal", () => {
 
     expect(onClose).toHaveBeenCalledOnce();
     expect(onAccept).not.toHaveBeenCalled();
+  });
+
+  it("dismisses after an outside pointer interaction without accepting", async () => {
+    const onClose = vi.fn();
+    const onAccept = vi.fn();
+    render(<DisclaimerModal open onClose={onClose} onAccept={onAccept} />);
+    const dialog = screen.getByRole("dialog");
+    const overlay = dialog.previousElementSibling;
+    if (!(overlay instanceof HTMLElement)) {
+      throw new Error("The dialog overlay was not rendered.");
+    }
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 0)));
+
+    fireEvent.pointerDown(overlay, {
+      button: 0,
+      ctrlKey: false,
+      pointerType: "mouse",
+    });
+    fireEvent.click(overlay);
+
+    await waitFor(() => expect(onClose).toHaveBeenCalledOnce());
+    expect(onAccept).not.toHaveBeenCalled();
+    expect(usePalmStore.getState().disclaimerAccepted).toBe(false);
   });
 
   it("reports acceptance separately from dismissal", () => {
