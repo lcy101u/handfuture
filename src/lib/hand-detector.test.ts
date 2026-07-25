@@ -107,4 +107,64 @@ describe("createHandDetector", () => {
 
     await expect(pending).rejects.toThrow("closed");
   });
+
+  it("rejects a single hand without a handedness label", async () => {
+    const fake = new FakeHands();
+    const detector = await createHandDetector(() => fake);
+    const pending = detector.detect(document.createElement("canvas"));
+
+    fake.emit([landmarks(21)], []);
+
+    await expect(pending).rejects.toThrow();
+  });
+
+  it("rejects a single hand with an unknown handedness label", async () => {
+    const fake = new FakeHands();
+    const detector = await createHandDetector(() => fake);
+    const pending = detector.detect(document.createElement("canvas"));
+
+    fake.emit([landmarks(21)], ["Unknown"]);
+
+    await expect(pending).rejects.toThrow();
+  });
+
+  it("rejects a single hand with a landmark count other than 21", async () => {
+    const fake = new FakeHands();
+    const detector = await createHandDetector(() => fake);
+    const pending = detector.detect(document.createElement("canvas"));
+
+    fake.emit([landmarks(20)], ["Left"]);
+
+    await expect(pending).rejects.toThrow();
+  });
+
+  it("rejects a single hand with a non-finite landmark coordinate", async () => {
+    const fake = new FakeHands();
+    const detector = await createHandDetector(() => fake);
+    const invalidLandmarks = landmarks(21);
+    invalidLandmarks[10] = { x: Infinity, y: 0.05, z: -0.01 };
+    const pending = detector.detect(document.createElement("canvas"));
+
+    fake.emit([invalidLandmarks], ["Left"]);
+
+    await expect(pending).rejects.toThrow();
+  });
+
+  it("recovers after rejecting malformed runtime output", async () => {
+    const fake = new FakeHands();
+    const detector = await createHandDetector(() => fake);
+    const malformed = detector.detect(document.createElement("canvas"));
+
+    fake.emit([landmarks(21)], ["Unknown"]);
+    await expect(malformed).rejects.toThrow();
+
+    const valid = detector.detect(document.createElement("canvas"));
+    fake.emit([landmarks(21)], ["Right"]);
+
+    await expect(valid).resolves.toEqual({
+      status: "success",
+      landmarks: landmarks(21),
+      handedness: "Right",
+    });
+  });
 });

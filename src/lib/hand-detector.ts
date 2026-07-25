@@ -45,8 +45,27 @@ const createDefaultHands: HandsFactory = () => {
   return hands;
 };
 
-const toHandedness = (label: string | undefined): Handedness =>
-  label === "Left" ? "Left" : "Right";
+const toHandedness = (label: string | undefined): Handedness => {
+  if (label === "Left" || label === "Right") {
+    return label;
+  }
+
+  throw new Error("MediaPipe returned an invalid handedness label.");
+};
+
+const toLandmarks = (landmarks: Results["multiHandLandmarks"][number]): HandLandmark[] => {
+  if (landmarks.length !== 21) {
+    throw new Error("MediaPipe returned a hand without exactly 21 landmarks.");
+  }
+
+  return landmarks.map(({ x, y, z }) => {
+    if (![x, y, z].every(Number.isFinite)) {
+      throw new Error("MediaPipe returned a hand with a non-finite landmark.");
+    }
+
+    return { x, y, z };
+  });
+};
 
 const toResult = (results: Results): HandDetectionResult => {
   const count = results.multiHandLandmarks.length;
@@ -61,7 +80,7 @@ const toResult = (results: Results): HandDetectionResult => {
 
   return {
     status: "success",
-    landmarks: results.multiHandLandmarks[0].map(({ x, y, z }) => ({ x, y, z })),
+    landmarks: toLandmarks(results.multiHandLandmarks[0]),
     handedness: toHandedness(results.multiHandedness[0]?.label),
   };
 };
@@ -87,8 +106,15 @@ export async function createHandDetector(
       return;
     }
 
-    pending = undefined;
-    request.resolve(toResult(results));
+    try {
+      request.resolve(toResult(results));
+    } catch (error) {
+      request.reject(error);
+    } finally {
+      if (pending === request) {
+        pending = undefined;
+      }
+    }
   });
 
   return {
