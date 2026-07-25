@@ -58,13 +58,24 @@ const toLandmarks = (landmarks: Results["multiHandLandmarks"][number]): HandLand
     throw new Error("MediaPipe returned a hand without exactly 21 landmarks.");
   }
 
-  return landmarks.map(({ x, y, z }) => {
-    if (![x, y, z].every(Number.isFinite)) {
+  const normalized: HandLandmark[] = [];
+
+  for (let index = 0; index < 21; index += 1) {
+    const landmark = landmarks[index];
+
+    if (
+      !landmark ||
+      !Number.isFinite(landmark.x) ||
+      !Number.isFinite(landmark.y) ||
+      !Number.isFinite(landmark.z)
+    ) {
       throw new Error("MediaPipe returned a hand with a non-finite landmark.");
     }
 
-    return { x, y, z };
-  });
+    normalized.push({ x: landmark.x, y: landmark.y, z: landmark.z });
+  }
+
+  return normalized;
 };
 
 const toResult = (results: Results): HandDetectionResult => {

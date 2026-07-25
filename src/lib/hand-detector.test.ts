@@ -150,6 +150,18 @@ describe("createHandDetector", () => {
     await expect(pending).rejects.toThrow();
   });
 
+  it("rejects a sparse 21-slot landmark list", async () => {
+    const fake = new FakeHands();
+    const detector = await createHandDetector(() => fake);
+    const sparseLandmarks = landmarks(21);
+    delete sparseLandmarks[10];
+    const pending = detector.detect(document.createElement("canvas"));
+
+    fake.emit([sparseLandmarks], ["Left"]);
+
+    await expect(pending).rejects.toThrow();
+  });
+
   it("recovers after rejecting malformed runtime output", async () => {
     const fake = new FakeHands();
     const detector = await createHandDetector(() => fake);
