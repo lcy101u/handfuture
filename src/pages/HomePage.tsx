@@ -31,7 +31,6 @@ import DisclaimerModal from "@/components/palm/DisclaimerModal";
 import SocialShare from "@/components/social/SocialShare";
 import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
 import { PublisherContent } from "@/components/content/PublisherContent";
-import { GoogleAdBanner } from "@/components/ads/GoogleAdBanner";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import FeedbackSection from "@/components/feedback/FeedbackSection";
@@ -441,11 +440,6 @@ function HomePage() {
                   </CardContent>
                 </Card>
               </div>
-            </section>
-
-            {/* Sponsored Ad Unit */}
-            <section aria-label="sponsored content" className="max-w-3xl mx-auto">
-              <GoogleAdBanner />
             </section>
 
             {/* Palm Reading Knowledge Section */}
