@@ -20,11 +20,15 @@ export default function ImageUploader() {
         type: '請選擇 JPG、PNG 或 WebP 圖片。',
         size: '圖片超過 10MB，請選擇較小的檔案。',
         unreadable: '無法讀取圖片，請選擇其他檔案。',
+        selected: '已在本機選擇照片',
+        detecting: '正在開始手部關節偵測。',
       }
     : {
         type: 'Choose a JPG, PNG, or WebP image.',
         size: 'The image is larger than 10MB. Choose a smaller file.',
         unreadable: 'The image could not be read. Choose another file.',
+        selected: 'Photo selected locally',
+        detecting: 'Hand-joint detection is starting.',
       }
 
   const cancelPendingRead = useCallback(() => {
@@ -74,8 +78,8 @@ export default function ImageUploader() {
         setImage(result)
 
         toast({
-          title: "圖片上傳成功",
-          description: "正在分析手部特徵..."
+          title: messages.selected,
+          description: messages.detecting,
         })
       } else {
         activeReaderRef.current = null
@@ -93,7 +97,7 @@ export default function ImageUploader() {
       setUploadError(messages.unreadable)
     }
     reader.readAsDataURL(file)
-  }, [cancelPendingRead, currentLanguage, messages.size, messages.type, messages.unreadable, setImage, toast])
+  }, [cancelPendingRead, currentLanguage, messages.detecting, messages.selected, messages.size, messages.type, messages.unreadable, setImage, toast])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

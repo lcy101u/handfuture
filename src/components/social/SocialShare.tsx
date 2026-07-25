@@ -52,24 +52,29 @@ export default function SocialShare({ className = "" }: SocialShareProps) {
   const message = shareCopy[currentLanguage];
   const supportsNativeShare = typeof navigator.share === "function";
 
+  const copyShareText = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      toast({ title: text.copied });
+    } catch {
+      toast({ title: text.failed, variant: "destructive" });
+    }
+  };
+
   const handleShare = async () => {
     const url = getCanonicalCurrentUrl();
 
     if (supportsNativeShare) {
       try {
         await navigator.share({ title: "HandFuture", text: message, url });
-      } catch {
-        // Cancelling the operating-system share sheet needs no error message.
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        await copyShareText(url);
       }
       return;
     }
 
-    try {
-      await navigator.clipboard.writeText(`${message}\n\n${url}`);
-      toast({ title: text.copied });
-    } catch {
-      toast({ title: text.failed, variant: "destructive" });
-    }
+    await copyShareText(`${message}\n\n${url}`);
   };
 
   return (

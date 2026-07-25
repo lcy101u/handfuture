@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Toaster } from "@/components/ui/toaster";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
 import ImageUploader from "./ImageUploader";
@@ -97,6 +98,47 @@ describe("ImageUploader request lifecycle", () => {
         }
       },
     );
+  });
+
+  it("describes a successful English selection as local joint detection", async () => {
+    render(
+      <>
+        <ImageUploader />
+        <Toaster />
+      </>,
+    );
+    upload(new File(["image"], "hand.png", { type: "image/png" }));
+    await waitFor(() => expect(readers).toHaveLength(1));
+
+    act(() => completeReader(readers[0], "data:image/png;base64,hand"));
+
+    const title = await screen.findByText("Photo selected locally");
+    const message = title.parentElement;
+    expect(message).toHaveTextContent(
+      "Photo selected locallyHand-joint detection is starting.",
+    );
+    expect(message).not.toHaveTextContent(/upload/i);
+  });
+
+  it("describes a successful Chinese selection as local joint detection", async () => {
+    useLanguageStore.getState().setLanguage("zh");
+    render(
+      <>
+        <ImageUploader />
+        <Toaster />
+      </>,
+    );
+    upload(new File(["image"], "hand.png", { type: "image/png" }));
+    await waitFor(() => expect(readers).toHaveLength(1));
+
+    act(() => completeReader(readers[0], "data:image/png;base64,hand"));
+
+    const title = await screen.findByText("已在本機選擇照片");
+    const message = title.parentElement;
+    expect(message).toHaveTextContent(
+      "已在本機選擇照片正在開始手部關節偵測。",
+    );
+    expect(message).not.toHaveTextContent(/上傳/);
   });
 
   it("does not let an older file overwrite the newer image", async () => {
