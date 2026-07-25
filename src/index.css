@@ -1,53 +1,3 @@
-/**
- * =====================================
- *         UI DESIGN SYSTEM
- * =====================================
- * 
- * Project: 免費AI手相算命 - Free AI Palm Reading
- * Type: SEO-Optimized Traditional Chinese Fortune Telling App
- * 
- * DESIGN PHILOSOPHY
- * -----------------
- * Core Principle: Ancient wisdom meets modern AI technology
- * Design Style: Traditional Chinese palmistry with modern UX
- * Emotion Goal: Mystical yet trustworthy, professional yet accessible
- * 
- * VISUAL LANGUAGE
- * ----------------
- * Primary Focus: Hand imagery, mystical elements, and clear content hierarchy
- * Hierarchy: SEO-optimized sections with traditional Chinese typography
- * Whitespace: Breathing space for content consumption and contemplation
- * 
- * COLOR SYSTEM
- * -------------
- * Primary: 39 100% 50% - Golden mystical (traditional fortune telling)
- * Secondary: 240 6% 10% - Deep charcoal (wisdom, depth)
- * Accent: 14 100% 57% - Warm amber (enlightenment, CTA)
- * Background: Soft gradients optimized for readability
- * Success: 142 76% 36% - Fortune green for positive readings
- * 
- * TYPOGRAPHY
- * ----------
- * Display: Traditional Chinese characters with modern clarity
- * Body: Clean, readable Noto Sans TC for long-form content
- * Scale: SEO-friendly hierarchical structure (H1-H6)
- * 
- * INTERACTIONS
- * ------------
- * Feedback: Gentle, mystical transitions enhancing user engagement
- * Transitions: 300ms ease-out for smooth, professional feel
- * States: Subtle glow effects for interactive elements
- * 
- * ACCESSIBILITY & SEO
- * ------------------
- * Contrast: WCAG AA compliance with golden theme
- * Focus: Clear golden ring indicators for keyboard navigation
- * Motion: Respects reduced motion preferences
- * Structure: Semantic HTML5 for better search engine crawling
- * Performance: Optimized for Core Web Vitals and mobile-first
- * ====================================
- */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -234,59 +184,9 @@
     @apply relative overflow-hidden rounded-lg border-2 border-dashed border-primary/30 bg-muted/50;
   }
   
-  .palm-line {
-    @apply stroke-primary/80 stroke-2 fill-none;
-    filter: drop-shadow(0 0 2px rgba(255, 204, 0, 0.5));
-  }
-  
   .landmark-dot {
     @apply fill-accent stroke-accent-foreground stroke-1;
     filter: drop-shadow(0 0 3px rgba(255, 131, 0, 0.8));
-  }
-
-  /* Social sharing optimizations */
-  .social-share-card .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .social-share-card {
-    @apply border border-border bg-card backdrop-blur-sm transition-all duration-200;
-  }
-
-  .social-share-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 25px -5px rgba(212, 175, 55, 0.2);
-  }
-
-  /* Mobile social sharing */
-  @media (max-width: 640px) {
-    .social-share-card {
-      position: sticky;
-      bottom: 1rem;
-      z-index: 50;
-      margin: 0 1rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-  }
-
-  /* Social platform colors */
-  .facebook-blue { color: #1877F2; }
-  .twitter-blue { color: #1DA1F2; }
-  .line-green { color: #00B900; }
-  .whatsapp-green { color: #25D366; }
-
-  /* Download animation */
-  @keyframes downloadSuccess {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-
-  .download-success {
-    animation: downloadSuccess 0.3s ease;
   }
 
   /* Language switching animations */
@@ -523,58 +423,6 @@
 
   .download-ready {
     animation: downloadGlow 1.5s ease-in-out infinite;
-  }
-
-  /* Batch Processing Animations */
-  @keyframes batchProcessing {
-    0% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.05) rotate(90deg); }
-    50% { transform: scale(1) rotate(180deg); }
-    75% { transform: scale(1.05) rotate(270deg); }
-    100% { transform: scale(1) rotate(360deg); }
-  }
-
-  @keyframes batchComplete {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-  }
-
-  @keyframes progressPulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
-  }
-
-  @keyframes imageUpload {
-    0% { transform: translateY(20px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-
-  @keyframes gridToList {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
-  }
-
-  .batch-processing {
-    animation: batchProcessing 2s linear infinite;
-  }
-
-  .batch-complete {
-    animation: batchComplete 1s ease-out;
-  }
-
-  .progress-active {
-    animation: progressPulse 1.5s ease-in-out infinite;
-  }
-
-  .image-upload-enter {
-    animation: imageUpload 0.5s ease-out;
-  }
-
-  .view-transition {
-    animation: gridToList 0.3s ease-in-out;
   }
 
   /* Theme Toggle Animations */

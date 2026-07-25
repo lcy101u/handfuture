@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { HandLandmark } from "@/lib/hand-detector";
@@ -38,21 +38,101 @@ describe("HomePage truthful reflection flow", () => {
     renderHome();
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /hand-joint reflections/i,
+      /handfuture/i,
     );
+    expect(
+      screen.getByRole("heading", {
+        name: /start a cultural exploration with one hand photo/i,
+      }),
+    ).toBeVisible();
     expect(document.body).toHaveTextContent(/non-scientific entertainment/i);
     expect(document.body.textContent).not.toMatch(
-      /palm lines?|life line|heart line|fortune|future|health|personality|confidence|prediction/i,
+      /\b(?:palm lines?|life line|heart line|fortune|future|health|personality|confidence|prediction)\b/i,
     );
+  });
+
+  it("presents the real-value sections in order and links every public route", () => {
+    renderHome();
+
+    const hero = screen.getByRole("heading", {
+      name: /start a cultural exploration with one hand photo/i,
+    }).closest("section");
+    const disclosure = screen.getByText(
+      /please review and accept the disclaimer before starting an analysis/i,
+    ).closest("section");
+    const tool = screen.getByRole("region", { name: /choose a hand photo/i });
+    const features = screen.getByRole("heading", {
+      name: /in-browser detection/i,
+    }).closest("section");
+    const continueReading = screen.getByRole("heading", {
+      name: /continue reading/i,
+    }).closest("section");
+    const faq = screen.getByRole("heading", { name: /frequently asked questions/i }).closest("section");
+
+    expect(hero?.compareDocumentPosition(disclosure as Node)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(disclosure?.compareDocumentPosition(tool)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(tool.compareDocumentPosition(features as Node)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(features?.compareDocumentPosition(continueReading as Node)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(continueReading?.compareDocumentPosition(faq as Node)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+
+    const guideLinks = within(continueReading as HTMLElement)
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    expect(guideLinks).toEqual([
+      "/guides/palmistry-basics",
+      "/guides/science-and-limitations",
+      "/guides/hand-photo-guide",
+    ]);
+
+    const footerLinks = within(screen.getByRole("contentinfo"))
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    expect(footerLinks).toEqual([
+      "/",
+      "/how-it-works",
+      "/guides/palmistry-basics",
+      "/guides/science-and-limitations",
+      "/guides/hand-photo-guide",
+      "/about",
+      "/privacy",
+      "/terms",
+    ]);
+  });
+
+  it("renders the factual home copy in Chinese", () => {
+    useLanguageStore.getState().setLanguage("zh");
+    renderHome();
+
+    expect(
+      screen.getByRole("heading", { name: "從一張手部照片，開始一段文化探索" }),
+    ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "瀏覽器內偵測" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "文化反思卡" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "照片不會上傳" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "繼續閱讀" })).toBeVisible();
   });
 
   it("does not open the disclaimer automatically", () => {
     renderHome();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /view disclaimer/i }),
+    ).toBeVisible();
   });
 
   it("requires a second explicit click after accepting the disclaimer", () => {
     usePalmStore.setState({
+      image: "data:image/png;base64,hand",
       detection: { status: "success", landmarks, handedness: "Right" },
     });
     renderHome();

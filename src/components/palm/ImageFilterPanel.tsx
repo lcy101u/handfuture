@@ -15,12 +15,10 @@ import {
   Waves,
   RotateCcw,
   Download,
-  Eye,
-  Sliders
+  Eye
 } from 'lucide-react'
 import { useImageFilterStore, filterPresets } from '@/store/image-filter-store'
 import { useLanguageStore } from '@/store/language-store'
-import { useAnalyticsStore } from '@/store/analytics-store'
 
 interface ImageFilterPanelProps {
   isVisible: boolean
@@ -31,7 +29,6 @@ interface ImageFilterPanelProps {
 
 export function ImageFilterPanel({ isVisible, onClose, canvas, originalImageData }: ImageFilterPanelProps) {
   const { currentLanguage, t } = useLanguageStore()
-  const { trackEvent } = useAnalyticsStore()
   const {
     activeFilter,
     brightness,
@@ -64,14 +61,9 @@ export function ImageFilterPanel({ isVisible, onClose, canvas, originalImageData
     if (canvas && originalImageData) {
       applyFiltersToCanvas(canvas, originalImageData)
     }
-  }, [canvas, originalImageData, brightness, contrast, saturation, blur, sepia, vintage, sharpness, temperature, tint, vignette])
+  }, [applyFiltersToCanvas, canvas, originalImageData, brightness, contrast, saturation, blur, sepia, vintage, sharpness, temperature, tint, vignette])
 
   const handlePresetFilter = (preset: typeof filterPresets[0]) => {
-    trackEvent('filter_preset_applied', {
-      filter_id: preset.id,
-      filter_name: currentLanguage === 'zh' ? preset.name : preset.nameEn
-    })
-    
     setActiveFilter(preset.id)
     
     // Apply preset values based on filter type
@@ -108,21 +100,13 @@ export function ImageFilterPanel({ isVisible, onClose, canvas, originalImageData
   }
 
   const handleResetFilters = () => {
-    trackEvent('filters_reset')
     resetFilters()
     setActiveFilter(null)
   }
 
   const handleDownloadFiltered = () => {
     if (!canvas) return
-    
-    trackEvent('filtered_image_download', {
-      active_filter: activeFilter,
-      brightness,
-      contrast,
-      saturation
-    })
-    
+
     const link = document.createElement('a')
     link.download = `palm-filtered-${Date.now()}.png`
     link.href = canvas.toDataURL()

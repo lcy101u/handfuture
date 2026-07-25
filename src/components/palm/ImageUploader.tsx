@@ -5,13 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
 import { usePalmStore } from '@/store/palm-store'
-import { useAnalyticsStore } from '@/store/analytics-store'
 import { useLanguageStore } from '@/store/language-store'
 
 export default function ImageUploader() {
   const { toast } = useToast()
   const setImage = usePalmStore(state => state.setImage)
-  const trackEvent = useAnalyticsStore(state => state.trackEvent)
   const { t, currentLanguage } = useLanguageStore()
   const [uploadError, setUploadError] = useState<string | null>(null)
   const activeReaderRef = useRef<FileReader | null>(null)
@@ -74,14 +72,7 @@ export default function ImageUploader() {
         activeReaderRef.current = null
         setUploadError(null)
         setImage(result)
-        
-        // Track image upload
-        trackEvent('image_uploaded', {
-          fileSize: file.size,
-          fileType: file.type,
-          uploadMethod: 'drag_drop'
-        })
-        
+
         toast({
           title: "圖片上傳成功",
           description: "正在分析手部特徵..."
@@ -102,7 +93,7 @@ export default function ImageUploader() {
       setUploadError(messages.unreadable)
     }
     reader.readAsDataURL(file)
-  }, [cancelPendingRead, currentLanguage, messages.size, messages.type, messages.unreadable, setImage, toast, trackEvent])
+  }, [cancelPendingRead, currentLanguage, messages.size, messages.type, messages.unreadable, setImage, toast])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -118,11 +109,6 @@ export default function ImageUploader() {
   })
 
   const handleCamera = () => {
-    // Track camera usage
-    trackEvent('camera_accessed', {
-      method: 'camera_button'
-    })
-    
     // Create file input for camera
     const input = document.createElement('input')
     input.type = 'file'
@@ -131,12 +117,6 @@ export default function ImageUploader() {
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (file) {
-        // Track camera capture
-        trackEvent('image_uploaded', {
-          fileSize: file.size,
-          fileType: file.type,
-          uploadMethod: 'camera_capture'
-        })
         onDrop([file])
       }
     }

@@ -9,12 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useThemeStore, Theme } from '@/store/theme-store';
 import { useLanguageStore } from '@/store/language-store';
-import { useAnalyticsStore } from '@/store/analytics-store';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useThemeStore();
   const { t } = useLanguageStore();
-  const { trackEvent } = useAnalyticsStore();
 
   const themeOptions: { value: Theme; icon: React.ReactNode; label: string }[] = [
     { value: 'light', icon: <Sun className="h-4 w-4" />, label: t('theme.light') },
@@ -26,12 +24,7 @@ export function ThemeToggle() {
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
-    trackEvent('theme_changed', {
-      from: theme,
-      to: newTheme,
-      timestamp: new Date().toISOString()
-    });
-    
+
     // Add visual feedback
     document.body.classList.add('theme-switching');
     setTimeout(() => {

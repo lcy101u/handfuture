@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
-const BatchPage = lazy(() => import("@/pages/BatchPage").then(module => ({ default: module.BatchPage })));
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const PrivacyPolicyPage = lazy(() => import("@/pages/PrivacyPolicyPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
@@ -31,7 +30,6 @@ function App() {
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/batch" element={<BatchPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
