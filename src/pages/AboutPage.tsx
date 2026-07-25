@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Compass, Cpu, Users, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -106,16 +106,6 @@ function AboutPage() {
   const { currentLanguage } = useLanguageStore();
 
   const content = useMemo(() => aboutContent[currentLanguage], [currentLanguage]);
-
-  useEffect(() => {
-    document.title = content.metaTitle;
-    const descriptionTag = document.querySelector(
-      'meta[name="description"]'
-    ) as HTMLMetaElement | null;
-    if (descriptionTag) {
-      descriptionTag.content = content.metaDescription;
-    }
-  }, [content]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-950 dark:via-amber-950 dark:to-gray-950">

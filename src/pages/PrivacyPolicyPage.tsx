@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -168,16 +168,6 @@ const policyContent = {
 function PrivacyPolicyPage() {
   const { currentLanguage } = useLanguageStore();
   const content = useMemo(() => policyContent[currentLanguage], [currentLanguage]);
-
-  useEffect(() => {
-    document.title = content.metaTitle;
-    const descriptionTag = document.querySelector(
-      'meta[name="description"]'
-    ) as HTMLMetaElement | null;
-    if (descriptionTag) {
-      descriptionTag.content = content.metaDescription;
-    }
-  }, [content]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white dark:from-slate-950 dark:via-blue-950 dark:to-gray-950">

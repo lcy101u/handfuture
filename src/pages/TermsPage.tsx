@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -166,16 +166,6 @@ const termsContent = {
 function TermsPage() {
   const { currentLanguage } = useLanguageStore();
   const content = useMemo(() => termsContent[currentLanguage], [currentLanguage]);
-
-  useEffect(() => {
-    document.title = content.metaTitle;
-    const descriptionTag = document.querySelector(
-      'meta[name="description"]'
-    ) as HTMLMetaElement | null;
-    if (descriptionTag) {
-      descriptionTag.content = content.metaDescription;
-    }
-  }, [content]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-white dark:from-rose-950 dark:via-pink-950 dark:to-gray-950">

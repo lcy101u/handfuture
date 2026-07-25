@@ -3,12 +3,10 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight,
   BookOpen,
-  Hand,
   MessageCircleQuestion,
   MonitorCheck,
   RotateCcw,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -23,9 +21,7 @@ import DisclaimerModal from "@/components/palm/DisclaimerModal";
 import HandPreview from "@/components/palm/HandPreview";
 import ImageUploader from "@/components/palm/ImageUploader";
 import ReflectionResult from "@/components/palm/ReflectionResult";
-import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import type { GuidePath, PublicPath } from "@/config/public-routes";
+import type { GuidePath } from "@/config/public-routes";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
 
@@ -48,38 +44,6 @@ const guideLinks: Array<{
     path: "/guides/hand-photo-guide",
     titleKey: "guide.photo.title",
     summaryKey: "guide.photo.summary",
-  },
-];
-
-const footerGroups: Array<{
-  titleKey: string;
-  links: Array<{ path: PublicPath; labelKey: string }>;
-}> = [
-  {
-    titleKey: "footer.explore",
-    links: [
-      { path: "/", labelKey: "nav.home" },
-      { path: "/how-it-works", labelKey: "footer.howItWorks" },
-    ],
-  },
-  {
-    titleKey: "footer.guides",
-    links: [
-      { path: "/guides/palmistry-basics", labelKey: "guide.basics.title" },
-      {
-        path: "/guides/science-and-limitations",
-        labelKey: "guide.science.title",
-      },
-      { path: "/guides/hand-photo-guide", labelKey: "guide.photo.title" },
-    ],
-  },
-  {
-    titleKey: "footer.project",
-    links: [
-      { path: "/about", labelKey: "nav.about" },
-      { path: "/privacy", labelKey: "nav.privacy" },
-      { path: "/terms", labelKey: "nav.terms" },
-    ],
   },
 ];
 
@@ -127,47 +91,12 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
-      <header className="border-b border-white/10 bg-slate-950 text-white">
-        <div className="container mx-auto flex flex-wrap items-center gap-5 px-4 py-5">
-          <Link to="/" className="flex min-w-fit items-center gap-3">
-            <span className="relative" aria-hidden="true">
-              <Hand className="h-8 w-8 text-primary" />
-              <Sparkles className="absolute -right-1 -top-1 h-4 w-4 text-accent" />
-            </span>
-            <div>
-              <h1 className="text-xl font-bold">{t("app.title")}</h1>
-              <p className="text-xs text-white/70">{t("app.subtitle")}</p>
-            </div>
-          </Link>
-
-          <nav
-            className="ml-auto flex flex-wrap items-center justify-end gap-x-4 gap-y-3 text-sm"
-            aria-label="Primary"
-          >
-            <Link to="/" className="hover:text-primary">
-              {t("nav.home")}
-            </Link>
-            <Link to="/about" className="hover:text-primary">
-              {t("nav.about")}
-            </Link>
-            <Link to="/privacy" className="hover:text-primary">
-              {t("nav.privacy")}
-            </Link>
-            <Link to="/terms" className="hover:text-primary">
-              {t("nav.terms")}
-            </Link>
-            <LanguageSwitcher />
-            <ThemeToggle />
-          </nav>
-        </div>
-      </header>
-
-      <main className="container mx-auto space-y-12 px-4 py-10 md:py-14">
+    <div>
+      <div className="container mx-auto space-y-12 px-4 py-10 md:py-14">
         <section className="mx-auto max-w-3xl space-y-5 text-center">
-          <h2 className="text-3xl font-bold leading-tight md:text-5xl">
+          <h1 className="text-3xl font-bold leading-tight md:text-5xl">
             {t("hero.title")}
-          </h2>
+          </h1>
           <p className="text-base leading-8 text-muted-foreground md:text-lg">
             {t("hero.description")}
           </p>
@@ -302,36 +231,7 @@ function HomePage() {
             ))}
           </div>
         </section>
-      </main>
-
-      <footer className="border-t border-border/60 bg-card/70">
-        <div className="container mx-auto grid gap-8 px-4 py-10 md:grid-cols-[1.25fr_2fr]">
-          <div>
-            <p className="text-lg font-bold">HandFuture</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              © {new Date().getFullYear()} HandFuture
-            </p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {footerGroups.map((group) => (
-              <div key={group.titleKey}>
-                <p className="text-sm font-semibold">{t(group.titleKey)}</p>
-                <nav className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
-                  {group.links.map((link) => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className="hover:text-primary"
-                    >
-                      {t(link.labelKey)}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-            ))}
-          </div>
-        </div>
-      </footer>
+      </div>
 
       <DisclaimerModal
         open={showDisclaimer}

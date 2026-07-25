@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it } from "vitest";
+import SiteLayout from "@/components/layout/SiteLayout";
 import type { HandLandmark } from "@/lib/hand-detector";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
@@ -15,7 +16,9 @@ const landmarks: HandLandmark[] = Array.from({ length: 21 }, (_, index) => ({
 function renderHome() {
   return render(
     <MemoryRouter>
-      <HomePage />
+      <SiteLayout>
+        <HomePage />
+      </SiteLayout>
     </MemoryRouter>,
   );
 }
@@ -37,14 +40,11 @@ describe("HomePage truthful reflection flow", () => {
   it("renders only truthful hand-joint and reflection claims", () => {
     renderHome();
 
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /handfuture/i,
+      /start a cultural exploration with one hand photo/i,
     );
-    expect(
-      screen.getByRole("heading", {
-        name: /start a cultural exploration with one hand photo/i,
-      }),
-    ).toBeVisible();
+    expect(screen.getByRole("link", { name: /handfuture home/i })).toBeVisible();
     expect(document.body).toHaveTextContent(/non-scientific entertainment/i);
     expect(document.body.textContent).not.toMatch(
       /\b(?:palm lines?|life line|heart line|fortune|future|health|personality|confidence|prediction)\b/i,

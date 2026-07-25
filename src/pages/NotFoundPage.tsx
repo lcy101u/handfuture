@@ -1,20 +1,21 @@
-import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useLanguageStore } from "@/store/language-store";
 
 function NotFoundPage() {
-  const navigate = useNavigate()
+  const currentLanguage = useLanguageStore((state) => state.currentLanguage);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-6xl mb-4">404</h1>
-        <p className="mb-6">Page not found</p>
-        <Button onClick={() => navigate('/')} variant="link">
-          Return home
-        </Button>
-      </div>
-    </div>
-  )
+    <section className="container mx-auto flex min-h-[50vh] max-w-2xl flex-col items-center justify-center px-4 py-16 text-center">
+      <h1 className="mb-4 text-6xl">404</h1>
+      <p className="mb-6 text-muted-foreground">
+        {currentLanguage === "zh" ? "找不到這個頁面。" : "Page not found."}
+      </p>
+      <Button asChild variant="link">
+        <Link to="/">{currentLanguage === "zh" ? "返回首頁" : "Return home"}</Link>
+      </Button>
+    </section>
+  );
 }
 
-export default NotFoundPage 
+export default NotFoundPage;
