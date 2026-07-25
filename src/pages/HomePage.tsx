@@ -1,18 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Hand,
-  Upload,
-  Camera,
-  AlertTriangle,
-  Sparkles,
-  Star,
-  Heart,
-  Brain,
-  Briefcase,
-  Zap,
-  Grid,
-} from "lucide-react";
+import { Hand, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,828 +9,191 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import ImageUploader from "@/components/palm/ImageUploader";
-import HandPreview from "@/components/palm/HandPreview";
-import ReflectionResult from "@/components/palm/ReflectionResult";
 import DisclaimerModal from "@/components/palm/DisclaimerModal";
-import SocialShare from "@/components/social/SocialShare";
-import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
-import { PublisherContent } from "@/components/content/PublisherContent";
+import HandPreview from "@/components/palm/HandPreview";
+import ImageUploader from "@/components/palm/ImageUploader";
+import ReflectionResult from "@/components/palm/ReflectionResult";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import FeedbackSection from "@/components/feedback/FeedbackSection";
-import FeedbackModal from "@/components/feedback/FeedbackModal";
-import { OnboardingOverlay } from "@/components/onboarding/OnboardingOverlay";
-import { WelcomeModal } from "@/components/onboarding/WelcomeModal";
-import { usePalmStore } from "@/store/palm-store";
-import { useAnalyticsStore } from "@/store/analytics-store";
 import { useLanguageStore } from "@/store/language-store";
-import { useOnboardingStore } from "@/store/onboarding-store";
+import { usePalmStore } from "@/store/palm-store";
+
+const copy = {
+  zh: {
+    title: "手部關節反思卡",
+    subtitle: "在瀏覽器內偵測手部關節，選出一張固定的反思提示卡。",
+    entertainment: "非科學娛樂與自我反思用途",
+    explanation:
+      "上傳一張清楚的單手照片。模型只取得 21 個手部關節座標，並依幾何位置固定選卡；照片不會由本功能上傳。",
+    uploadTitle: "選擇手部照片",
+    uploadDescription: "請使用單純背景，讓一隻手完整出現在畫面中。",
+    previewTitle: "手部關節偵測",
+    previewDescription: "偵測完成後，你可以主動選擇一張反思卡。",
+    reset: "更換照片",
+    resultTitle: "反思卡",
+    waiting: "先完成一隻手的關節偵測。",
+    choose: "選擇反思卡",
+    detecting: "正在偵測關節…",
+    disclaimer: "閱讀娛樂用途說明",
+    privacy: "隱私政策",
+    terms: "使用條款",
+    about: "關於本工具",
+  },
+  en: {
+    title: "Hand-joint reflections",
+    subtitle:
+      "Detect hand joints in your browser and select one stable reflection prompt.",
+    entertainment: "Non-scientific entertainment and self-reflection",
+    explanation:
+      "Upload one clear photo containing a single hand. The model obtains only 21 joint coordinates and uses their geometry for a stable card choice. This feature does not upload the photo.",
+    uploadTitle: "Choose a hand photo",
+    uploadDescription:
+      "Use a plain background and keep one full hand visible in the frame.",
+    previewTitle: "Hand-joint detection",
+    previewDescription:
+      "After detection finishes, you can explicitly choose a reflection card.",
+    reset: "Choose another photo",
+    resultTitle: "Reflection card",
+    waiting: "Complete joint detection for one hand first.",
+    choose: "Choose reflection card",
+    detecting: "Detecting joints…",
+    disclaimer: "Read entertainment notice",
+    privacy: "Privacy",
+    terms: "Terms",
+    about: "About this tool",
+  },
+} as const;
 
 function HomePage() {
-  const { image, detection, reflectionKey, disclaimerAccepted, isDetecting } =
-    usePalmStore();
-
-  const { initSession, endSession, trackEvent, trackPageView } =
-    useAnalyticsStore();
-  const { t, currentLanguage } = useLanguageStore();
-  const { showWelcome, showWelcomeModal, hideWelcomeModal } =
-    useOnboardingStore();
+  const image = usePalmStore((state) => state.image);
+  const detection = usePalmStore((state) => state.detection);
+  const reflectionKey = usePalmStore((state) => state.reflectionKey);
+  const isDetecting = usePalmStore((state) => state.isDetecting);
+  const disclaimerAccepted = usePalmStore(
+    (state) => state.disclaimerAccepted,
+  );
+  const currentLanguage = useLanguageStore((state) => state.currentLanguage);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
-  const [showAnalytics, setShowAnalytics] = useState(false);
-  const [logoClickCount, setLogoClickCount] = useState(0);
-  const [languageTransition, setLanguageTransition] = useState(false);
+  const text = copy[currentLanguage];
 
-  // Initialize analytics session
-  useEffect(() => {
-    initSession();
-    trackPageView("/");
-
-    // Cleanup on unmount
-    return () => {
-      endSession();
-    };
-  }, [initSession, endSession, trackPageView]);
-
-  // Language transition animation with content flash prevention
-  useEffect(() => {
-    let frameId2: number, frameId3: number;
-
-    setLanguageTransition(true);
-
-    const frameId1 = requestAnimationFrame(() => {
-      document.body.classList.add("language-switching");
-    });
-
-    const midTransition = setTimeout(() => {
-      frameId2 = requestAnimationFrame(() => {
-        document.body.classList.remove("language-switching");
-        document.body.classList.add("language-switched");
-      });
-    }, 150);
-
-    const endTransition = setTimeout(() => {
-      frameId3 = requestAnimationFrame(() => {
-        setLanguageTransition(false);
-        document.body.classList.remove("language-switched");
-      });
-    }, 300);
-
-    return () => {
-      cancelAnimationFrame(frameId1);
-      cancelAnimationFrame(frameId2);
-      cancelAnimationFrame(frameId3);
-      clearTimeout(midTransition);
-      clearTimeout(endTransition);
-      document.body.classList.remove("language-switching", "language-switched");
-    };
-  }, [currentLanguage]);
-
-  // Show analytics dashboard if toggled
-  if (showAnalytics) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="border-b border-border/50 bg-card/80">
-          <div className="container mx-auto px-4 py-4">
-            <Button
-              onClick={() => setShowAnalytics(false)}
-              variant="outline"
-              size="sm"
-            >
-              ← {t("button.back")}
-            </Button>
-          </div>
-        </div>
-        <AnalyticsDashboard />
-      </div>
-    );
-  }
-
-  const openDisclaimer = (source: string) => {
-    trackEvent("disclaimer_opened", { source });
-    setShowDisclaimer(true);
-  };
-
-  const handleAnalyzeClick = () => {
+  const handleReflectionClick = () => {
     if (!disclaimerAccepted) {
-      openDisclaimer("reflection_button");
+      setShowDisclaimer(true);
       return;
     }
     usePalmStore.getState().createReflection();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-secondary/20">
-      {/* Header with proper SEO structure */}
-      <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() => {
-                const newCount = logoClickCount + 1;
-                setLogoClickCount(newCount);
-                if (newCount >= 5) {
-                  setShowAnalytics(!showAnalytics);
-                  setLogoClickCount(0);
-                  trackEvent("analytics_dashboard_accessed");
-                }
-              }}
-              data-onboarding="logo"
-            >
-              <div className="relative">
-                <Hand className="w-8 h-8 text-primary" />
-                <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  {t("app.title")}
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  {t("app.subtitle")}
-                </p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+      <header className="border-b border-border/60 bg-card/80 backdrop-blur-sm">
+        <div className="container mx-auto flex flex-wrap items-center gap-4 px-4 py-5">
+          <Link to="/" className="flex items-center gap-3">
+            <span className="relative" aria-hidden="true">
+              <Hand className="h-8 w-8 text-primary" />
+              <Sparkles className="absolute -right-1 -top-1 h-4 w-4 text-accent" />
+            </span>
+            <div>
+              <h1 className="text-xl font-bold">{text.title}</h1>
+              <p className="text-xs text-muted-foreground">
+                {text.entertainment}
+              </p>
             </div>
+          </Link>
 
-            <nav className="flex flex-1 flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
-              <Link to="/" className="transition-colors hover:text-primary">
-                {t("nav.home")}
-              </Link>
-              <Link to="/about" className="transition-colors hover:text-primary">
-                {t("nav.about")}
-              </Link>
-              <a href="#faq" className="transition-colors hover:text-primary">
-                {t("nav.faq")}
-              </a>
-              <Link to="/privacy" className="transition-colors hover:text-primary">
-                {t("nav.privacy")}
-              </Link>
-              <Link to="/terms" className="transition-colors hover:text-primary">
-                {t("nav.terms")}
-              </Link>
-            </nav>
-
-            <div className="flex flex-wrap items-center gap-2 ml-auto justify-end">
-              <div className="hidden md:flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
-                  <Star className="w-3 h-3 mr-1" />
-                  {t("header.badges.rating")}
-                </Badge>
-                <Badge variant="outline" className="text-xs">
-                  {t("header.badges.users")}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <div data-onboarding="theme-toggle">
-                  <ThemeToggle />
-                </div>
-                <LanguageSwitcher />
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  trackEvent("guided_tour_requested");
-                  showWelcomeModal();
-                }}
-              >
-                {t("button.startTour")}
-              </Button>
-              <SocialShare className="hidden md:block" />
-            </div>
-          </div>
+          <nav className="ml-auto flex items-center gap-4 text-sm">
+            <Link to="/about" className="hover:text-primary">
+              {text.about}
+            </Link>
+            <Link to="/privacy" className="hover:text-primary">
+              {text.privacy}
+            </Link>
+            <Link to="/terms" className="hover:text-primary">
+              {text.terms}
+            </Link>
+            <LanguageSwitcher />
+          </nav>
         </div>
       </header>
 
-      <main
-        className={`container mx-auto px-4 py-8 space-y-8 transition-all duration-300 ${
-          languageTransition
-            ? "opacity-70 translate-y-1"
-            : "opacity-100 translate-y-0"
-        }`}
-      >
-        {/* SEO-optimized introduction section */}
-        <section
-          id="hero"
-          className="text-center space-y-4 mb-8"
-          aria-labelledby="main-heading"
-        >
-          <h2
-            id="main-heading"
-            className="text-3xl md:text-4xl font-bold text-foreground mb-4"
-          >
-            {t("hero.title")}
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {t("hero.description")}
+      <main className="container mx-auto space-y-8 px-4 py-10">
+        <section className="mx-auto max-w-3xl space-y-4 text-center">
+          <h2 className="text-3xl font-bold md:text-4xl">{text.subtitle}</h2>
+          <p className="leading-relaxed text-muted-foreground">
+            {text.explanation}
           </p>
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            <Badge
-              variant="default"
-              className="bg-primary/10 text-primary hover:bg-primary/20"
-            >
-              <Heart className="w-3 h-3 mr-1" />
-              {t("analysis.topics.emotion")}
-            </Badge>
-            <Badge
-              variant="default"
-              className="bg-accent/10 text-accent hover:bg-accent/20"
-            >
-              <Briefcase className="w-3 h-3 mr-1" />
-              {t("analysis.topics.career")}
-            </Badge>
-            <Badge
-              variant="default"
-              className="bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-950/30 dark:text-green-400"
-            >
-              <Brain className="w-3 h-3 mr-1" />
-              {t("analysis.topics.intelligence")}
-            </Badge>
-            <Badge
-              variant="default"
-              className="bg-orange-100 text-orange-700 hover:bg-orange-200 dark:bg-orange-950/30 dark:text-orange-400"
-            >
-              <Zap className="w-3 h-3 mr-1" />
-              {t("analysis.topics.energy")}
-            </Badge>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowDisclaimer(true)}
+          >
+            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+            {text.disclaimer}
+          </Button>
         </section>
 
-        {/* Disclaimer Alert - Important for SEO and user trust */}
-        <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
-          <AlertDescription className="text-amber-800 dark:text-amber-200">
-            <strong>{t("disclaimer.notice")}</strong>
-            {t("footer.disclaimer")}
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => openDisclaimer("alert_cta")}
-              >
-                {t("button.viewDisclaimer")}
-              </Button>
-              {!disclaimerAccepted && (
-                <span className="text-xs text-muted-foreground">
-                  {t("disclaimer.prompt")}
-                </span>
-              )}
-            </div>
-          </AlertDescription>
-        </Alert>
-
-        {/* Main Content */}
-        {!image ? (
-          <div className="space-y-8">
-            {/* Upload Section */}
-            <section id="upload" aria-labelledby="upload-section">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Upload Card */}
-                <Card className="palm-card mystical-glow md:col-span-2 lg:col-span-2">
-                  <CardHeader>
-                    <CardTitle
-                      className="flex items-center gap-2"
-                      id="upload-section"
-                    >
-                      <Upload className="w-5 h-5" />
-                      {t("upload.title_with_action")}
-                    </CardTitle>
-                    <CardDescription
-                      dangerouslySetInnerHTML={{
-                        __html: t("upload.description"),
-                      }}
-                    />
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div data-onboarding="image-uploader">
-                      <ImageUploader />
-                    </div>
-
-                    {/* Batch Processing Option */}
-                    <div className="pt-4 border-t border-muted">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-sm mb-1">
-                            {t("batch.title")}
-                          </h4>
-                          <p className="text-xs text-muted-foreground">
-                            {t("batch.subtitle")}
-                          </p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            trackEvent("batch_mode_clicked", {
-                              language: currentLanguage,
-                            });
-                            window.open("/batch", "_blank");
-                          }}
-                          className="ml-3"
-                          data-onboarding="batch-link"
-                        >
-                          <Grid className="w-4 h-4 mr-2" />
-                          {t("batch.mode")}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Instructions Card */}
-                <Card className="palm-card">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Camera className="w-5 h-5" />
-                      {t("instructions.title")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <div>
-                        <h4 className="font-medium">
-                          {t("instructions.item1.title")}
-                        </h4>
-                        <p
-                          className="text-sm text-muted-foreground"
-                          dangerouslySetInnerHTML={{
-                            __html: t("instructions.item1.description"),
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <div>
-                        <h4 className="font-medium">
-                          {t("instructions.item2.title")}
-                        </h4>
-                        <p
-                          className="text-sm text-muted-foreground"
-                          dangerouslySetInnerHTML={{
-                            __html: t("instructions.item2.description"),
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <div>
-                        <h4 className="font-medium">
-                          {t("instructions.item3.title")}
-                        </h4>
-                        <p
-                          className="text-sm text-muted-foreground"
-                          dangerouslySetInnerHTML={{
-                            __html: t("instructions.item3.description"),
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <div>
-                        <h4 className="font-medium">
-                          {t("instructions.item4.title")}
-                        </h4>
-                        <p
-                          className="text-sm text-muted-foreground"
-                          dangerouslySetInnerHTML={{
-                            __html: t("instructions.item4.description"),
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </section>
-
-            {/* Palm Reading Knowledge Section */}
-            <section id="knowledge" aria-labelledby="knowledge-section">
-              <Card className="palm-card">
-                <CardHeader className="text-center">
-                  <CardTitle id="knowledge-section" className="text-2xl">
-                    {t("knowledge.title")}
-                  </CardTitle>
-                  <CardDescription
-                    className="text-base"
-                    dangerouslySetInnerHTML={{
-                      __html: t("knowledge.description"),
-                    }}
-                  />
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <article className="text-center space-y-3">
-                      <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                        <div className="w-8 h-1 bg-primary rounded-full transform rotate-45" />
-                      </div>
-                      <h3 className="font-semibold text-lg">
-                        {t("knowledge.lifeline.title")}
-                      </h3>
-                      <p
-                        className="text-sm text-muted-foreground leading-relaxed"
-                        dangerouslySetInnerHTML={{
-                          __html: t("knowledge.lifeline.description"),
-                        }}
-                      />
-                    </article>
-                    <article className="text-center space-y-3">
-                      <div className="w-16 h-16 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
-                        <div className="w-8 h-1 bg-accent rounded-full" />
-                      </div>
-                      <h3 className="font-semibold text-lg">
-                        {t("knowledge.wisdomline.title")}
-                      </h3>
-                      <p
-                        className="text-sm text-muted-foreground leading-relaxed"
-                        dangerouslySetInnerHTML={{
-                          __html: t("knowledge.wisdomline.description"),
-                        }}
-                      />
-                    </article>
-                    <article className="text-center space-y-3">
-                      <div className="w-16 h-16 mx-auto rounded-full bg-red-100 dark:bg-red-950/30 flex items-center justify-center">
-                        <div className="w-8 h-1 bg-red-500 rounded-full" />
-                      </div>
-                      <h3 className="font-semibold text-lg">
-                        {t("knowledge.loveline.title")}
-                      </h3>
-                      <p
-                        className="text-sm text-muted-foreground leading-relaxed"
-                        dangerouslySetInnerHTML={{
-                          __html: t("knowledge.loveline.description"),
-                        }}
-                      />
-                    </article>
-                    <article className="text-center space-y-3">
-                      <div className="w-16 h-16 mx-auto rounded-full bg-green-100 dark:bg-green-950/30 flex items-center justify-center">
-                        <div className="w-8 h-1 bg-green-500 rounded-full transform -rotate-12" />
-                      </div>
-                      <h3 className="font-semibold text-lg">
-                        {t("knowledge.careerline.title")}
-                      </h3>
-                      <p
-                        className="text-sm text-muted-foreground leading-relaxed"
-                        dangerouslySetInnerHTML={{
-                          __html: t("knowledge.careerline.description"),
-                        }}
-                      />
-                    </article>
-                  </div>
-                </CardContent>
-              </Card>
-            </section>
-
-            {/* Features Section */}
-            <section
-              aria-labelledby="features-section"
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              <h2 id="features-section" className="sr-only">
-                {t("features.section_title")}
-              </h2>
-
-              <Card className="palm-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Brain className="w-5 h-5 text-blue-500" />
-                    {t("features.item1.title")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p
-                    className="text-sm text-muted-foreground leading-relaxed"
-                    dangerouslySetInnerHTML={{
-                      __html: t("features.item1.description"),
-                    }}
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="palm-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-red-500" />
-                    {t("features.item2.title")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p
-                    className="text-sm text-muted-foreground leading-relaxed"
-                    dangerouslySetInnerHTML={{
-                      __html: t("features.item2.description"),
-                    }}
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="palm-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-yellow-500" />
-                    {t("features.item3.title")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p
-                    className="text-sm text-muted-foreground leading-relaxed"
-                    dangerouslySetInnerHTML={{
-                      __html: t("features.item3.description"),
-                    }}
-                  />
-                </CardContent>
-              </Card>
-            </section>
-
-            {/* FAQ Section for SEO */}
-            <section id="faq" aria-labelledby="faq-section">
-              <Card className="palm-card">
-                <CardHeader>
-                  <CardTitle id="faq-section" className="text-xl">
-                    {t("faq.section_title")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("faq.section_description")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <details className="group">
-                    <summary className="flex cursor-pointer items-center justify-between p-2 text-sm font-medium rounded border">
-                      <span>{t("faq.item1.question")}</span>
-                      <span className="ml-auto transition-transform group-open:rotate-180">
-                        ▼
-                      </span>
-                    </summary>
-                    <div
-                      className="mt-2 p-2 text-sm text-muted-foreground bg-muted/50 rounded"
-                      dangerouslySetInnerHTML={{
-                        __html: t("faq.item1.answer"),
-                      }}
-                    />
-                  </details>
-
-                  <details className="group">
-                    <summary className="flex cursor-pointer items-center justify-between p-2 text-sm font-medium rounded border">
-                      <span>{t("faq.item2.question")}</span>
-                      <span className="ml-auto transition-transform group-open:rotate-180">
-                        ▼
-                      </span>
-                    </summary>
-                    <div
-                      className="mt-2 p-2 text-sm text-muted-foreground bg-muted/50 rounded"
-                      dangerouslySetInnerHTML={{
-                        __html: t("faq.item2.answer"),
-                      }}
-                    />
-                  </details>
-
-                  <details className="group">
-                    <summary className="flex cursor-pointer items-center justify-between p-2 text-sm font-medium rounded border">
-                      <span>{t("faq.item3.question")}</span>
-                      <span className="ml-auto transition-transform group-open:rotate-180">
-                        ▼
-                      </span>
-                    </summary>
-                    <div
-                      className="mt-2 p-2 text-sm text-muted-foreground bg-muted/50 rounded"
-                      dangerouslySetInnerHTML={{
-                        __html: t("faq.item3.answer"),
-                      }}
-                    />
-                  </details>
-                </CardContent>
-              </Card>
-            </section>
-          </div>
-        ) : (
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Image Preview */}
-            <Card className="palm-card">
-              <CardHeader>
-                <CardTitle>{t("analysis.card.title")}</CardTitle>
-                <CardDescription>
-                  {detection
-                    ? t("analysis.card.description_landmarks")
-                    : t("analysis.card.description_no_landmarks")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <HandPreview />
-                <div className="mt-4 flex gap-2">
+        <section className="grid gap-8 lg:grid-cols-2" aria-label={text.uploadTitle}>
+          <Card>
+            <CardHeader>
+              <CardTitle>{image ? text.previewTitle : text.uploadTitle}</CardTitle>
+              <CardDescription>
+                {image ? text.previewDescription : text.uploadDescription}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {image ? (
+                <div className="space-y-4">
+                  <HandPreview />
                   <Button
+                    type="button"
                     variant="outline"
-                    size="sm"
                     onClick={() => usePalmStore.getState().reset()}
                   >
-                    {t("analysis.card.button_reset")}
+                    <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                    {text.reset}
                   </Button>
-                  {detection && !reflectionKey && (
-                    <Button
-                      size="sm"
-                      onClick={handleAnalyzeClick}
-                      disabled={isDetecting}
-                    >
-                      {isDetecting
-                        ? t("analysis.card.button_analyzing")
-                        : t("analysis.card.button_start")}
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Analysis Results */}
-            <div className="space-y-6">
-              {reflectionKey ? (
-                <div data-onboarding="analysis-section">
-                  <ReflectionResult />
                 </div>
               ) : (
-                <Card className="palm-card">
-                  <CardHeader>
-                    <CardTitle>{t("analysis.wait.title")}</CardTitle>
-                    <CardDescription>
-                      {t("analysis.wait.description")}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-center h-32 text-muted-foreground">
-                      <div className="text-center space-y-2">
-                        <Hand className="w-12 h-12 mx-auto opacity-50" />
-                        <p>{t("analysis.wait.message")}</p>
-                        <p className="text-xs">
-                          {t("analysis.wait.submessage")}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <ImageUploader />
               )}
-            </div>
-          </div>
-        )}
+            </CardContent>
+          </Card>
 
-        <PublisherContent />
+          <div className="space-y-6">
+            {reflectionKey ? (
+              <ReflectionResult />
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{text.resultTitle}</CardTitle>
+                  <CardDescription>{text.waiting}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    type="button"
+                    onClick={handleReflectionClick}
+                    disabled={!detection || isDetecting}
+                  >
+                    {isDetecting ? text.detecting : text.choose}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </section>
       </main>
 
-      {/* User Feedback Section */}
-      <FeedbackSection />
-
-      {/* Footer with internal links for SEO */}
-      <footer className="border-t border-border/50 bg-card/50 mt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <h3 className="font-semibold mb-3">
-                {t("footer.links.tools.title")}
-              </h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#upload" className="hover:text-primary transition-colors">
-                    {t("footer.links.tools.item1")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#knowledge" className="hover:text-primary transition-colors">
-                    {t("footer.links.tools.item2")}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#publisher-content-section"
-                    className="hover:text-primary transition-colors"
-                  >
-                    {t("footer.links.tools.item3")}
-                  </a>
-                </li>
-                <li>
-                  <Link to="/batch" className="hover:text-primary transition-colors">
-                    {t("footer.links.tools.item4")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-3">
-                {t("footer.links.readings.title")}
-              </h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a
-                    href="#publisher-content-section"
-                    className="hover:text-primary transition-colors"
-                  >
-                    {t("footer.links.readings.item1")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#faq" className="hover:text-primary transition-colors">
-                    {t("footer.links.readings.item2")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#feedback" className="hover:text-primary transition-colors">
-                    {t("footer.links.readings.item3")}
-                  </a>
-                </li>
-                <li>
-                  <Link to="/about" className="hover:text-primary transition-colors">
-                    {t("footer.links.readings.item4")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-3">
-                {t("footer.links.knowledge.title")}
-              </h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#knowledge" className="hover:text-primary transition-colors">
-                    {t("footer.links.knowledge.item1")}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#publisher-content-section"
-                    className="hover:text-primary transition-colors"
-                  >
-                    {t("footer.links.knowledge.item2")}
-                  </a>
-                </li>
-                <li>
-                  <Link to="/about" className="hover:text-primary transition-colors">
-                    {t("footer.links.knowledge.item3")}
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/terms" className="hover:text-primary transition-colors">
-                    {t("footer.links.knowledge.item4")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-3">
-                {t("footer.links.about.title")}
-              </h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link to="/about" className="hover:text-primary transition-colors">
-                    {t("footer.links.about.item1")}
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/privacy" className="hover:text-primary transition-colors">
-                    {t("footer.links.about.item2")}
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/terms" className="hover:text-primary transition-colors">
-                    {t("footer.links.about.item3")}
-                  </Link>
-                </li>
-                <li>
-                  <a
-                    href="mailto:coralgroper398@dontsp.am"
-                    className="hover:text-primary transition-colors"
-                  >
-                    {t("footer.links.about.item4")}
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border/50 mt-8 pt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              {t("footer.copyright_full")}
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              {t("footer.keywords")}
-            </p>
-          </div>
-        </div>
+      <footer className="border-t border-border/60 py-6 text-center text-sm text-muted-foreground">
+        {text.entertainment}
       </footer>
 
-      {/* Disclaimer Modal */}
       <DisclaimerModal
         open={showDisclaimer}
+        onClose={() => setShowDisclaimer(false)}
         onAccept={() => {
           usePalmStore.getState().acceptDisclaimer();
           setShowDisclaimer(false);
-          trackEvent("disclaimer_accepted");
         }}
       />
-      <FeedbackModal />
-
-      {/* Onboarding Components */}
-      <OnboardingOverlay />
-      <WelcomeModal open={showWelcome} onOpenChange={hideWelcomeModal} />
     </div>
   );
 }

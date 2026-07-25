@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
@@ -54,5 +54,72 @@ describe("ImageUploader errors", () => {
 
     expect(await screen.findByText(/image could not be read/i)).toBeVisible();
     await waitFor(() => expect(usePalmStore.getState().image).toBeNull());
+  });
+});
+
+interface ControlledReader {
+  result: string | ArrayBuffer | null;
+  onload: FileReader["onload"];
+  onerror: FileReader["onerror"];
+  onabort: FileReader["onabort"];
+  readAsDataURL: (file: Blob) => void;
+  abort: () => void;
+}
+
+function completeReader(reader: ControlledReader, result: string) {
+  reader.result = result;
+  reader.onload?.call(
+    reader as unknown as FileReader,
+    { target: reader } as unknown as ProgressEvent<FileReader>,
+  );
+}
+
+describe("ImageUploader request lifecycle", () => {
+  const readers: ControlledReader[] = [];
+
+  beforeEach(() => {
+    readers.length = 0;
+    useLanguageStore.getState().setLanguage("en");
+    usePalmStore.setState({ image: null });
+
+    vi.stubGlobal(
+      "FileReader",
+      class {
+        result: string | ArrayBuffer | null = null;
+        onload: FileReader["onload"] = null;
+        onerror: FileReader["onerror"] = null;
+        onabort: FileReader["onabort"] = null;
+        readAsDataURL = vi.fn();
+        abort = vi.fn();
+
+        constructor() {
+          readers.push(this);
+        }
+      },
+    );
+  });
+
+  it("does not let an older file overwrite the newer image", async () => {
+    render(<ImageUploader />);
+    upload(new File(["a"], "a.png", { type: "image/png" }));
+    await waitFor(() => expect(readers).toHaveLength(1));
+    upload(new File(["b"], "b.png", { type: "image/png" }));
+    await waitFor(() => expect(readers).toHaveLength(2));
+
+    act(() => completeReader(readers[1], "data:image/png;base64,b"));
+    act(() => completeReader(readers[0], "data:image/png;base64,a"));
+
+    expect(usePalmStore.getState().image).toBe("data:image/png;base64,b");
+  });
+
+  it("does not update the store after unmount", async () => {
+    const { unmount } = render(<ImageUploader />);
+    upload(new File(["a"], "a.png", { type: "image/png" }));
+    await waitFor(() => expect(readers).toHaveLength(1));
+    unmount();
+
+    act(() => completeReader(readers[0], "data:image/png;base64,a"));
+
+    expect(usePalmStore.getState().image).toBeNull();
   });
 });

@@ -14,6 +14,7 @@ import { useLanguageStore } from "@/store/language-store";
 
 interface DisclaimerModalProps {
   open: boolean;
+  onClose: () => void;
   onAccept: () => void;
 }
 
@@ -57,13 +58,19 @@ const copy = {
 
 export default function DisclaimerModal({
   open,
+  onClose,
   onAccept,
 }: DisclaimerModalProps) {
   const currentLanguage = useLanguageStore((state) => state.currentLanguage);
   const text = copy[currentLanguage];
 
   return (
-    <Dialog open={open} onOpenChange={() => undefined}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
+    >
       <DialogContent className="max-h-[80vh] max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">

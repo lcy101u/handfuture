@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { AlertCircle, Upload, Camera, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -14,6 +14,8 @@ export default function ImageUploader() {
   const trackEvent = useAnalyticsStore(state => state.trackEvent)
   const { t, currentLanguage } = useLanguageStore()
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const activeReaderRef = useRef<FileReader | null>(null)
+  const requestIdRef = useRef(0)
 
   const messages = currentLanguage === 'zh'
     ? {
@@ -27,7 +29,19 @@ export default function ImageUploader() {
         unreadable: 'The image could not be read. Choose another file.',
       }
 
+  const cancelPendingRead = useCallback(() => {
+    requestIdRef.current += 1
+    activeReaderRef.current?.abort()
+    activeReaderRef.current = null
+    return requestIdRef.current
+  }, [])
+
+  useEffect(() => () => {
+    cancelPendingRead()
+  }, [cancelPendingRead])
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
+    const requestId = cancelPendingRead()
     const file = acceptedFiles[0]
     if (!file) return
 
@@ -49,9 +63,15 @@ export default function ImageUploader() {
 
     // Create image URL
     const reader = new FileReader()
+    activeReaderRef.current = reader
+    const isCurrentRequest = () =>
+      requestIdRef.current === requestId && activeReaderRef.current === reader
+
     reader.onload = (e) => {
+      if (!isCurrentRequest()) return
       const result = e.target?.result
       if (typeof result === 'string' && result) {
+        activeReaderRef.current = null
         setUploadError(null)
         setImage(result)
         
@@ -67,17 +87,29 @@ export default function ImageUploader() {
           description: "正在分析手部特徵..."
         })
       } else {
+        activeReaderRef.current = null
         setUploadError(messages.unreadable)
       }
     }
-    reader.onerror = () => setUploadError(messages.unreadable)
-    reader.onabort = () => setUploadError(messages.unreadable)
+    reader.onerror = () => {
+      if (!isCurrentRequest()) return
+      activeReaderRef.current = null
+      setUploadError(messages.unreadable)
+    }
+    reader.onabort = () => {
+      if (!isCurrentRequest()) return
+      activeReaderRef.current = null
+      setUploadError(messages.unreadable)
+    }
     reader.readAsDataURL(file)
-  }, [currentLanguage, messages.size, messages.type, messages.unreadable, setImage, toast, trackEvent])
+  }, [cancelPendingRead, currentLanguage, messages.size, messages.type, messages.unreadable, setImage, toast, trackEvent])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    onDropRejected: () => setUploadError(messages.type),
+    onDropRejected: () => {
+      cancelPendingRead()
+      setUploadError(messages.type)
+    },
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.webp']
     },

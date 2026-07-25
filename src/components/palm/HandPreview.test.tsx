@@ -38,6 +38,16 @@ function detectorWith(result: HandDetectionResult): HandDetector {
   };
 }
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
+}
+
 describe("HandPreview", () => {
   beforeEach(() => {
     vi.stubGlobal("Image", DecodableImage);
@@ -118,5 +128,81 @@ describe("HandPreview", () => {
 
     expect(await screen.findByText(/21 hand joints detected/i)).toBeVisible();
     await waitFor(() => expect(factory).toHaveBeenCalledTimes(2));
+  });
+
+  it("ignores a decoded image after a newer image is selected", async () => {
+    const firstDecode = deferred<void>();
+    const secondDecode = deferred<void>();
+    const decodes = [firstDecode, secondDecode];
+    let imageCount = 0;
+    vi.stubGlobal(
+      "Image",
+      class extends DecodableImage {
+        private readonly pendingDecode = decodes[imageCount++];
+        decode() {
+          return this.pendingDecode.promise;
+        }
+      },
+    );
+    const factory = vi.fn().mockResolvedValue(
+      detectorWith({ status: "success", landmarks, handedness: "Left" }),
+    );
+
+    render(<HandPreview detectorFactory={factory} />);
+    act(() => usePalmStore.getState().setImage("data:image/png;base64,new"));
+    await act(async () => secondDecode.resolve());
+    await screen.findByText(/21 hand joints detected/i);
+    await act(async () => firstDecode.resolve());
+
+    expect(usePalmStore.getState().image).toBe("data:image/png;base64,new");
+    expect(usePalmStore.getState().detection?.handedness).toBe("Left");
+    expect(factory).toHaveBeenCalledOnce();
+  });
+
+  it("closes a detector that initializes after unmount without storing a result", async () => {
+    const pendingFactory = deferred<HandDetector>();
+    const detector = detectorWith({
+      status: "success",
+      landmarks,
+      handedness: "Right",
+    });
+    const factory = vi.fn(() => pendingFactory.promise);
+    const { unmount } = render(<HandPreview detectorFactory={factory} />);
+    await waitFor(() => expect(factory).toHaveBeenCalledOnce());
+
+    unmount();
+    await act(async () => pendingFactory.resolve(detector));
+
+    await waitFor(() => expect(detector.close).toHaveBeenCalledOnce());
+    expect(usePalmStore.getState().detection).toBeNull();
+  });
+
+  it("closes an active detector and ignores its result after reset", async () => {
+    const pendingDetection = deferred<HandDetectionResult>();
+    const detector: HandDetector = {
+      detect: vi.fn(() => pendingDetection.promise),
+      close: vi.fn().mockResolvedValue(undefined),
+    };
+    const factory = vi.fn().mockResolvedValue(detector);
+    render(<HandPreview detectorFactory={factory} />);
+    await waitFor(() => expect(detector.detect).toHaveBeenCalledOnce());
+
+    act(() => usePalmStore.getState().reset());
+    await waitFor(() => expect(detector.close).toHaveBeenCalledOnce());
+    await act(async () =>
+      pendingDetection.resolve({
+        status: "success",
+        landmarks,
+        handedness: "Right",
+      }),
+    );
+
+    expect(usePalmStore.getState()).toMatchObject({
+      image: null,
+      detection: null,
+      reflectionKey: null,
+      isDetecting: false,
+      error: null,
+    });
   });
 });
