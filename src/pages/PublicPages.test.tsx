@@ -143,6 +143,38 @@ describe("sourced public articles", () => {
     },
   );
 
+  it.each([
+    {
+      locale: "zh" as const,
+      falseVisualization: /繪出手腕、手指關節與指尖的連線|關節骨架看起來精細/,
+      usableHand: /確認只找到一隻可用的手，並驗證.*恰好 21 個有限數值的關節座標/,
+      visibleResult: /保留原始上傳照片.*以文字顯示偵測狀態.*驗證成功.*選擇反思卡/,
+    },
+    {
+      locale: "en" as const,
+      falseVisualization:
+        /draw connections among the wrist, finger joints, and fingertips|detailed-looking joint skeleton/i,
+      usableHand:
+        /confirms that exactly one usable hand was found and validates.*exactly 21 finite joint coordinates/i,
+      visibleResult:
+        /keeps the original uploaded photo.*reports the detection status in text.*after validation succeeds.*reflection card/i,
+    },
+  ])(
+    "renders the actual detector behavior in the science guide for $locale",
+    ({ locale, falseVisualization, usableHand, visibleResult }) => {
+      useLanguageStore.setState({ currentLanguage: locale });
+      renderInLayout(
+        <GuidePage path="/guides/science-and-limitations" />,
+        "/guides/science-and-limitations",
+      );
+      const article = screen.getByRole("article");
+
+      expect(article).not.toHaveTextContent(falseVisualization);
+      expect(article).toHaveTextContent(usableHand);
+      expect(article).toHaveTextContent(visibleResult);
+    },
+  );
+
   it("rerenders guide content in Chinese", () => {
     const path: GuidePath = "/guides/palmistry-basics";
     renderInLayout(<GuidePage path={path} />, path);

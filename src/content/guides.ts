@@ -239,8 +239,8 @@ export const GUIDE_CONTENT: Record<
         {
           heading: "偵測不是解讀",
           paragraphs: [
-            "MediaPipe Hand Landmarker 的輸出是手部關節座標、世界座標與左右手資訊。HandFuture 使用其中的正規化關節座標確認一隻手是否被定位，再繪出手腕、手指關節與指尖的連線。這是電腦視覺的定位工作，目標是回答影像中哪些點可能對應手部關節。",
-            "模型不會回傳生命線、智慧線、感情線或命運線，也沒有掌褶名稱、象徵意義、人格分數或人生分類。即使關節骨架看起來精細，也不能把輸出的幾何點換個名稱就當成手相分析。技術能可靠描述的範圍，必須以實際輸入與輸出為準。",
+            "MediaPipe Hand Landmarker 的輸出是手部關節座標、世界座標與左右手資訊。HandFuture 會先確認只找到一隻可用的手，並驗證單一結果包含恰好 21 個有限數值的關節座標，才把它視為可用的偵測結果。這是電腦視覺的定位工作，目標是回答影像中哪些點可能對應手部關節。",
+            "模型不會回傳生命線、智慧線、感情線或命運線，也沒有掌褶名稱、象徵意義、人格分數或人生分類。介面會保留原始上傳照片，並以文字顯示偵測狀態；驗證成功後，使用者才可選擇反思卡。幾何點仍只是關節定位輸出，不能換個名稱就當成手相分析。",
             "HandFuture 由固定幾何簽章選擇一般反思卡，這個規則只讓相同座標產生相同鍵值。穩定的程式規則不等於詮釋已被證實；它只是可重現的選卡方式。反思卡的文字也沒有回頭訓練或評估照片中的人。",
           ],
         },
@@ -280,8 +280,8 @@ export const GUIDE_CONTENT: Record<
         {
           heading: "Detection is not interpretation",
           paragraphs: [
-            "MediaPipe Hand Landmarker outputs hand landmarks in image and world coordinates along with handedness. HandFuture uses normalized joint coordinates to confirm that one hand was located and to draw connections among the wrist, finger joints, and fingertips. This is a computer-vision localization task: it estimates which image points correspond to standard hand joints.",
-            "The model does not return life, head, heart, or fate creases. Its output has no crease names, symbolic meanings, personality scores, or life categories. A detailed-looking joint skeleton cannot become palm analysis merely by relabeling geometric points. Claims about the technology must stay within its actual inputs and documented outputs.",
+            "MediaPipe Hand Landmarker outputs hand landmarks in image and world coordinates along with handedness. HandFuture confirms that exactly one usable hand was found and validates that the result contains exactly 21 finite joint coordinates before accepting it as usable. This is a computer-vision localization task: it estimates which image points correspond to standard hand joints.",
+            "The model does not return life, head, heart, or fate creases. Its output has no crease names, symbolic meanings, personality scores, or life categories. The interface keeps the original uploaded photo and reports the detection status in text; after validation succeeds, users can choose a reflection card. Geometric points remain joint-localization output and cannot become palm analysis merely by being relabeled.",
             "HandFuture uses a fixed geometry signature to select a general reflection card. That rule only makes identical coordinates produce the same key. A reproducible program rule does not establish the truth of an interpretation; it is simply a repeatable card-selection method. The card text neither trains on nor evaluates the person in the photo.",
           ],
         },
