@@ -9,7 +9,40 @@ import { PUBLIC_PATHS } from "@/config/public-routes";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
+function readJpegDimensions(bytes: Buffer): { width: number; height: number } | undefined {
+  let offset = 2;
+
+  while (offset < bytes.length) {
+    if (bytes[offset] !== 0xff) return undefined;
+    while (bytes[offset] === 0xff) offset += 1;
+
+    const marker = bytes[offset];
+    offset += 1;
+    if (marker === 0xd8 || marker === 0xd9 || (marker >= 0xd0 && marker <= 0xd7)) continue;
+    if (offset + 1 >= bytes.length) return undefined;
+
+    const length = bytes.readUInt16BE(offset);
+    if (length < 8 || offset + length > bytes.length) return undefined;
+    if (marker >= 0xc0 && marker <= 0xc3) {
+      return {
+        height: bytes.readUInt16BE(offset + 3),
+        width: bytes.readUInt16BE(offset + 5),
+      };
+    }
+    offset += length;
+  }
+}
+
 describe("publisher and crawl files", () => {
+  it("ships a real 1200 by 630 JPEG social image", () => {
+    const bytes = fs.readFileSync(path.join(root, "public/og-image.jpg"));
+
+    expect([...bytes.subarray(0, 3)]).toEqual([0xff, 0xd8, 0xff]);
+    expect(bytes.byteLength).toBeGreaterThan(20_000);
+    expect(readJpegDimensions(bytes)).toEqual({ width: 1200, height: 630 });
+    expect(read("src/config/site-metadata.ts")).toContain(`${SITE_ORIGIN}/og-image.jpg`);
+  });
+
   it("has the exact AdSense record and final newline", () => {
     expect(read("public/ads.txt")).toBe(`${ADS_TXT_RECORD}\n`);
   });

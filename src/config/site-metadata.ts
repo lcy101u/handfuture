@@ -2,6 +2,7 @@ import type { Locale, PublicPath } from "./public-routes";
 
 export const SITE_ORIGIN = "https://www.handfortune.com";
 export const SITE_NAME = "HandFuture";
+export const SOCIAL_IMAGE_URL = "https://www.handfortune.com/og-image.jpg";
 export const PUBLISHER_ID = "ca-pub-3713047615080346";
 export const ADS_TXT_RECORD = "google.com, pub-3713047615080346, DIRECT, f08c47fec0942fa0";
 export const LAST_UPDATED = "2026-07-26";
@@ -59,7 +60,7 @@ export function getRouteMetadata(path: PublicPath, locale: Locale): RouteMetadat
     ...localized,
     canonical,
     ogUrl: canonical,
-    ogImage: `${SITE_ORIGIN}/og-image.jpg`,
+    ogImage: SOCIAL_IMAGE_URL,
   };
 }
 
