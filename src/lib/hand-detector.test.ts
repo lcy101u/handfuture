@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Results } from "@mediapipe/hands";
 import {
   createHandDetector,
@@ -34,7 +34,21 @@ class FakeHands implements HandsLike {
   }
 }
 
+function observeOutcome<T>(promise: Promise<T>) {
+  const outcome = vi.fn<(value: string) => void>();
+  void promise.then(
+    () => outcome("resolved"),
+    (error: unknown) =>
+      outcome(error instanceof Error ? error.message : String(error)),
+  );
+  return outcome;
+}
+
 describe("createHandDetector", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("maps one 21-point hand to success", async () => {
     const fake = new FakeHands();
     const detector = await createHandDetector(() => fake);
@@ -63,10 +77,47 @@ describe("createHandDetector", () => {
     await expect(pending).resolves.toEqual({ status: "multiple-hands", count: 2 });
   });
 
-  it("rejects initialization errors", async () => {
+  it("closes the MediaPipe instance when initialization rejects", async () => {
     const fake = new FakeHands();
     fake.initialize.mockRejectedValueOnce(new Error("model unavailable"));
     await expect(createHandDetector(() => fake)).rejects.toThrow("model unavailable");
+    expect(fake.close).toHaveBeenCalledOnce();
+  });
+
+  it("times out and closes a never-settling initialization", async () => {
+    vi.useFakeTimers();
+    const fake = new FakeHands();
+    fake.initialize.mockImplementationOnce(
+      () => new Promise<undefined>(() => undefined),
+    );
+    const outcome = observeOutcome(
+      createHandDetector(() => fake, { initializationTimeoutMs: 50 }),
+    );
+
+    await vi.advanceTimersByTimeAsync(50);
+
+    expect(outcome).toHaveBeenCalledWith(
+      expect.stringMatching(/initialization timed out/i),
+    );
+    expect(fake.close).toHaveBeenCalledOnce();
+  });
+
+  it("cancels and closes a pending initialization", async () => {
+    const fake = new FakeHands();
+    fake.initialize.mockImplementationOnce(
+      () => new Promise<undefined>(() => undefined),
+    );
+    const controller = new AbortController();
+    const outcome = observeOutcome(
+      createHandDetector(() => fake, { signal: controller.signal }),
+    );
+
+    controller.abort();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(outcome).toHaveBeenCalledWith(expect.stringMatching(/cancelled/i));
+    expect(fake.close).toHaveBeenCalledOnce();
   });
 
   it("rejects send errors without fabricating a result", async () => {
@@ -76,6 +127,41 @@ describe("createHandDetector", () => {
     await expect(detector.detect(document.createElement("canvas"))).rejects.toThrow(
       "decode failed",
     );
+  });
+
+  it("times out and closes when send resolves without onResults", async () => {
+    vi.useFakeTimers();
+    const fake = new FakeHands();
+    const detector = await createHandDetector(() => fake, {
+      resultTimeoutMs: 50,
+    });
+    const outcome = observeOutcome(detector.detect(document.createElement("canvas")));
+
+    await vi.advanceTimersByTimeAsync(50);
+
+    expect(outcome).toHaveBeenCalledWith(
+      expect.stringMatching(/detection timed out/i),
+    );
+    expect(fake.close).toHaveBeenCalledOnce();
+    await expect(detector.detect(document.createElement("canvas"))).rejects.toThrow(
+      /closed/i,
+    );
+  });
+
+  it("cancels and closes an in-flight detection", async () => {
+    const fake = new FakeHands();
+    const controller = new AbortController();
+    const detector = await createHandDetector(() => fake, {
+      signal: controller.signal,
+    });
+    const outcome = observeOutcome(detector.detect(document.createElement("canvas")));
+
+    controller.abort();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(outcome).toHaveBeenCalledWith(expect.stringMatching(/closed|cancelled/i));
+    expect(fake.close).toHaveBeenCalledOnce();
   });
 
   it("closes the MediaPipe instance", async () => {

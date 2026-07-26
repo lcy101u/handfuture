@@ -35,6 +35,7 @@ describe("RouteMeta", () => {
     useLanguageStore.setState({ currentLanguage: "zh" });
     document.head.innerHTML = `${originalHead}
       <meta name="description" content="duplicate description">
+      <meta property="og:locale:alternate" content="en_US">
       <link rel="canonical" href="https://duplicate.example/">
     `;
     document.documentElement.lang = "en";
@@ -82,6 +83,13 @@ describe("RouteMeta", () => {
     renderMetadata("/guides/science-and-limitations");
 
     await waitFor(() => expect(document.documentElement.lang).toBe("zh-TW"));
+    expect(document.querySelector('meta[property="og:locale"]')).toHaveAttribute(
+      "content",
+      "zh_TW",
+    );
+    expect(
+      document.querySelector('meta[property="og:locale:alternate"]'),
+    ).toHaveAttribute("content", "en_US");
     act(() => useLanguageStore.getState().setLanguage("en"));
 
     await waitFor(() => {
@@ -89,6 +97,13 @@ describe("RouteMeta", () => {
     });
 
     expect(document.documentElement.lang).toBe("en");
+    expect(document.querySelector('meta[property="og:locale"]')).toHaveAttribute(
+      "content",
+      "en_US",
+    );
+    expect(
+      document.querySelector('meta[property="og:locale:alternate"]'),
+    ).toHaveAttribute("content", "zh_TW");
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       "content",
       "Understand the difference between hand-landmark detection and palm reading, how the Barnum effect shapes impressions, and why palmistry should not guide medical, financial, or life decisions.",
@@ -98,6 +113,8 @@ describe("RouteMeta", () => {
       'meta[property="og:title"]',
       'meta[property="og:description"]',
       'meta[property="og:url"]',
+      'meta[property="og:locale"]',
+      'meta[property="og:locale:alternate"]',
       'meta[name="twitter:title"]',
       'meta[name="twitter:description"]',
       'link[rel="canonical"]',

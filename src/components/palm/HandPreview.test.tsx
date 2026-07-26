@@ -4,7 +4,9 @@ import type {
   HandDetectionResult,
   HandDetector,
   HandLandmark,
+  HandsLike,
 } from "@/lib/hand-detector";
+import { createHandDetector } from "@/lib/hand-detector";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
 import HandPreview from "./HandPreview";
@@ -46,6 +48,14 @@ function deferred<T>() {
     reject = rejectPromise;
   });
   return { promise, resolve, reject };
+}
+
+class PendingInitializationHands implements HandsLike {
+  initialize = vi.fn(() => new Promise<void>(() => undefined));
+  send = vi.fn(async () => undefined);
+  close = vi.fn(async () => undefined);
+  setOptions = vi.fn();
+  onResults = vi.fn();
 }
 
 describe("HandPreview", () => {
@@ -175,6 +185,41 @@ describe("HandPreview", () => {
 
     await waitFor(() => expect(detector.close).toHaveBeenCalledOnce());
     expect(usePalmStore.getState().detection).toBeNull();
+  });
+
+  it.each(["reset", "unmount"] as const)(
+    "aborts and closes pending real-adapter initialization on %s",
+    async (action) => {
+      const hands = new PendingInitializationHands();
+      const detectorFactory = vi.fn((options?: { signal?: AbortSignal }) =>
+        createHandDetector(() => hands, options),
+      );
+      const rendered = render(<HandPreview detectorFactory={detectorFactory} />);
+      await waitFor(() => expect(hands.initialize).toHaveBeenCalledOnce());
+
+      if (action === "reset") {
+        act(() => usePalmStore.getState().reset());
+      } else {
+        rendered.unmount();
+      }
+
+      await waitFor(() => expect(hands.close).toHaveBeenCalledOnce());
+      expect(detectorFactory.mock.calls[0]?.[0]?.signal?.aborted).toBe(true);
+      expect(usePalmStore.getState().detection).toBeNull();
+    },
+  );
+
+  it("closes the one-shot detector after a successful result", async () => {
+    const detector = detectorWith({
+      status: "success",
+      landmarks,
+      handedness: "Right",
+    });
+
+    render(<HandPreview detectorFactory={vi.fn().mockResolvedValue(detector)} />);
+
+    await screen.findByText(/21 hand joints detected/i);
+    expect(detector.close).toHaveBeenCalledOnce();
   });
 
   it("closes an active detector and ignores its result after reset", async () => {

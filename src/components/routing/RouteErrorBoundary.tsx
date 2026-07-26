@@ -51,7 +51,7 @@ class RouteErrorBoundaryImpl extends Component<BoundaryProps, BoundaryState> {
         <button
           type="button"
           className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          onClick={() => window.location.reload()}
+          onClick={() => window.history.go(0)}
         >
           {isChinese ? "重新載入" : "Reload page"}
         </button>

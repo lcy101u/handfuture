@@ -9,6 +9,25 @@ import { PUBLIC_PATHS } from "@/config/public-routes";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
+function collectRelativeFiles(directory: string, base = directory): string[] {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const absolutePath = path.join(directory, entry.name);
+
+    return entry.isDirectory()
+      ? collectRelativeFiles(absolutePath, base)
+      : [path.relative(base, absolutePath)];
+  });
+}
+
+function collectBuiltText(): string {
+  const textExtensions = /\.(?:css|html|js|json|svg|txt|webmanifest|xml)$/i;
+
+  return collectRelativeFiles(path.join(root, "dist"))
+    .filter((relativePath) => textExtensions.test(relativePath))
+    .map((relativePath) => read(path.join("dist", relativePath)))
+    .join("\n");
+}
+
 function readJpegDimensions(bytes: Buffer): { width: number; height: number } | undefined {
   let offset = 2;
 
@@ -34,6 +53,34 @@ function readJpegDimensions(bytes: Buffer): { width: number; height: number } | 
 }
 
 describe("publisher and crawl files", () => {
+  it("ships truthful HandFuture install metadata", () => {
+    const manifest = JSON.parse(read("public/site.webmanifest"));
+
+    expect(manifest).toMatchObject({
+      name: "HandFuture｜手相文化探索與手部偵測",
+      short_name: "HandFuture",
+      description:
+        "從文化角度認識手相傳統，使用瀏覽器內的手部關節偵測選擇一張非科學、僅供娛樂與自我反思的提示卡。",
+      start_url: "/",
+      lang: "zh-TW",
+    });
+  });
+
+  it("copies every public asset byte-for-byte into the built site", () => {
+    for (const relativePath of collectRelativeFiles(path.join(root, "public"))) {
+      expect(
+        fs.readFileSync(path.join(root, "dist", relativePath)),
+        relativePath,
+      ).toEqual(fs.readFileSync(path.join(root, "public", relativePath)));
+    }
+  });
+
+  it("does not ship the retired image-filter interface", () => {
+    expect(collectBuiltText()).not.toMatch(
+      /image-filter-storage|\.filter-panel|\.filter-preset-active|\.download-ready/,
+    );
+  });
+
   it("ships a real 1200 by 630 JPEG social image", () => {
     const bytes = fs.readFileSync(path.join(root, "public/og-image.jpg"));
 

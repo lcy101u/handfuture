@@ -31,6 +31,20 @@ function collectProductionFiles(directory: string): string[] {
   });
 }
 
+function collectPublicTextAssets(directory: string): string[] {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const absolutePath = path.join(directory, entry.name);
+
+    if (entry.isDirectory()) {
+      return collectPublicTextAssets(absolutePath);
+    }
+
+    return /\.(?:css|html|js|json|svg|txt|webmanifest|xml)$/i.test(entry.name)
+      ? [absolutePath]
+      : [];
+  });
+}
+
 const prohibitedPublicClaims = [
   /2847/i,
   /98%/i,
@@ -43,6 +57,11 @@ const prohibitedPublicClaims = [
   /三十萬|300,000/i,
   /真實.*評價|verified review/i,
   /準確度高達|accuracy of over/i,
+  /免費AI手相算命/i,
+  /AI手相/i,
+  /掌相解讀分析/i,
+  /專業AI手相分析/i,
+  /免費解讀(?:生命線|智慧線|感情線)/i,
 ];
 
 const removedPaths = [
@@ -65,6 +84,7 @@ describe("public source truthfulness", () => {
   it("contains none of the prohibited public claims", () => {
     const productionSource = [
       ...collectProductionFiles(path.join(root, "src")),
+      ...collectPublicTextAssets(path.join(root, "public")),
       path.join(root, "index.html"),
     ]
       .map((file) => fs.readFileSync(file, "utf8"))

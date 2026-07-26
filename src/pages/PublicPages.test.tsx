@@ -117,6 +117,32 @@ describe("sourced public articles", () => {
     expect(article).toHaveTextContent(/does not identify.*palm crease/i);
   });
 
+  it.each([
+    {
+      locale: "zh" as const,
+      validatedResult: /確認單一結果包含恰好 21 個有限數值的關節座標/,
+      visiblePreview: /保留原始上傳照片，並以文字顯示偵測狀態/,
+      nonexistentDrawing: /畫出關節連線|畫面上的骨架/,
+    },
+    {
+      locale: "en" as const,
+      validatedResult: /validates that one result contains exactly 21 finite joint coordinates/i,
+      visiblePreview: /keeps the original uploaded photo and reports the detection status in text/i,
+      nonexistentDrawing: /draw a joint overlay|visible skeleton/i,
+    },
+  ])(
+    "describes the visible detector result instead of a nonexistent overlay in $locale",
+    ({ locale, validatedResult, visiblePreview, nonexistentDrawing }) => {
+      useLanguageStore.setState({ currentLanguage: locale });
+      renderInLayout(<HowItWorksPage />, "/how-it-works");
+      const article = screen.getByRole("article");
+
+      expect(article).toHaveTextContent(validatedResult);
+      expect(article).toHaveTextContent(visiblePreview);
+      expect(article).not.toHaveTextContent(nonexistentDrawing);
+    },
+  );
+
   it("rerenders guide content in Chinese", () => {
     const path: GuidePath = "/guides/palmistry-basics";
     renderInLayout(<GuidePage path={path} />, path);
@@ -291,9 +317,10 @@ describe("factual trust and policy pages", () => {
 });
 
 describe("RouteErrorBoundary", () => {
-  it("shows localized recovery content and a reload button after a child error", () => {
+  it("reloads through the browser history boundary after a child error", () => {
     useLanguageStore.setState({ currentLanguage: "en" });
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const historyGo = vi.spyOn(window.history, "go").mockImplementation(() => undefined);
     const preventWindowError = (event: ErrorEvent) => event.preventDefault();
     window.addEventListener("error", preventWindowError);
 
@@ -310,8 +337,12 @@ describe("RouteErrorBoundary", () => {
     );
 
     expect(screen.getByRole("alert")).toHaveTextContent(/could not load/i);
-    expect(screen.getByRole("button", { name: /reload/i })).toBeVisible();
+    const reload = screen.getByRole("button", { name: /reload/i });
+    expect(reload).toBeVisible();
+    act(() => reload.click());
+    expect(historyGo).toHaveBeenCalledWith(0);
     window.removeEventListener("error", preventWindowError);
+    historyGo.mockRestore();
     consoleError.mockRestore();
   });
 });

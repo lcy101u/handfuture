@@ -69,8 +69,8 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
       {
         heading: "尋找手部關節",
         paragraphs: [
-          "MediaPipe 會在影像中尋找一隻手，回傳最多 21 個標準手部關節座標與左右手資訊。這些點描述手腕、手指關節和指尖的相對位置，讓介面可以畫出關節連線並確認模型是否找到可用的手部形狀。",
-          "關節模型不會辨識生命線、智慧線、感情線、命運線或其他掌褶，也不會替掌褶賦予意義。畫面上的骨架只是偵測輸出的視覺化，不是手相圖，也不能從中得到個人特質或人生結論。",
+          "MediaPipe 會在影像中尋找手部，回傳標準手部關節座標與左右手資訊。HandFuture 會確認只找到一隻手，並確認單一結果包含恰好 21 個有限數值的關節座標，才把它視為可用的偵測結果。",
+          "介面會保留原始上傳照片，並以文字顯示偵測狀態；驗證成功後，反思卡按鈕才可供選擇。關節模型不會辨識生命線、智慧線、感情線、命運線或其他掌褶，也不會從照片得到個人特質或人生結論。",
         ],
       },
       {
@@ -106,8 +106,8 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
       {
         heading: "Locate hand joints",
         paragraphs: [
-          "MediaPipe looks for one hand and returns up to 21 standard hand landmarks plus handedness information. The coordinates represent relative positions for the wrist, finger joints, and fingertips, allowing the interface to draw a joint overlay and confirm that the model found a usable hand shape.",
-          "The landmark model does not identify the life, head, heart, or fate creases, and it does not assign meaning to any palm crease. The visible skeleton is only a visualization of detector output. It is not a palmistry chart and supplies no conclusion about the person in the photo.",
+          "MediaPipe looks for hands and returns standard hand landmarks plus handedness information. HandFuture first confirms that only one hand was found, then validates that one result contains exactly 21 finite joint coordinates before treating the detection as usable.",
+          "The interface keeps the original uploaded photo and reports the detection status in text; after validation succeeds, the reflection-card button becomes available. The landmark model does not identify the life, head, heart, or fate creases, and it supplies no conclusion about the person in the photo.",
         ],
       },
       {

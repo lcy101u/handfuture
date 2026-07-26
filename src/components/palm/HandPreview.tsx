@@ -5,13 +5,19 @@ import { Button } from "@/components/ui/button";
 import {
   createHandDetector,
   type HandDetector,
+  type HandDetectorOptions,
 } from "@/lib/hand-detector";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
 
 interface HandPreviewProps {
-  detectorFactory?: () => Promise<HandDetector>;
+  detectorFactory?: (
+    options?: Pick<HandDetectorOptions, "signal">,
+  ) => Promise<HandDetector>;
 }
+
+const createDefaultDetector = (options?: Pick<HandDetectorOptions, "signal">) =>
+  createHandDetector(undefined, options);
 
 const copy = {
   zh: {
@@ -65,7 +71,7 @@ function decodeImage(source: string): Promise<HTMLImageElement> {
 }
 
 export default function HandPreview({
-  detectorFactory = createHandDetector,
+  detectorFactory = createDefaultDetector,
 }: HandPreviewProps) {
   const image = usePalmStore((state) => state.image);
   const detection = usePalmStore((state) => state.detection);
@@ -85,6 +91,7 @@ export default function HandPreview({
 
     let active = true;
     let detector: HandDetector | null = null;
+    const controller = new AbortController();
 
     const detect = async () => {
       setError(null);
@@ -94,9 +101,11 @@ export default function HandPreview({
         const decodedImage = await decodeImage(image);
         if (!active) return;
 
-        const createdDetector = await detectorFactory();
+        const createdDetector = await detectorFactory({
+          signal: controller.signal,
+        });
         if (!active) {
-          await createdDetector.close();
+          void createdDetector.close().catch(() => undefined);
           return;
         }
 
@@ -109,6 +118,12 @@ export default function HandPreview({
         if (active) {
           setError("detector-unavailable");
         }
+      } finally {
+        if (detector) {
+          const completedDetector = detector;
+          detector = null;
+          void completedDetector.close().catch(() => undefined);
+        }
       }
     };
 
@@ -116,6 +131,7 @@ export default function HandPreview({
 
     return () => {
       active = false;
+      controller.abort();
       if (detector) {
         void detector.close().catch(() => undefined);
         detector = null;

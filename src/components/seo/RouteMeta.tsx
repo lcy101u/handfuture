@@ -68,6 +68,11 @@ export default function RouteMeta() {
     upsertMeta("property", "og:image", meta.ogImage);
     upsertMeta("property", "og:image:alt", meta.ogImageAlt);
     upsertMeta("property", "og:locale", currentLanguage === "zh" ? "zh_TW" : "en_US");
+    upsertMeta(
+      "property",
+      "og:locale:alternate",
+      currentLanguage === "zh" ? "en_US" : "zh_TW",
+    );
     upsertMeta("name", "twitter:title", meta.title);
     upsertMeta("name", "twitter:description", meta.description);
     upsertMeta("name", "twitter:image", meta.ogImage);

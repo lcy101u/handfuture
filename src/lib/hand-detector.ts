@@ -28,6 +28,15 @@ export interface HandsLike {
 
 export type HandsFactory = () => HandsLike;
 
+export interface HandDetectorOptions {
+  signal?: AbortSignal;
+  initializationTimeoutMs?: number;
+  resultTimeoutMs?: number;
+}
+
+const DEFAULT_INITIALIZATION_TIMEOUT_MS = 20_000;
+const DEFAULT_RESULT_TIMEOUT_MS = 10_000;
+
 const createDefaultHands: HandsFactory = () => {
   const hands = new Hands({
     locateFile: (file) =>
@@ -96,24 +105,135 @@ const toResult = (results: Results): HandDetectionResult => {
   };
 };
 
+function boundedInitialization(
+  initialization: Promise<void>,
+  timeoutMs: number,
+  signal?: AbortSignal,
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+
+    const cleanup = () => {
+      clearTimeout(timeout);
+      signal?.removeEventListener("abort", cancel);
+    };
+    const succeed = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve();
+    };
+    const fail = (error: unknown) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    };
+    const cancel = () =>
+      fail(new Error("Hand detector initialization was cancelled."));
+    const timeout = setTimeout(
+      () => fail(new Error("Hand detector initialization timed out.")),
+      timeoutMs,
+    );
+
+    if (signal?.aborted) {
+      cancel();
+      return;
+    }
+
+    signal?.addEventListener("abort", cancel, { once: true });
+    initialization.then(succeed, fail);
+  });
+}
+
 export async function createHandDetector(
   factory: HandsFactory = createDefaultHands,
+  options: HandDetectorOptions = {},
 ): Promise<HandDetector> {
-  const hands = factory();
-  await hands.initialize();
+  if (options.signal?.aborted) {
+    throw new Error("Hand detector initialization was cancelled.");
+  }
 
+  const hands = factory();
   let pending:
     | {
         resolve: (result: HandDetectionResult) => void;
         reject: (reason?: unknown) => void;
+        timeout?: ReturnType<typeof setTimeout>;
       }
     | undefined;
   let closed = false;
   let closePromise: Promise<void> | undefined;
+  let lifecycleAbortListener: (() => void) | undefined;
+  const initializationTimeoutMs =
+    options.initializationTimeoutMs ?? DEFAULT_INITIALIZATION_TIMEOUT_MS;
+  const resultTimeoutMs = options.resultTimeoutMs ?? DEFAULT_RESULT_TIMEOUT_MS;
+
+  const clearPending = (request: NonNullable<typeof pending>) => {
+    if (pending !== request) return false;
+
+    pending = undefined;
+    if (request.timeout !== undefined) {
+      clearTimeout(request.timeout);
+    }
+    return true;
+  };
+
+  const close = () => {
+    if (!closePromise) {
+      closed = true;
+
+      if (lifecycleAbortListener) {
+        options.signal?.removeEventListener("abort", lifecycleAbortListener);
+        lifecycleAbortListener = undefined;
+      }
+
+      if (pending) {
+        const request = pending;
+        clearPending(request);
+        request.reject(
+          new Error("The hand detector was closed before detection completed."),
+        );
+      }
+
+      try {
+        closePromise = Promise.resolve(hands.close());
+      } catch (error) {
+        closePromise = Promise.reject(error);
+      }
+    }
+
+    return closePromise;
+  };
+
+  try {
+    const initialization = hands.initialize();
+    await boundedInitialization(
+      initialization,
+      initializationTimeoutMs,
+      options.signal,
+    );
+  } catch (error) {
+    void close().catch(() => undefined);
+    throw error;
+  }
+
+  if (options.signal?.aborted) {
+    const error = new Error("Hand detector initialization was cancelled.");
+    void close().catch(() => undefined);
+    throw error;
+  }
+
+  lifecycleAbortListener = () => {
+    void close().catch(() => undefined);
+  };
+  options.signal?.addEventListener("abort", lifecycleAbortListener, {
+    once: true,
+  });
 
   hands.onResults((results) => {
     const request = pending;
-    if (!request) {
+    if (!request || !clearPending(request)) {
       return;
     }
 
@@ -121,10 +241,6 @@ export async function createHandDetector(
       request.resolve(toResult(results));
     } catch (error) {
       request.reject(error);
-    } finally {
-      if (pending === request) {
-        pending = undefined;
-      }
     }
   });
 
@@ -139,36 +255,31 @@ export async function createHandDetector(
       }
 
       return new Promise<HandDetectionResult>((resolve, reject) => {
-        const request = { resolve, reject };
+        const request: NonNullable<typeof pending> = { resolve, reject };
         pending = request;
+        request.timeout = setTimeout(() => {
+          if (!clearPending(request)) return;
+
+          reject(
+            new Error("Hand detection timed out before MediaPipe returned a result."),
+          );
+          void close().catch(() => undefined);
+        }, resultTimeoutMs);
 
         try {
           hands.send({ image }).catch((error: unknown) => {
-            if (pending === request) {
-              pending = undefined;
+            if (clearPending(request)) {
               reject(error);
             }
           });
         } catch (error) {
-          pending = undefined;
-          reject(error);
+          if (clearPending(request)) {
+            reject(error);
+          }
         }
       });
     },
 
-    close() {
-      if (!closePromise) {
-        closed = true;
-
-        if (pending) {
-          pending.reject(new Error("The hand detector was closed before detection completed."));
-          pending = undefined;
-        }
-
-        closePromise = hands.close();
-      }
-
-      return closePromise;
-    },
+    close,
   };
 }

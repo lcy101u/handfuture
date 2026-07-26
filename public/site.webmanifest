@@ -1,7 +1,7 @@
 {
-  "name": "免費AI手相算命 | 掌相解讀分析",
-  "short_name": "AI手相",
-  "description": "專業AI手相分析工具，免費解讀生命線、智慧線、感情線等掌紋特徵",
+  "name": "HandFuture｜手相文化探索與手部偵測",
+  "short_name": "HandFuture",
+  "description": "從文化角度認識手相傳統，使用瀏覽器內的手部關節偵測選擇一張非科學、僅供娛樂與自我反思的提示卡。",
   "icons": [
     {
       "src": "/favicon-96x96.png",
