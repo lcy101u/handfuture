@@ -5,13 +5,21 @@ import SiteLayout from "@/components/layout/SiteLayout";
 import RouteErrorBoundary from "@/components/routing/RouteErrorBoundary";
 import { GUIDE_CONTENT } from "@/content/guides";
 import {
+  ABOUT_CONTENT,
+  PRIVACY_CONTENT,
+  TERMS_CONTENT,
+} from "@/content/policies";
+import {
   PUBLIC_PATHS,
   type GuidePath,
   type PublicPath,
 } from "@/config/public-routes";
 import { useLanguageStore } from "@/store/language-store";
+import AboutPage from "./AboutPage";
 import GuidePage from "./GuidePage";
 import HowItWorksPage from "./HowItWorksPage";
+import PrivacyPolicyPage from "./PrivacyPolicyPage";
+import TermsPage from "./TermsPage";
 
 const guidePaths = PUBLIC_PATHS.filter(
   (path): path is GuidePath => path.startsWith("/guides/"),
@@ -106,6 +114,100 @@ describe("sourced public articles", () => {
       GUIDE_CONTENT[path].zh.title,
     );
     expect(screen.getByRole("heading", { name: "參考資料" })).toBeVisible();
+  });
+});
+
+describe("factual trust and policy pages", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    useLanguageStore.setState({ currentLanguage: "en" });
+  });
+
+  it.each([
+    ["/about", <AboutPage />, ABOUT_CONTENT.en],
+    ["/privacy", <PrivacyPolicyPage />, PRIVACY_CONTENT.en],
+    ["/terms", <TermsPage />, TERMS_CONTENT.en],
+  ] as const)("renders %s as one dated article in the shared shell", (path, page, content) => {
+    renderInLayout(page, path);
+    const article = screen.getByRole("article");
+
+    expect(screen.getAllByRole("banner")).toHaveLength(1);
+    expect(screen.getAllByRole("contentinfo")).toHaveLength(1);
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(within(article).getByRole("heading", { level: 1 })).toHaveTextContent(content.title);
+    expect(within(article).getByText("HandFuture", { selector: "span" })).toBeVisible();
+    expect(within(article).getByText("2026-07-26", { selector: "time" })).toHaveAttribute(
+      "datetime",
+      "2026-07-26",
+    );
+    for (const section of content.sections) {
+      expect(within(article).getByRole("heading", { name: section.heading })).toBeVisible();
+    }
+    for (const source of content.sources) {
+      expect(within(article).getByRole("link", { name: source.label })).toHaveAttribute(
+        "href",
+        source.url,
+      );
+    }
+  });
+
+  it("shows the observed image, storage, hosting, advertising, and DNS flows", () => {
+    renderInLayout(<PrivacyPolicyPage />, "/privacy");
+    const article = screen.getByRole("article");
+
+    expect(article).toHaveTextContent(/FileReader/);
+    expect(article).toHaveTextContent(/not sent to a HandFuture application server/i);
+    expect(article).toHaveTextContent(/current page memory/i);
+    expect(article).toHaveTextContent(/palm-reading-storage/);
+    expect(article).toHaveTextContent(/language-store/);
+    expect(article).toHaveTextContent(/palm-theme/);
+    expect(article).not.toHaveTextContent(/image-filter-storage/);
+    expect(article).toHaveTextContent(/Vercel Web Analytics/);
+    expect(article).toHaveTextContent(/Google AdSense/);
+    expect(article).toHaveTextContent(/Google-certified CMP/);
+    expect(article).toHaveTextContent(/Cloudflare provides authoritative DNS only/i);
+    expect(article).toHaveTextContent(
+      "This address is monitored only after domain email routing is enabled.",
+    );
+  });
+
+  it("shows entertainment-only and acceptable-use boundaries", () => {
+    renderInLayout(<TermsPage />, "/terms");
+    const article = screen.getByRole("article");
+
+    expect(article).toHaveTextContent(/Entertainment only/);
+    expect(article).toHaveTextContent(/mental-health.*financial.*employment.*compatibility/i);
+    expect(article).toHaveTextContent(/automated traffic/);
+    expect(article).toHaveTextContent(/ad manipulation/);
+    expect(article).toHaveTextContent(/does not claim ownership/);
+    expect(article).toHaveTextContent(/no uptime guarantee/);
+    expect(within(article).getByRole("link", { name: "Privacy Policy" })).toHaveAttribute(
+      "href",
+      "/privacy",
+    );
+  });
+
+  it("rerenders policy content in Chinese", () => {
+    renderInLayout(<PrivacyPolicyPage />, "/privacy");
+
+    act(() => useLanguageStore.getState().setLanguage("zh"));
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("隱私政策");
+    expect(screen.getByRole("heading", { name: "瀏覽器儲存" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Google 廣告" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "區域同意" })).toBeVisible();
+  });
+
+  it.each([
+    ["/about", <AboutPage />],
+    ["/privacy", <PrivacyPolicyPage />],
+    ["/terms", <TermsPage />],
+  ] as const)("removes unsupported providers, contacts, and promises from %s", (path, page) => {
+    const { container } = renderInLayout(page, path);
+
+    expect(container).not.toHaveTextContent(
+      /GA4|Google Analytics 4|cloud export|90 days|MFA|multi-factor|seven business days|legal@handfortune\.com|dontsp\.am/i,
+    );
   });
 });
 
