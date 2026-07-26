@@ -1,1 +1,0 @@
-import{D as e,O as t}from"./index-B2OjdI3X.js";import{t as n}from"./policies-BLDsPP2s.js";import{EditorialArticle as r}from"./GuidePage-Dr66KhRF.js";var i=e();function a(){let e=t(e=>e.currentLanguage);return(0,i.jsx)(r,{content:n[e],locale:e,relatedPaths:[`/how-it-works`,`/guides/palmistry-basics`],eyebrow:e===`zh`?`關於本站`:`About this site`})}export{a as default};
