@@ -110,6 +110,14 @@ describe("PRIVACY_CONTENT", () => {
     );
   });
 
+  it.each(locales)("does not attribute jsDelivr ownership to Google in %s", (locale) => {
+    const text = pageText(PRIVACY_CONTENT[locale]);
+
+    expect(text).toContain("cdn.jsdelivr.net");
+    expect(text).not.toMatch(/Google['’]s\s*(?:cdn\.jsdelivr\.net|jsDelivr)/i);
+    expect(text).not.toMatch(/Google\s*(?:的)?\s*(?:cdn\.jsdelivr\.net|jsDelivr)/i);
+  });
+
   it.each(locales)("names the current providers and consent boundary in %s", (locale) => {
     const page = PRIVACY_CONTENT[locale];
     const text = pageText(page);

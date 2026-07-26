@@ -194,7 +194,7 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
       {
         heading: "External resource requests",
         paragraphs: [
-          "After a visitor selects a hand image, the browser loads the MediaPipe hand-detection model files from Google's cdn.jsdelivr.net content delivery network. On every page load, the site also loads Google Fonts font files from fonts.googleapis.com and fonts.gstatic.com.",
+          "After a visitor selects a hand image, the browser loads the MediaPipe hand-detection model files from the cdn.jsdelivr.net content delivery network. On every page load, the site also loads Google Fonts font files from fonts.googleapis.com and fonts.gstatic.com.",
           "These requests fetch model and font assets only. Like any web request, they can expose ordinary request metadata such as the visitor's IP address and browser user agent to cdn.jsdelivr.net, fonts.googleapis.com, and fonts.gstatic.com. They do not include the selected hand image, landmark coordinates, or any HandFuture-specific telemetry.",
         ],
       },
