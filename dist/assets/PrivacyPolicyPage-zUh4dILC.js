@@ -1,0 +1,1 @@
+import{D as e,O as t}from"./index-B2OjdI3X.js";import{n}from"./policies-BLDsPP2s.js";import{EditorialArticle as r}from"./GuidePage-Dr66KhRF.js";var i=e();function a(){let e=t(e=>e.currentLanguage);return(0,i.jsx)(r,{content:n[e],locale:e,relatedPaths:[`/how-it-works`,`/guides/hand-photo-guide`],eyebrow:e===`zh`?`隱私與資料處理`:`Privacy and data handling`})}export{a as default};
