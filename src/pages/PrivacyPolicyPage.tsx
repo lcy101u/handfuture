@@ -10,6 +10,7 @@ export default function PrivacyPolicyPage() {
       content={PRIVACY_CONTENT[locale]}
       locale={locale}
       relatedPaths={["/how-it-works", "/guides/hand-photo-guide"]}
+      eyebrow={locale === "zh" ? "隱私與資料處理" : "Privacy and data handling"}
     />
   );
 }

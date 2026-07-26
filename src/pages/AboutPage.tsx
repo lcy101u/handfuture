@@ -10,6 +10,7 @@ export default function AboutPage() {
       content={ABOUT_CONTENT[locale]}
       locale={locale}
       relatedPaths={["/how-it-works", "/guides/palmistry-basics"]}
+      eyebrow={locale === "zh" ? "關於本站" : "About this site"}
     />
   );
 }

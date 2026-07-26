@@ -115,6 +115,28 @@ describe("sourced public articles", () => {
     );
     expect(screen.getByRole("heading", { name: "參考資料" })).toBeVisible();
   });
+
+  it("keeps the default guide eyebrow for guides and how-it-works", () => {
+    renderInLayout(<GuidePage path="/guides/palmistry-basics" />, "/guides/palmistry-basics");
+    expect(screen.getByText("Culture and technology guide")).toBeVisible();
+
+    renderInLayout(<HowItWorksPage />, "/how-it-works");
+    expect(screen.getAllByText("Culture and technology guide").length).toBeGreaterThan(0);
+  });
+
+  it("renders external guide sources as new-tab anchors, not router links", () => {
+    const path: GuidePath = "/guides/palmistry-basics";
+    renderInLayout(<GuidePage path={path} />, path);
+    const article = screen.getByRole("article");
+    const page = GUIDE_CONTENT[path].en;
+
+    for (const source of page.sources) {
+      const link = within(article).getByRole("link", { name: source.label });
+      expect(link).toHaveAttribute("href", source.url);
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link).toHaveAttribute("rel", "noreferrer");
+    }
+  });
 });
 
 describe("factual trust and policy pages", () => {
@@ -185,6 +207,35 @@ describe("factual trust and policy pages", () => {
       "href",
       "/privacy",
     );
+  });
+
+  it.each([
+    ["/about", <AboutPage />, "About this site"],
+    ["/privacy", <PrivacyPolicyPage />, "Privacy and data handling"],
+    ["/terms", <TermsPage />, "Terms and service scope"],
+  ] as const)("gives %s its own eyebrow distinct from the guide eyebrow", (path, page, eyebrow) => {
+    renderInLayout(page, path);
+
+    expect(screen.getByText(eyebrow)).toBeVisible();
+    expect(screen.queryByText("Culture and technology guide")).not.toBeInTheDocument();
+  });
+
+  it("does not render a Sources heading or list when a page has no sources", () => {
+    renderInLayout(<AboutPage />, "/about");
+
+    expect(ABOUT_CONTENT.en.sources).toHaveLength(0);
+    expect(screen.queryByRole("heading", { name: "Sources" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "參考資料" })).not.toBeInTheDocument();
+  });
+
+  it("links Terms' Privacy Policy reference with an in-app router Link, not a new-tab anchor", () => {
+    renderInLayout(<TermsPage />, "/terms");
+    const article = screen.getByRole("article");
+    const link = within(article).getByRole("link", { name: "Privacy Policy" });
+
+    expect(link).toHaveAttribute("href", "/privacy");
+    expect(link).not.toHaveAttribute("target");
+    expect(link).not.toHaveAttribute("rel");
   });
 
   it("rerenders policy content in Chinese", () => {
