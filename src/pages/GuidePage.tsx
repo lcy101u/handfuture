@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
+import SocialShare from "@/components/social/SocialShare";
 import type { EditorialPage } from "@/content/guides";
 import { GUIDE_CONTENT } from "@/content/guides";
 import type { GuidePath, Locale, PublicPath } from "@/config/public-routes";
@@ -106,6 +107,8 @@ export function EditorialArticle({
           </ul>
         </section>
       )}
+
+      <SocialShare />
 
       <nav
         className="space-y-3 rounded-xl border border-border/70 bg-card p-6"

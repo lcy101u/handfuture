@@ -95,6 +95,19 @@ describe("sourced public articles", () => {
     }
   });
 
+  it("exposes the share or copy-link control on public articles", () => {
+    renderInLayout(
+      <GuidePage path="/guides/science-and-limitations" />,
+      "/guides/science-and-limitations",
+    );
+
+    expect(
+      within(screen.getByRole("article")).getByRole("button", {
+        name: /share this page|copy share link/i,
+      }),
+    ).toBeVisible();
+  });
+
   it("explains 21 landmarks and that palm creases are not detected", () => {
     renderInLayout(<HowItWorksPage />, "/how-it-works");
     const article = screen.getByRole("article");

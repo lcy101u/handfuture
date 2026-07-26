@@ -18,7 +18,7 @@ function collectProductionFiles(directory: string): string[] {
         : collectProductionFiles(absolutePath);
     }
 
-    const isProductionSource = /\.(?:ts|tsx|html)$/.test(entry.name);
+    const isProductionSource = /\.(?:ts|tsx|html|css)$/.test(entry.name);
     const isTest = /\.test\.(?:ts|tsx)$/.test(entry.name);
     const isUnrelatedSkeleton = [
       "src/components/ui/sidebar.tsx",
