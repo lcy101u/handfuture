@@ -82,10 +82,32 @@ describe("PRIVACY_CONTENT", () => {
     const text = pageText(PRIVACY_CONTENT[locale]);
 
     expect(text).toMatch(/FileReader/);
-    expect(text).toMatch(locale === "zh" ? /canvas.*API/ : /canvas APIs/i);
+    expect(text).toMatch(locale === "zh" ? /HTMLImageElement/ : /HTMLImageElement/);
+    expect(text).toMatch(locale === "zh" ? /MediaPipe/ : /MediaPipe/i);
     expect(text).toMatch(locale === "zh" ? /目前頁面.*記憶體/ : /current page memory/i);
     expect(text).toMatch(locale === "zh" ? /不會傳送至 HandFuture.*應用程式伺服器/ : /not sent to a HandFuture application server/i);
     expect(text).toMatch(locale === "zh" ? /重設.*重新整理.*關閉分頁.*瀏覽器.*記憶體管理/ : /reset.*refresh.*tab close.*browser memory management/i);
+  });
+
+  it.each(locales)("does not claim canvas processing of the hand image in %s", (locale) => {
+    const text = pageText(PRIVACY_CONTENT[locale]);
+
+    expect(text).not.toMatch(/canvas/i);
+  });
+
+  it.each(locales)("discloses third-party asset requests without exposing the hand image in %s", (locale) => {
+    const text = pageText(PRIVACY_CONTENT[locale]);
+
+    expect(text).toContain("cdn.jsdelivr.net");
+    expect(text).toContain("fonts.googleapis.com");
+    expect(text).toContain("fonts.gstatic.com");
+    expect(text).toMatch(locale === "zh" ? /IP 位址/ : /IP address/i);
+    expect(text).toMatch(locale === "zh" ? /user agent/i : /user agent/i);
+    expect(text).toMatch(
+      locale === "zh"
+        ? /不包含.*(?:所選的)?手部影像/
+        : /do not include the selected hand image/i,
+    );
   });
 
   it.each(locales)("names the current providers and consent boundary in %s", (locale) => {
@@ -169,5 +191,6 @@ describe("policy claim hygiene", () => {
       /GA4|Google Analytics 4|cloud exports?|雲端匯出|90 days|90 天|MFA|multi-factor|多因子|seven business days|7 個工作天|legal@handfortune\.com|dontsp\.am/i,
     );
     expect(text).not.toMatch(/Taiwan|臺灣|Taipei|台北|universal age|年滿\s*1[368]\s*歲/i);
+    expect(text).not.toMatch(/canvas/i);
   });
 });

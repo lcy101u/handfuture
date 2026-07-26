@@ -97,7 +97,7 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
   zh: {
     title: "隱私政策",
     summary:
-      "本政策說明 HandFuture 網站目前如何處理手部影像、瀏覽器儲存、網站傳遞、整體分析、Google 廣告與區域同意選項。政策生效及更新日期為 2026-07-26。",
+      "本政策說明 HandFuture 網站目前如何處理手部影像、外部資源請求、瀏覽器儲存、網站傳遞、整體分析、Google 廣告與區域同意選項。政策生效及更新日期為 2026-07-26。",
     updatedAt: "2026-07-26",
     sections: [
       {
@@ -110,14 +110,21 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
       {
         heading: "手部影像",
         paragraphs: [
-          "只有在訪客自行選擇檔案後，瀏覽器才會用 FileReader 讀取影像，並以影像解碼與 canvas API 供目前頁面的手部關節偵測及預覽使用。影像不會傳送至 HandFuture 的應用程式伺服器。",
-          "選取的影像、解碼後的畫布內容、關節座標與反思卡保留在目前頁面的記憶體中，不會由 HandFuture 寫入瀏覽器持久儲存。按下重設、重新整理頁面、關閉分頁或瀏覽器的記憶體管理都會移除這些記憶體狀態。",
+          "只有在訪客自行選擇檔案後，瀏覽器才會用 FileReader 讀取影像。瀏覽器接著將影像解碼為記憶體中的 HTMLImageElement，並直接交給在裝置端執行的 MediaPipe 手部偵測器，用於手部關節偵測及預覽，過程中沒有任何中介繪製步驟。影像不會傳送至 HandFuture 的應用程式伺服器。",
+          "選取的影像、解碼後的 HTMLImageElement、關節座標與反思卡保留在目前頁面的記憶體中，不會由 HandFuture 寫入瀏覽器持久儲存。按下重設、重新整理頁面、關閉分頁或瀏覽器的記憶體管理都會移除這些記憶體狀態。",
+        ],
+      },
+      {
+        heading: "外部資源請求",
+        paragraphs: [
+          "訪客選擇手部影像後，瀏覽器會從 cdn.jsdelivr.net 這個內容傳遞網路載入 MediaPipe 手部偵測所需的模型檔案。網站在每次載入頁面時，也會從 fonts.googleapis.com 與 fonts.gstatic.com 載入 Google Fonts 字型檔案。",
+          "這些請求只會取得模型與字型檔案。如同任何網路請求，它們可能讓 cdn.jsdelivr.net、fonts.googleapis.com 與 fonts.gstatic.com 這些提供者取得一般的請求中繼資料，例如訪客的 IP 位址與瀏覽器 user agent。這些請求不包含所選的手部影像、關節座標，也不含任何 HandFuture 自建的遙測資料。",
         ],
       },
       {
         heading: "瀏覽器儲存",
         paragraphs: [
-          "網站在本機儲存空間只寫入三個鍵，全部是介面偏好：palm-reading-storage 只保存免責聲明接受狀態；language-store 保存語言偏好；palm-theme 保存主題偏好。這些鍵不保存手部照片、畫布內容或關節座標。",
+          "網站在本機儲存空間只寫入三個鍵，全部是介面偏好：palm-reading-storage 只保存免責聲明接受狀態；language-store 保存語言偏好；palm-theme 保存主題偏好。這些鍵不保存手部照片、解碼後的影像元素或關節座標。",
           "訪客可透過瀏覽器的網站資料或隱私設定，查看並清除 handfortune.com 名下的所有本機儲存資料。清除後，相關偏好會回到預設值，網站之後可能再次顯示免責聲明。",
         ],
       },
@@ -167,7 +174,7 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
   en: {
     title: "Privacy Policy",
     summary:
-      "This policy explains how the current HandFuture website handles hand images, browser storage, site delivery, aggregate analytics, Google advertising, and regional consent choices. It is effective and updated on 2026-07-26.",
+      "This policy explains how the current HandFuture website handles hand images, external resource requests, browser storage, site delivery, aggregate analytics, Google advertising, and regional consent choices. It is effective and updated on 2026-07-26.",
     updatedAt: "2026-07-26",
     sections: [
       {
@@ -180,14 +187,21 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
       {
         heading: "Hand images",
         paragraphs: [
-          "Only after a visitor chooses a file does browser FileReader read the image. Image decoding and canvas APIs then make it available to the current page for hand-joint detection and preview. The image is not sent to a HandFuture application server.",
-          "The selected image, decoded canvas content, landmark coordinates, and reflection card stay in current page memory and are not written by HandFuture to persistent browser storage. Reset, refresh, tab close, or browser memory management removes these in-memory states.",
+          "Only after a visitor chooses a file does browser FileReader read the image. The browser then decodes it into an in-memory HTMLImageElement, which is passed directly to the on-device MediaPipe hand detector for hand-joint detection and preview, with no intermediate drawing step. The image is not sent to a HandFuture application server.",
+          "The selected image, the decoded HTMLImageElement, landmark coordinates, and reflection card stay in current page memory and are not written by HandFuture to persistent browser storage. Reset, refresh, tab close, or browser memory management removes these in-memory states.",
+        ],
+      },
+      {
+        heading: "External resource requests",
+        paragraphs: [
+          "After a visitor selects a hand image, the browser loads the MediaPipe hand-detection model files from Google's cdn.jsdelivr.net content delivery network. On every page load, the site also loads Google Fonts font files from fonts.googleapis.com and fonts.gstatic.com.",
+          "These requests fetch model and font assets only. Like any web request, they can expose ordinary request metadata such as the visitor's IP address and browser user agent to cdn.jsdelivr.net, fonts.googleapis.com, and fonts.gstatic.com. They do not include the selected hand image, landmark coordinates, or any HandFuture-specific telemetry.",
         ],
       },
       {
         heading: "Browser storage",
         paragraphs: [
-          "The site writes only three local-storage keys, all of them interface preferences: palm-reading-storage stores disclaimer acceptance only; language-store stores the language preference; and palm-theme stores the theme preference. These keys do not store the hand photo, canvas content, or landmark coordinates.",
+          "The site writes only three local-storage keys, all of them interface preferences: palm-reading-storage stores disclaimer acceptance only; language-store stores the language preference; and palm-theme stores the theme preference. These keys do not store the hand photo, the decoded image element, or landmark coordinates.",
           "Visitors can inspect and clear everything stored locally for handfortune.com through their browser's site-data or privacy settings. Clearing it resets the related preferences, and the site may show the disclaimer again on a later visit.",
         ],
       },

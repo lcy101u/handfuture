@@ -178,6 +178,9 @@ describe("factual trust and policy pages", () => {
     const article = screen.getByRole("article");
 
     expect(article).toHaveTextContent(/FileReader/);
+    expect(article).toHaveTextContent(/HTMLImageElement/);
+    expect(article).toHaveTextContent(/MediaPipe/);
+    expect(article).not.toHaveTextContent(/canvas/i);
     expect(article).toHaveTextContent(/not sent to a HandFuture application server/i);
     expect(article).toHaveTextContent(/current page memory/i);
     expect(article).toHaveTextContent(/palm-reading-storage/);
@@ -191,6 +194,18 @@ describe("factual trust and policy pages", () => {
     expect(article).toHaveTextContent(
       "This address is monitored only after domain email routing is enabled.",
     );
+  });
+
+  it("discloses MediaPipe and Google Fonts asset requests without exposing the hand image", () => {
+    renderInLayout(<PrivacyPolicyPage />, "/privacy");
+    const article = screen.getByRole("article");
+
+    expect(article).toHaveTextContent("cdn.jsdelivr.net");
+    expect(article).toHaveTextContent("fonts.googleapis.com");
+    expect(article).toHaveTextContent("fonts.gstatic.com");
+    expect(article).toHaveTextContent(/IP address/i);
+    expect(article).toHaveTextContent(/user agent/i);
+    expect(article).toHaveTextContent(/do not include the selected hand image/i);
   });
 
   it("shows entertainment-only and acceptable-use boundaries", () => {
