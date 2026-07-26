@@ -14,6 +14,30 @@ const requiredPrivacyLinks = [
   "https://support.google.com/adsense/answer/13554116",
 ];
 
+// Matches any English or Chinese phrasing that attributes ownership of
+// jsDelivr / cdn.jsdelivr.net to Google. jsDelivr is an independent CDN;
+// @mediapipe/hands merely publishes its npm package assets there.
+const jsDelivrOwnershipPattern =
+  /Google(?:['’]s|-owned|\s+owned|\s+owns)(?:\s+the)?\s*(?:cdn\.jsdelivr\.net|jsDelivr)|Google\s*(?:的|擁有(?:的)?)\s*(?:cdn\.jsdelivr\.net|jsDelivr)/i;
+
+// Table of concrete example phrases proving jsDelivrOwnershipPattern catches
+// every named ownership form (English: 's / -owned / owned / owns; Chinese:
+// 的 / 擁有), independent of whatever the actual policy prose says today.
+const prohibitedJsDelivrOwnershipPhrases = [
+  "Google's cdn.jsdelivr.net",
+  "Google's jsDelivr",
+  "Google-owned jsDelivr",
+  "Google-owned cdn.jsdelivr.net",
+  "Google owned jsDelivr",
+  "Google owned the cdn.jsdelivr.net",
+  "Google owns jsDelivr",
+  "Google owns cdn.jsdelivr.net",
+  "Google 的 cdn.jsdelivr.net",
+  "Google 的 jsDelivr",
+  "Google 擁有的 jsDelivr",
+  "Google 擁有 cdn.jsdelivr.net",
+];
+
 function pageText(page: (typeof ABOUT_CONTENT)[Locale]) {
   return [
     page.title,
@@ -114,8 +138,7 @@ describe("PRIVACY_CONTENT", () => {
     const text = pageText(PRIVACY_CONTENT[locale]);
 
     expect(text).toContain("cdn.jsdelivr.net");
-    expect(text).not.toMatch(/Google['’]s\s*(?:cdn\.jsdelivr\.net|jsDelivr)/i);
-    expect(text).not.toMatch(/Google\s*(?:的)?\s*(?:cdn\.jsdelivr\.net|jsDelivr)/i);
+    expect(text).not.toMatch(jsDelivrOwnershipPattern);
   });
 
   it.each(locales)("names the current providers and consent boundary in %s", (locale) => {
@@ -186,6 +209,25 @@ describe("TERMS_CONTENT", () => {
       label: locale === "zh" ? "隱私政策" : "Privacy Policy",
       url: "/privacy",
     });
+  });
+});
+
+describe("jsDelivr ownership claim detection", () => {
+  it.each(prohibitedJsDelivrOwnershipPhrases)(
+    "flags the prohibited ownership phrase %j",
+    (phrase) => {
+      expect(phrase).toMatch(jsDelivrOwnershipPattern);
+    },
+  );
+
+  it("does not flag neutral disclosure of the jsDelivr hostname", () => {
+    expect("the cdn.jsdelivr.net content delivery network").not.toMatch(
+      jsDelivrOwnershipPattern,
+    );
+    expect(
+      "Google Fonts font files load from fonts.googleapis.com and fonts.gstatic.com, and MediaPipe model files load from the cdn.jsdelivr.net content delivery network",
+    ).not.toMatch(jsDelivrOwnershipPattern);
+    expect("cdn.jsdelivr.net 這個內容傳遞網路").not.toMatch(jsDelivrOwnershipPattern);
   });
 });
 
