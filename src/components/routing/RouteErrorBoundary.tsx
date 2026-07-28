@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import type { Locale } from "@/config/public-routes";
+import { getTranslation } from "@/i18n/catalogs";
 import { useLanguageStore } from "@/store/language-store";
 
 interface BoundaryProps {
@@ -33,7 +34,7 @@ class RouteErrorBoundaryImpl extends Component<BoundaryProps, BoundaryState> {
   render() {
     if (!this.state.error) return this.props.children;
 
-    const isChinese = this.props.locale === "zh";
+    const { locale } = this.props;
     return (
       <section
         role="alert"
@@ -41,19 +42,17 @@ class RouteErrorBoundaryImpl extends Component<BoundaryProps, BoundaryState> {
         className="container mx-auto flex min-h-[45vh] max-w-2xl flex-col items-center justify-center gap-4 px-4 py-16 text-center"
       >
         <h1 id="route-error-title" className="text-3xl font-bold">
-          {isChinese ? "頁面無法載入" : "The page could not load"}
+          {getTranslation(locale, "routeError.title")}
         </h1>
         <p className="leading-7 text-muted-foreground">
-          {isChinese
-            ? "頁面元件載入時發生問題。請重新載入後再試一次。"
-            : "A page component failed to load. Reload the page and try again."}
+          {getTranslation(locale, "routeError.description")}
         </p>
         <button
           type="button"
           className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           onClick={() => window.history.go(0)}
         >
-          {isChinese ? "重新載入" : "Reload page"}
+          {getTranslation(locale, "routeError.reload")}
         </button>
       </section>
     );

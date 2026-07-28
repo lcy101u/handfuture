@@ -145,6 +145,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "HandFuture 首頁", "nav.primaryAria": "主要導覽", "nav.guidesLabel": "指南", "nav.footerAria": "頁尾導覽",
     "footer.tagline": "獨立文化探索網頁專案", "layout.skip": "跳至主要內容", "home.productFacts": "產品特色",
     "notFound.message": "找不到這個頁面。", "notFound.home": "返回首頁",
+    "editorial.eyebrow.guide": "文化與技術指南", "editorial.eyebrow.about": "關於本站", "editorial.eyebrow.privacy": "隱私與資料處理", "editorial.eyebrow.terms": "使用條款與服務範圍",
+    "editorial.publisher": "發布者", "editorial.updated": "更新", "editorial.sources": "參考資料", "editorial.related": "相關閱讀",
+    "routeError.title": "頁面無法載入", "routeError.description": "頁面元件載入時發生問題。請重新載入後再試一次。", "routeError.reload": "重新載入",
     "disclaimer.title": "使用條款與免責聲明", "disclaimer.subtitle": "請先了解這項瀏覽器內娛樂功能如何運作。", "disclaimer.warning": "這是非科學的文化娛樂與自我反思工具。",
     "disclaimer.serviceTitle": "偵測與選卡方式", "disclaimer.service": "模型只偵測 21 個手部關節位置，不會辨識或解讀掌紋、掌褶，也不會測量性格、能力、健康或命運。反思卡只依手部幾何固定選擇。",
     "disclaimer.decisionsTitle": "重要決策", "disclaimer.decisions": "請勿根據反思卡做出醫療、心理健康、法律、財務、工作、關係或其他重大決策；需要協助時，請諮詢合格專業人士。",
@@ -161,6 +164,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "HandFuture 首页", "nav.primaryAria": "主导航", "nav.guidesLabel": "指南", "nav.footerAria": "页脚导航",
     "footer.tagline": "独立文化探索网页项目", "layout.skip": "跳至主要内容", "home.productFacts": "产品特点",
     "notFound.message": "找不到这个页面。", "notFound.home": "返回首页",
+    "editorial.eyebrow.guide": "文化与技术指南", "editorial.eyebrow.about": "关于本站", "editorial.eyebrow.privacy": "隐私与数据处理", "editorial.eyebrow.terms": "使用条款与服务范围",
+    "editorial.publisher": "发布者", "editorial.updated": "更新", "editorial.sources": "参考资料", "editorial.related": "相关阅读",
+    "routeError.title": "页面无法加载", "routeError.description": "加载页面组件时出现问题。请重新加载后再试。", "routeError.reload": "重新加载",
     "disclaimer.title": "使用条款与免责声明", "disclaimer.subtitle": "请先了解这项浏览器内娱乐功能如何运作。", "disclaimer.warning": "这是用于文化娱乐与自我反思的非科学工具。",
     "disclaimer.serviceTitle": "检测与选卡方式", "disclaimer.service": "模型只检测 21 个手部关节位置，不会识别或解读掌纹、掌褶，也不会衡量性格、能力、健康或命运。手部几何信息只用于固定选择反思卡。",
     "disclaimer.decisionsTitle": "重要决策", "disclaimer.decisions": "请勿依靠反思卡做出医疗、心理健康、法律、财务、工作、关系或其他重大决策；需要帮助时，请咨询合格的专业人士。",
@@ -177,6 +183,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "HandFuture home", "nav.primaryAria": "Primary navigation", "nav.guidesLabel": "Guides", "nav.footerAria": "Footer navigation",
     "footer.tagline": "Independent cultural exploration web project", "layout.skip": "Skip to content", "home.productFacts": "Product facts",
     "notFound.message": "Page not found.", "notFound.home": "Return home",
+    "editorial.eyebrow.guide": "Culture and technology guide", "editorial.eyebrow.about": "About this site", "editorial.eyebrow.privacy": "Privacy and data handling", "editorial.eyebrow.terms": "Terms and service scope",
+    "editorial.publisher": "Publisher", "editorial.updated": "Updated", "editorial.sources": "Sources", "editorial.related": "Related reading",
+    "routeError.title": "The page could not load", "routeError.description": "A page component failed to load. Reload the page and try again.", "routeError.reload": "Reload page",
     "disclaimer.title": "Terms of Use & Disclaimer", "disclaimer.subtitle": "Please understand how this in-browser entertainment feature works.", "disclaimer.warning": "This is a non-scientific tool for cultural entertainment and self-reflection.",
     "disclaimer.serviceTitle": "Detection and card selection", "disclaimer.service": "The model detects only 21 hand-joint positions. It does not identify or interpret palm creases, and it does not measure personality, ability, health, or destiny. Hand geometry only makes the card selection deterministic.",
     "disclaimer.decisionsTitle": "Consequential decisions", "disclaimer.decisions": "Do not rely on a reflection card for medical, mental-health, legal, financial, employment, relationship, or other consequential decisions. Consult a qualified professional when needed.",
@@ -193,6 +202,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "HandFuture ホーム", "nav.primaryAria": "メインナビゲーション", "nav.guidesLabel": "ガイド", "nav.footerAria": "フッターナビゲーション",
     "footer.tagline": "独立した文化探究ウェブプロジェクト", "layout.skip": "メインコンテンツへ移動", "home.productFacts": "製品の特徴",
     "notFound.message": "ページが見つかりません。", "notFound.home": "ホームに戻る",
+    "editorial.eyebrow.guide": "文化と技術のガイド", "editorial.eyebrow.about": "このサイトについて", "editorial.eyebrow.privacy": "プライバシーとデータ処理", "editorial.eyebrow.terms": "利用規約とサービス範囲",
+    "editorial.publisher": "発行者", "editorial.updated": "更新日", "editorial.sources": "出典", "editorial.related": "関連資料",
+    "routeError.title": "ページを読み込めませんでした", "routeError.description": "ページの構成要素を読み込めませんでした。ページを再読み込みして、もう一度お試しください。", "routeError.reload": "ページを再読み込み",
     "disclaimer.title": "利用規約と免責事項", "disclaimer.subtitle": "このブラウザー内の娯楽機能の仕組みをご確認ください。", "disclaimer.warning": "これは文化的な娯楽と自己省察のための非科学的なツールです。",
     "disclaimer.serviceTitle": "検出とカード選択", "disclaimer.service": "モデルが検出するのは21個の手の関節位置だけです。手相線や掌のしわを識別・解釈せず、性格、能力、健康、運命も測定しません。手の形状はカードを一定の方法で選ぶためにのみ使われます。",
     "disclaimer.decisionsTitle": "重大な決定", "disclaimer.decisions": "リフレクションカードを、医療、メンタルヘルス、法律、金融、雇用、人間関係、その他の重大な決定の根拠にしないでください。必要な場合は有資格の専門家に相談してください。",
@@ -209,6 +221,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "HandFuture 홈", "nav.primaryAria": "기본 탐색", "nav.guidesLabel": "가이드", "nav.footerAria": "바닥글 탐색",
     "footer.tagline": "독립 문화 탐구 웹 프로젝트", "layout.skip": "본문으로 건너뛰기", "home.productFacts": "제품 특징",
     "notFound.message": "페이지를 찾을 수 없습니다.", "notFound.home": "홈으로 돌아가기",
+    "editorial.eyebrow.guide": "문화와 기술 가이드", "editorial.eyebrow.about": "이 사이트 소개", "editorial.eyebrow.privacy": "개인정보와 데이터 처리", "editorial.eyebrow.terms": "이용 약관과 서비스 범위",
+    "editorial.publisher": "발행자", "editorial.updated": "업데이트", "editorial.sources": "출처", "editorial.related": "관련 자료",
+    "routeError.title": "페이지를 불러올 수 없습니다", "routeError.description": "페이지 구성 요소를 불러오는 중 문제가 생겼습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.", "routeError.reload": "페이지 새로고침",
     "disclaimer.title": "이용 약관 및 면책 조항", "disclaimer.subtitle": "브라우저 내 오락 기능이 어떻게 작동하는지 먼저 확인해 주세요.", "disclaimer.warning": "문화적 오락과 자기 성찰을 위한 비과학적 도구입니다.",
     "disclaimer.serviceTitle": "감지 및 카드 선택", "disclaimer.service": "모델은 손의 관절 위치 21개만 감지합니다. 손금 선이나 주름을 식별하거나 해석하지 않으며 성격, 능력, 건강 또는 운명을 측정하지 않습니다. 손의 기하 정보는 카드를 일관되게 선택하는 데만 사용됩니다.",
     "disclaimer.decisionsTitle": "중대한 결정", "disclaimer.decisions": "성찰 카드를 의료, 정신 건강, 법률, 재정, 고용, 관계 또는 기타 중대한 결정의 근거로 삼지 마세요. 필요하면 자격을 갖춘 전문가와 상담하세요.",
@@ -225,6 +240,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "Inicio de HandFuture", "nav.primaryAria": "Navegación principal", "nav.guidesLabel": "Guías", "nav.footerAria": "Navegación del pie",
     "footer.tagline": "Proyecto web independiente de exploración cultural", "layout.skip": "Saltar al contenido", "home.productFacts": "Características del producto",
     "notFound.message": "No se encontró la página.", "notFound.home": "Volver al inicio",
+    "editorial.eyebrow.guide": "Guía cultural y tecnológica", "editorial.eyebrow.about": "Acerca de este sitio", "editorial.eyebrow.privacy": "Privacidad y tratamiento de datos", "editorial.eyebrow.terms": "Términos y alcance del servicio",
+    "editorial.publisher": "Publicado por", "editorial.updated": "Actualizado", "editorial.sources": "Fuentes", "editorial.related": "Lecturas relacionadas",
+    "routeError.title": "No se pudo cargar la página", "routeError.description": "Se produjo un problema al cargar un componente de la página. Recarga la página e inténtalo de nuevo.", "routeError.reload": "Recargar la página",
     "disclaimer.title": "Términos de uso y descargo de responsabilidad", "disclaimer.subtitle": "Comprende primero cómo funciona esta función de entretenimiento en el navegador.", "disclaimer.warning": "Esta es una herramienta no científica para el entretenimiento cultural y la autorreflexión.",
     "disclaimer.serviceTitle": "Detección y selección de tarjeta", "disclaimer.service": "El modelo solo detecta 21 posiciones de articulaciones de la mano. No identifica ni interpreta líneas o pliegues de la palma, ni mide la personalidad, la capacidad, la salud o el destino. La geometría de la mano solo hace determinista la selección de la tarjeta.",
     "disclaimer.decisionsTitle": "Decisiones importantes", "disclaimer.decisions": "No uses una tarjeta de reflexión para tomar decisiones médicas, de salud mental, legales, financieras, laborales, sentimentales u otras decisiones importantes. Consulta a un profesional cualificado cuando sea necesario.",
@@ -241,6 +259,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "Início do HandFuture", "nav.primaryAria": "Navegação principal", "nav.guidesLabel": "Guias", "nav.footerAria": "Navegação do rodapé",
     "footer.tagline": "Projeto web independente de exploração cultural", "layout.skip": "Ir para o conteúdo", "home.productFacts": "Recursos do produto",
     "notFound.message": "Página não encontrada.", "notFound.home": "Voltar ao início",
+    "editorial.eyebrow.guide": "Guia de cultura e tecnologia", "editorial.eyebrow.about": "Sobre este site", "editorial.eyebrow.privacy": "Privacidade e tratamento de dados", "editorial.eyebrow.terms": "Termos e escopo do serviço",
+    "editorial.publisher": "Publicado por", "editorial.updated": "Atualizado", "editorial.sources": "Fontes", "editorial.related": "Leituras relacionadas",
+    "routeError.title": "Não foi possível carregar a página", "routeError.description": "Ocorreu um problema ao carregar um componente da página. Recarregue a página e tente novamente.", "routeError.reload": "Recarregar a página",
     "disclaimer.title": "Termos de uso e aviso de isenção", "disclaimer.subtitle": "Entenda primeiro como funciona este recurso de entretenimento no navegador.", "disclaimer.warning": "Esta é uma ferramenta não científica para entretenimento cultural e autorreflexão.",
     "disclaimer.serviceTitle": "Detecção e seleção do cartão", "disclaimer.service": "O modelo detecta apenas 21 posições das articulações da mão. Ele não identifica nem interpreta linhas ou dobras da palma e não mede personalidade, habilidade, saúde ou destino. A geometria da mão apenas torna determinística a escolha do cartão.",
     "disclaimer.decisionsTitle": "Decisões importantes", "disclaimer.decisions": "Não confie em um cartão de reflexão para decisões médicas, de saúde mental, jurídicas, financeiras, profissionais, de relacionamento ou outras decisões importantes. Consulte um profissional qualificado quando necessário.",
@@ -257,6 +278,9 @@ const trackedComponentCatalogs = defineCompleteCatalogs({
     "nav.homeAria": "Accueil de HandFuture", "nav.primaryAria": "Navigation principale", "nav.guidesLabel": "Guides", "nav.footerAria": "Navigation du pied de page",
     "footer.tagline": "Projet web indépendant d’exploration culturelle", "layout.skip": "Aller au contenu", "home.productFacts": "Caractéristiques du produit",
     "notFound.message": "Page introuvable.", "notFound.home": "Retour à l’accueil",
+    "editorial.eyebrow.guide": "Guide culturel et technique", "editorial.eyebrow.about": "À propos de ce site", "editorial.eyebrow.privacy": "Confidentialité et traitement des données", "editorial.eyebrow.terms": "Conditions et portée du service",
+    "editorial.publisher": "Publié par", "editorial.updated": "Mis à jour", "editorial.sources": "Sources", "editorial.related": "Lectures associées",
+    "routeError.title": "La page n’a pas pu être chargée", "routeError.description": "Un problème est survenu pendant le chargement d’un composant de la page. Rechargez la page et réessayez.", "routeError.reload": "Recharger la page",
     "disclaimer.title": "Conditions d’utilisation et avertissement", "disclaimer.subtitle": "Comprenez d’abord le fonctionnement de cette fonctionnalité de divertissement dans le navigateur.", "disclaimer.warning": "Il s’agit d’un outil non scientifique destiné au divertissement culturel et à l’autoréflexion.",
     "disclaimer.serviceTitle": "Détection et sélection de la carte", "disclaimer.service": "Le modèle détecte uniquement 21 positions d’articulations de la main. Il n’identifie ni n’interprète les lignes ou plis de la paume et ne mesure ni la personnalité, ni les aptitudes, ni la santé, ni le destin. La géométrie de la main sert uniquement à rendre le choix de la carte déterministe.",
     "disclaimer.decisionsTitle": "Décisions importantes", "disclaimer.decisions": "Ne vous fiez pas à une carte de réflexion pour des décisions médicales, de santé mentale, juridiques, financières, professionnelles, relationnelles ou toute autre décision importante. Consultez un professionnel qualifié si nécessaire.",
@@ -283,10 +307,8 @@ export const catalogs = Object.fromEntries(
 ) as Record<Locale, LanguageCatalog>;
 
 export function getTranslation(locale: Locale, key: string): string {
-  const resolvedLocale =
-    (locale as string) === "zh" ? "zh-TW" : locale;
   return (
-    catalogs[resolvedLocale][key as CatalogKey] ??
+    catalogs[locale][key as CatalogKey] ??
     catalogs.en[key as CatalogKey] ??
     key
   );

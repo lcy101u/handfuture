@@ -32,7 +32,7 @@ function renderMetadata(initialEntry = "/") {
 describe("RouteMeta", () => {
   beforeEach(() => {
     localStorage.clear();
-    useLanguageStore.setState({ currentLanguage: "zh" });
+    useLanguageStore.setState({ currentLanguage: "zh-TW" });
     document.head.innerHTML = `${originalHead}
       <meta name="description" content="duplicate description">
       <meta property="og:locale:alternate" content="en_US">
@@ -171,7 +171,7 @@ describe("RouteMeta", () => {
     renderMetadata("/missing");
 
     await waitFor(() => expect(document.title).toBe("Page not found | HandFuture"));
-    act(() => useLanguageStore.getState().setLanguage("zh"));
+    act(() => useLanguageStore.getState().setLanguage("zh-TW"));
 
     await waitFor(() => expect(document.title).toBe("找不到頁面｜HandFuture"));
     expect(document.documentElement.lang).toBe("zh-TW");
@@ -217,5 +217,34 @@ describe("RouteMeta", () => {
       "content",
       description,
     );
+  });
+
+  it("selects route-locale metadata for an exact localized public path", async () => {
+    useLanguageStore.setState({ currentLanguage: "en" });
+
+    renderMetadata("/fr/privacy");
+
+    await waitFor(() =>
+      expect(document.title).toBe("Politique de confidentialité | HandFuture"),
+    );
+    expect(document.documentElement.lang).toBe("fr");
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      "index, follow",
+    );
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "Découvrez comment HandFuture traite les photos dans le navigateur, utilise le stockage local et Vercel Analytics, et comment fonctionnent la publicité Google et les choix de consentement.",
+    );
+    expect(document.querySelector('meta[property="og:locale"]')).toHaveAttribute(
+      "content",
+      "fr_FR",
+    );
+    expect(
+      JSON.parse(document.querySelector("#route-structured-data")?.textContent ?? "{}"),
+    ).toMatchObject({
+      "@type": "WebPage",
+      inLanguage: "fr",
+    });
   });
 });

@@ -1,8 +1,10 @@
-import { act, render, screen, within } from "@testing-library/react";
+import { Suspense } from "react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SiteLayout from "@/components/layout/SiteLayout";
 import RouteErrorBoundary from "@/components/routing/RouteErrorBoundary";
+import LocaleRouter from "@/components/routing/LocaleRouter";
 import { GUIDE_CONTENT } from "@/content/guides";
 import {
   ABOUT_CONTENT,
@@ -14,6 +16,7 @@ import {
   type GuidePath,
   type PublicPath,
 } from "@/config/public-routes";
+import { SUPPORTED_LOCALES, buildLocalizedPath, type Locale } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 import AboutPage from "./AboutPage";
 import GuidePage from "./GuidePage";
@@ -33,9 +36,92 @@ function renderInLayout(page: React.ReactNode, entry: PublicPath = "/") {
   );
 }
 
-function setLegacyContentLanguage(locale: "zh" | "en") {
-  useLanguageStore.setState({ currentLanguage: locale as never });
+function setContentLanguage(locale: Locale) {
+  useLanguageStore.setState({ currentLanguage: locale });
 }
+
+function renderLocalizedPublicRoute(locale: Locale, path: PublicPath) {
+  setContentLanguage(locale);
+  return render(
+    <MemoryRouter initialEntries={[buildLocalizedPath(locale, path)]}>
+      <SiteLayout>
+        <Suspense fallback={<div role="status">Loading</div>}>
+          <LocaleRouter />
+        </Suspense>
+      </SiteLayout>
+    </MemoryRouter>,
+  );
+}
+
+describe("all localized public routes", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    document.querySelector('meta[name="robots"]')?.remove();
+  });
+
+  it.each(
+    SUPPORTED_LOCALES.flatMap((locale) =>
+      PUBLIC_PATHS.map((path) => [locale, path] as const),
+    ),
+  )("renders %s%s as indexable public content", async (locale, path) => {
+    renderLocalizedPublicRoute(locale, path);
+
+    if (path === "/") {
+      expect(await screen.findByRole("heading", { level: 1 })).toBeVisible();
+    } else {
+      expect(await screen.findByRole("article")).toBeVisible();
+    }
+    expect(screen.queryByRole("heading", { name: "404" })).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+        "content",
+        "index, follow",
+      ),
+    );
+  });
+
+  it.each([
+    {
+      locale: "ja" as const,
+      path: "/guides/palmistry-basics" as const,
+      title: "手相入門：伝統的な名称と歴史的背景",
+      section: "手相とは",
+      eyebrow: "文化と技術のガイド",
+    },
+    {
+      locale: "ko" as const,
+      path: "/about" as const,
+      title: "HandFuture 소개",
+      section: "이 프로젝트",
+      eyebrow: "이 사이트 소개",
+    },
+    {
+      locale: "es" as const,
+      path: "/privacy" as const,
+      title: "Política de privacidad",
+      section: "Imágenes de manos",
+      eyebrow: "Privacidad y tratamiento de datos",
+    },
+    {
+      locale: "pt-BR" as const,
+      path: "/terms" as const,
+      title: "Termos de Uso",
+      section: "Apenas para entretenimento",
+      eyebrow: "Termos e escopo do serviço",
+    },
+  ])(
+    "renders native editorial text and UI labels for $locale$path",
+    async ({ locale, path, title, section, eyebrow }) => {
+      renderLocalizedPublicRoute(locale, path);
+
+      const article = await screen.findByRole("article");
+      expect(within(article).getByRole("heading", { level: 1 })).toHaveTextContent(title);
+      expect(within(article).getByRole("heading", { name: section })).toBeVisible();
+      expect(within(article).getByText(eyebrow)).toBeVisible();
+      expect(within(article).getByText("HandFuture", { selector: "span" })).toBeVisible();
+    },
+  );
+});
 
 describe("public page shell", () => {
   beforeEach(() => {
@@ -127,7 +213,7 @@ describe("sourced public articles", () => {
 
   it.each([
     {
-      locale: "zh" as const,
+      locale: "zh-TW" as const,
       validatedResult: /確認單一結果包含恰好 21 個有限數值的關節座標/,
       visiblePreview: /保留原始上傳照片，並以文字顯示偵測狀態/,
       nonexistentDrawing: /畫出關節連線|畫面上的骨架/,
@@ -141,7 +227,7 @@ describe("sourced public articles", () => {
   ])(
     "describes the visible detector result instead of a nonexistent overlay in $locale",
     ({ locale, validatedResult, visiblePreview, nonexistentDrawing }) => {
-      setLegacyContentLanguage(locale);
+      setContentLanguage(locale);
       renderInLayout(<HowItWorksPage />, "/how-it-works");
       const article = screen.getByRole("article");
 
@@ -153,7 +239,7 @@ describe("sourced public articles", () => {
 
   it.each([
     {
-      locale: "zh" as const,
+      locale: "zh-TW" as const,
       falseVisualization: /繪出手腕、手指關節與指尖的連線|關節骨架看起來精細/,
       usableHand: /確認只找到一隻可用的手，並驗證.*恰好 21 個有限數值的關節座標/,
       visibleResult: /保留原始上傳照片.*以文字顯示偵測狀態.*驗證成功.*選擇反思卡/,
@@ -170,7 +256,7 @@ describe("sourced public articles", () => {
   ])(
     "renders the actual detector behavior in the science guide for $locale",
     ({ locale, falseVisualization, usableHand, visibleResult }) => {
-      setLegacyContentLanguage(locale);
+      setContentLanguage(locale);
       renderInLayout(
         <GuidePage path="/guides/science-and-limitations" />,
         "/guides/science-and-limitations",
@@ -187,10 +273,10 @@ describe("sourced public articles", () => {
     const path: GuidePath = "/guides/palmistry-basics";
     renderInLayout(<GuidePage path={path} />, path);
 
-    act(() => setLegacyContentLanguage("zh"));
+    act(() => setContentLanguage("zh-TW"));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      GUIDE_CONTENT[path].zh.title,
+      GUIDE_CONTENT[path]["zh-TW"].title,
     );
     expect(screen.getByRole("heading", { name: "參考資料" })).toBeVisible();
   });
@@ -359,7 +445,7 @@ describe("factual trust and policy pages", () => {
   it("rerenders policy content in Chinese", () => {
     renderInLayout(<PrivacyPolicyPage />, "/privacy");
 
-    act(() => setLegacyContentLanguage("zh"));
+    act(() => setContentLanguage("zh-TW"));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("隱私政策");
     expect(screen.getByRole("heading", { name: "瀏覽器儲存" })).toBeVisible();
@@ -407,6 +493,32 @@ describe("RouteErrorBoundary", () => {
     expect(historyGo).toHaveBeenCalledWith(0);
     window.removeEventListener("error", preventWindowError);
     historyGo.mockRestore();
+    consoleError.mockRestore();
+  });
+
+  it("renders route-error copy from the active French catalog", () => {
+    useLanguageStore.setState({ currentLanguage: "fr" });
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const preventWindowError = (event: ErrorEvent) => event.preventDefault();
+    window.addEventListener("error", preventWindowError);
+
+    function BrokenPage(): never {
+      throw new Error("échec du composant");
+    }
+
+    render(
+      <MemoryRouter>
+        <RouteErrorBoundary>
+          <BrokenPage />
+        </RouteErrorBoundary>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "La page n’a pas pu être chargée",
+    );
+    expect(screen.getByRole("button", { name: "Recharger la page" })).toBeVisible();
+    window.removeEventListener("error", preventWindowError);
     consoleError.mockRestore();
   });
 });

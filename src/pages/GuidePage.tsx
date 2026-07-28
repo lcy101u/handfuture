@@ -2,9 +2,10 @@ import { ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import SocialShare from "@/components/social/SocialShare";
 import type { EditorialPage } from "@/content/guides";
-import { GUIDE_CONTENT } from "@/content/guides";
+import { GUIDE_CONTENT, HOW_IT_WORKS_CONTENT } from "@/content/guides";
 import type { GuidePath, Locale, PublicPath } from "@/config/public-routes";
-import { buildLocalizedPath, normalizeLocale } from "@/i18n/locales";
+import { getTranslation } from "@/i18n/catalogs";
+import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
 const guidePaths = Object.keys(GUIDE_CONTENT) as GuidePath[];
@@ -30,18 +31,15 @@ export function EditorialArticle({
   relatedPaths,
   eyebrow,
 }: EditorialArticleProps) {
-  const activeLocale = useLanguageStore((state) => state.currentLanguage);
-  const routeLocale =
-    normalizeLocale(activeLocale) ?? (locale === "zh" ? "zh-TW" : "en");
   const relatedLabel = (path: PublicPath) => {
     if (path === "/how-it-works") {
-      return locale === "zh" ? "HandFuture 如何運作" : "How HandFuture works";
+      return HOW_IT_WORKS_CONTENT[locale].title;
     }
     if (isGuidePath(path)) return GUIDE_CONTENT[path][locale].title;
     return path;
   };
   const resolvedEyebrow =
-    eyebrow ?? (locale === "zh" ? "文化與技術指南" : "Culture and technology guide");
+    eyebrow ?? getTranslation(locale, "editorial.eyebrow.guide");
 
   return (
     <article className="container mx-auto max-w-4xl space-y-10 px-4 py-10 md:py-14">
@@ -50,10 +48,10 @@ export function EditorialArticle({
         <h1 className="text-3xl font-bold leading-tight md:text-5xl">{content.title}</h1>
         <p className="text-lg leading-8 text-muted-foreground">{content.summary}</p>
         <p className="flex flex-wrap gap-x-2 text-sm text-muted-foreground">
-          <span>{locale === "zh" ? "發布者" : "Publisher"}:</span>
+          <span>{getTranslation(locale, "editorial.publisher")}:</span>
           <span className="font-medium text-foreground">HandFuture</span>
           <span aria-hidden="true">·</span>
-          <span>{locale === "zh" ? "更新" : "Updated"}:</span>
+          <span>{getTranslation(locale, "editorial.updated")}:</span>
           <time dateTime={content.updatedAt}>{content.updatedAt}</time>
         </p>
       </div>
@@ -83,14 +81,14 @@ export function EditorialArticle({
       {content.sources.length > 0 && (
         <section className="space-y-4 border-t border-border/70 pt-8" aria-labelledby="article-sources">
           <h2 id="article-sources" className="text-2xl font-semibold">
-            {locale === "zh" ? "參考資料" : "Sources"}
+            {getTranslation(locale, "editorial.sources")}
           </h2>
           <ul className="space-y-3">
             {content.sources.map((source) => (
               <li key={source.url}>
                 {isInternalPath(source.url) ? (
                   <Link
-                    to={buildLocalizedPath(routeLocale, source.url)}
+                    to={buildLocalizedPath(locale, source.url)}
                     className="inline-flex items-start gap-2 text-primary underline-offset-4 hover:underline"
                   >
                     <span>{source.label}</span>
@@ -116,16 +114,16 @@ export function EditorialArticle({
 
       <nav
         className="space-y-3 rounded-xl border border-border/70 bg-card p-6"
-        aria-label={locale === "zh" ? "相關閱讀" : "Related reading"}
+        aria-label={getTranslation(locale, "editorial.related")}
       >
         <h2 className="text-xl font-semibold">
-          {locale === "zh" ? "相關閱讀" : "Related reading"}
+          {getTranslation(locale, "editorial.related")}
         </h2>
         <ul className="space-y-2">
           {relatedPaths.map((path) => (
             <li key={path}>
               <Link
-                to={buildLocalizedPath(routeLocale, path)}
+                to={buildLocalizedPath(locale, path)}
                 className="text-primary underline-offset-4 hover:underline"
               >
                 {relatedLabel(path)}

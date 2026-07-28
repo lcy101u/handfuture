@@ -1,4 +1,11 @@
-import type { GuidePath, Locale } from "@/config/public-routes";
+import type { GuidePath } from "@/config/public-routes";
+import type { Locale } from "@/i18n/locales";
+import { esEditorial } from "./locales/es";
+import { frEditorial } from "./locales/fr";
+import { jaEditorial } from "./locales/ja";
+import { koEditorial } from "./locales/ko";
+import { ptBREditorial } from "./locales/pt-BR";
+import { zhCNEditorial } from "./locales/zh-CN";
 
 export interface SourceLink {
   label: string;
@@ -53,7 +60,7 @@ const implementationSources: SourceLink[] = [
 ];
 
 export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
-  zh: {
+  "zh-TW": {
     title: "HandFuture 如何運作",
     summary:
       "從選擇照片、定位手部關節到產生反思卡，逐步了解資料如何在目前的瀏覽器工作階段中流動，以及這項工具刻意不做哪些推論。",
@@ -63,7 +70,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
         heading: "選擇照片",
         paragraphs: [
           "上傳器接受 JPEG、PNG 或 WebP，檔案上限為 10MB。請選擇只呈現一隻手的照片；程式會用瀏覽器的 FileReader 將你明確選取的檔案讀成暫時的資料網址，放入目前頁面的應用程式狀態。",
-          "HandFuture 沒有接收這張照片的上傳端點。照片不是帳號資料，也不會成為公開內容；選檔只是讓目前的瀏覽器頁面取得可供後續偵測的影像。仍請避免讓臉孔、證件或可辨識的居家環境入鏡。",
+          "HandFuture 沒有接收這張照片的上傳端點，照片不會上傳到 HandFuture。照片不是帳號資料，也不會成為公開內容；選檔只是讓目前的瀏覽器頁面取得可供後續偵測的影像。仍請避免讓臉孔、證件或可辨識的居家環境入鏡。",
         ],
       },
       {
@@ -77,7 +84,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
         heading: "選擇反思卡",
         paragraphs: [
           "偵測成功後，只有在你按下按鈕時，程式才會把正規化座標整理成固定的幾何簽章，再由簽章選出四個一般反思提示之一。相同的正規化座標會得到相同的鍵值，因此它不是每次都改變的隨機抽取。",
-          "這個步驟不推論性格、相容性、健康、職涯、財富或未來。卡片只是固定題庫中的開放式問題，設計目的在於文化娛樂與自我對話；幾何簽章只負責穩定選卡，並不是對一個人的衡量。",
+          "這個步驟不推論性格、相容性、健康、職涯、財富或未來。卡片只是固定題庫中的開放式問題，設計目的在於非科學的文化娛樂與自我對話；幾何簽章只負責穩定選卡，並不是對一個人的衡量。",
         ],
       },
       {
@@ -100,7 +107,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
         heading: "Choose a photo",
         paragraphs: [
           "The uploader accepts JPEG, PNG, or WebP files up to 10MB. Choose a photo that contains one hand. Browser FileReader reads the file you explicitly select into a temporary data URL and places it in the current page's application state.",
-          "There is no HandFuture upload endpoint for this photo. It does not become account data or public content; file selection only makes the image available to the current browser page for detection. You should still keep faces, documents, and identifying surroundings out of the frame.",
+          "There is no HandFuture upload endpoint for this photo. The photo is not uploaded to HandFuture, and it does not become account data or public content; file selection only makes the image available to the current browser page for detection. You should still keep faces, documents, and identifying surroundings out of the frame.",
         ],
       },
       {
@@ -114,7 +121,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
         heading: "Select a reflection card",
         paragraphs: [
           "After successful detection, and only after you press the button, the program turns normalized coordinates into a fixed geometry signature. That signature selects one of four general prompts. Identical normalized coordinates return the same key, so the result is not a fresh random draw on every click.",
-          "This step makes no inference about personality, compatibility, health, career, wealth, or future events. A card is an open-ended question from a fixed set for cultural entertainment and personal reflection. Geometry provides a stable selection key; it is not a measurement of a person.",
+          "This step makes no inference about personality, compatibility, health, career, wealth, or future events. A card is an open-ended question from a fixed set for non-scientific cultural entertainment and personal reflection. Geometry provides a stable selection key; it is not a measurement of a person.",
         ],
       },
       {
@@ -127,6 +134,12 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
     ],
     sources: implementationSources,
   },
+  "zh-CN": zhCNEditorial.howItWorks,
+  ja: jaEditorial.howItWorks,
+  ko: koEditorial.howItWorks,
+  es: esEditorial.howItWorks,
+  "pt-BR": ptBREditorial.howItWorks,
+  fr: frEditorial.howItWorks,
 };
 
 export const GUIDE_CONTENT: Record<
@@ -134,7 +147,7 @@ export const GUIDE_CONTENT: Record<
   Record<Locale, EditorialPage>
 > = {
   "/guides/palmistry-basics": {
-    zh: {
+    "zh-TW": {
       title: "手相文化入門：傳統名稱與歷史脈絡",
       summary:
         "認識手相作為占卜傳統的定義、不同時代與社群中的差異，以及如何在不把傳統說法當成事實判斷的前提下閱讀常見掌線名稱。",
@@ -228,9 +241,15 @@ export const GUIDE_CONTENT: Record<
       ],
       sources: palmistrySources,
     },
+    "zh-CN": zhCNEditorial.guides["/guides/palmistry-basics"],
+    ja: jaEditorial.guides["/guides/palmistry-basics"],
+    ko: koEditorial.guides["/guides/palmistry-basics"],
+    es: esEditorial.guides["/guides/palmistry-basics"],
+    "pt-BR": ptBREditorial.guides["/guides/palmistry-basics"],
+    fr: frEditorial.guides["/guides/palmistry-basics"],
   },
   "/guides/science-and-limitations": {
-    zh: {
+    "zh-TW": {
       title: "手相、科學與限制：安全看待解讀",
       summary:
         "分辨手部關節偵測與掌紋詮釋，認識一般敘述為何容易帶來貼身感，並建立不讓娛樂內容介入重大決策的清楚界線。",
@@ -304,7 +323,7 @@ export const GUIDE_CONTENT: Record<
         {
           heading: "Safe use",
           paragraphs: [
-            "Do not use a reflection card or palmistry result for medical or mental-health questions, legal rights, investments or debt, hiring and employment, promotion or dismissal, or major relationship choices. Entertainment content does not know a person's full circumstances and lacks the qualifications, data, and accountable process required for those decisions.",
+            "Do not use a reflection card or palmistry result for medical or mental-health questions, legal rights, financial choices such as investments or debt, hiring and employment, promotion or dismissal, relationship choices, or other consequential decisions. Entertainment content does not know a person's full circumstances and lacks the qualifications, data, and accountable process required for those decisions.",
             "For physical symptoms or a mental-health crisis, seek qualified health support. For legal or financial questions, use trustworthy official information and an appropriately qualified professional in your jurisdiction. Employment and relationship issues should rely on observable behavior, direct communication, and fair process rather than a hand photo.",
             "Do not photograph, classify, or share a result about someone who has not consented. Cultural labels should never be used to ridicule, exclude, or pressure another person. Safe entertainment is voluntary, easy to stop, free from fear tactics, and treats each card as a general question that can be ignored rather than an authoritative instruction.",
           ],
@@ -312,9 +331,15 @@ export const GUIDE_CONTENT: Record<
       ],
       sources: scienceSources,
     },
+    "zh-CN": zhCNEditorial.guides["/guides/science-and-limitations"],
+    ja: jaEditorial.guides["/guides/science-and-limitations"],
+    ko: koEditorial.guides["/guides/science-and-limitations"],
+    es: esEditorial.guides["/guides/science-and-limitations"],
+    "pt-BR": ptBREditorial.guides["/guides/science-and-limitations"],
+    fr: frEditorial.guides["/guides/science-and-limitations"],
   },
   "/guides/hand-photo-guide": {
-    zh: {
+    "zh-TW": {
       title: "手部照片指南：光線、取景與隱私",
       summary:
         "用均勻光線、完整單手與單純背景準備較容易偵測的照片，同時理解檔案限制、目前瀏覽器工作階段的處理方式與常見失敗狀態。",
@@ -410,5 +435,11 @@ export const GUIDE_CONTENT: Record<
       ],
       sources: implementationSources,
     },
+    "zh-CN": zhCNEditorial.guides["/guides/hand-photo-guide"],
+    ja: jaEditorial.guides["/guides/hand-photo-guide"],
+    ko: koEditorial.guides["/guides/hand-photo-guide"],
+    es: esEditorial.guides["/guides/hand-photo-guide"],
+    "pt-BR": ptBREditorial.guides["/guides/hand-photo-guide"],
+    fr: frEditorial.guides["/guides/hand-photo-guide"],
   },
 };

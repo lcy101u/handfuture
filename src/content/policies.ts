@@ -1,5 +1,11 @@
-import type { Locale } from "@/config/public-routes";
+import type { Locale } from "@/i18n/locales";
 import type { EditorialPage, SourceLink } from "./guides";
+import { esEditorial } from "./locales/es";
+import { frEditorial } from "./locales/fr";
+import { jaEditorial } from "./locales/ja";
+import { koEditorial } from "./locales/ko";
+import { ptBREditorial } from "./locales/pt-BR";
+import { zhCNEditorial } from "./locales/zh-CN";
 
 const privacySources: SourceLink[] = [
   {
@@ -17,7 +23,7 @@ const privacySources: SourceLink[] = [
 ];
 
 export const ABOUT_CONTENT: Record<Locale, EditorialPage> = {
-  zh: {
+  "zh-TW": {
     title: "關於 HandFuture",
     summary:
       "HandFuture 是探索手相文化的獨立網頁專案，以有來源的入門文章和透明的瀏覽器內互動功能，區分文化傳統、技術能力與科學證據。",
@@ -91,10 +97,16 @@ export const ABOUT_CONTENT: Record<Locale, EditorialPage> = {
     ],
     sources: [],
   },
+  "zh-CN": zhCNEditorial.about,
+  ja: jaEditorial.about,
+  ko: koEditorial.about,
+  es: esEditorial.about,
+  "pt-BR": ptBREditorial.about,
+  fr: frEditorial.about,
 };
 
 export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
-  zh: {
+  "zh-TW": {
     title: "隱私政策",
     summary:
       "本政策說明 HandFuture 網站目前如何處理手部影像、外部資源請求、瀏覽器儲存、網站傳遞、整體分析、Google 廣告與區域同意選項。政策生效及更新日期為 2026-07-26。",
@@ -248,10 +260,16 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
     ],
     sources: privacySources,
   },
+  "zh-CN": zhCNEditorial.privacy,
+  ja: jaEditorial.privacy,
+  ko: koEditorial.privacy,
+  es: esEditorial.privacy,
+  "pt-BR": ptBREditorial.privacy,
+  fr: frEditorial.privacy,
 };
 
 export const TERMS_CONTENT: Record<Locale, EditorialPage> = {
-  zh: {
+  "zh-TW": {
     title: "使用條款",
     summary:
       "本條款說明 HandFuture 的文化娛樂用途、訪客責任、內容權利、服務限制與適用法律。使用網站前請先閱讀這些界線。",
@@ -391,4 +409,10 @@ export const TERMS_CONTENT: Record<Locale, EditorialPage> = {
     ],
     sources: [{ label: "Privacy Policy", url: "/privacy" }],
   },
+  "zh-CN": zhCNEditorial.terms,
+  ja: jaEditorial.terms,
+  ko: koEditorial.terms,
+  es: esEditorial.terms,
+  "pt-BR": ptBREditorial.terms,
+  fr: frEditorial.terms,
 };

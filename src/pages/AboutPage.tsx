@@ -1,4 +1,5 @@
 import { ABOUT_CONTENT } from "@/content/policies";
+import { getTranslation } from "@/i18n/catalogs";
 import { useLanguageStore } from "@/store/language-store";
 import { EditorialArticle } from "./GuidePage";
 
@@ -10,7 +11,7 @@ export default function AboutPage() {
       content={ABOUT_CONTENT[locale]}
       locale={locale}
       relatedPaths={["/how-it-works", "/guides/palmistry-basics"]}
-      eyebrow={locale === "zh" ? "關於本站" : "About this site"}
+      eyebrow={getTranslation(locale, "editorial.eyebrow.about")}
     />
   );
 }

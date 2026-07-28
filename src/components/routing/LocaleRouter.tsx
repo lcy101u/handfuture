@@ -111,19 +111,12 @@ export default function LocaleRouter() {
 
   const localized = parseLocalizedPath(pathname);
   if (localized) {
-    const contentIsAvailable =
-      localized.publicPath === "/" || localized.locale === "en";
-
     return (
       <LocaleBoundary
         locale={localized.locale}
-        indexable={contentIsAvailable}
+        indexable
       >
-        {contentIsAvailable ? (
-          <PublicPage path={localized.publicPath} />
-        ) : (
-          <NotFoundPage />
-        )}
+        <PublicPage path={localized.publicPath} />
       </LocaleBoundary>
     );
   }

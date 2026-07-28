@@ -2,7 +2,19 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { isPublicPath } from "@/config/public-routes";
 import { buildStructuredData, getRouteMetadata } from "@/config/site-metadata";
+import { parseLocalizedPath, type Locale } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
+
+const OPEN_GRAPH_LOCALES = {
+  "zh-TW": "zh_TW",
+  "zh-CN": "zh_CN",
+  en: "en_US",
+  ja: "ja_JP",
+  ko: "ko_KR",
+  es: "es_ES",
+  "pt-BR": "pt_BR",
+  fr: "fr_FR",
+} satisfies Record<Locale, string>;
 
 function upsertMeta(attribute: "name" | "property", key: string, content: string) {
   const matches = Array.from(
@@ -43,12 +55,15 @@ export default function RouteMeta() {
   const currentLanguage = useLanguageStore((state) => state.currentLanguage);
 
   useEffect(() => {
-    const htmlLanguage = currentLanguage === "zh" ? "zh-TW" : "en";
-    document.documentElement.lang = htmlLanguage;
+    const localizedRoute = parseLocalizedPath(pathname);
+    const publicPath =
+      localizedRoute?.publicPath ?? (isPublicPath(pathname) ? pathname : null);
+    const routeLocale = localizedRoute?.locale ?? currentLanguage;
+    document.documentElement.lang = routeLocale;
 
-    if (!isPublicPath(pathname)) {
+    if (!publicPath) {
       document.title =
-        currentLanguage === "zh"
+        routeLocale.startsWith("zh")
           ? "找不到頁面｜HandFuture"
           : "Page not found | HandFuture";
       upsertMeta("name", "robots", "noindex, follow");
@@ -56,29 +71,29 @@ export default function RouteMeta() {
       return;
     }
 
-    const meta = getRouteMetadata(pathname, currentLanguage);
+    const meta = getRouteMetadata(publicPath, routeLocale);
     upsertMeta("name", "robots", "index, follow");
     document.title = meta.title;
     upsertMeta("name", "title", meta.title);
     upsertMeta("name", "description", meta.description);
-    upsertMeta("property", "og:type", pathname.startsWith("/guides/") ? "article" : "website");
+    upsertMeta("property", "og:type", publicPath.startsWith("/guides/") ? "article" : "website");
     upsertMeta("property", "og:title", meta.title);
     upsertMeta("property", "og:description", meta.description);
     upsertMeta("property", "og:url", meta.ogUrl);
     upsertMeta("property", "og:image", meta.ogImage);
     upsertMeta("property", "og:image:alt", meta.ogImageAlt);
-    upsertMeta("property", "og:locale", currentLanguage === "zh" ? "zh_TW" : "en_US");
+    upsertMeta("property", "og:locale", OPEN_GRAPH_LOCALES[routeLocale]);
     upsertMeta(
       "property",
       "og:locale:alternate",
-      currentLanguage === "zh" ? "en_US" : "zh_TW",
+      routeLocale === "en" ? "zh_TW" : "en_US",
     );
     upsertMeta("name", "twitter:title", meta.title);
     upsertMeta("name", "twitter:description", meta.description);
     upsertMeta("name", "twitter:image", meta.ogImage);
     upsertMeta("name", "twitter:image:alt", meta.ogImageAlt);
     upsertLink("canonical", meta.canonical);
-    upsertJsonLd("route-structured-data", buildStructuredData(pathname, currentLanguage));
+    upsertJsonLd("route-structured-data", buildStructuredData(publicPath, routeLocale));
   }, [currentLanguage, pathname]);
 
   return null;
