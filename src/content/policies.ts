@@ -141,6 +141,13 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
         ],
       },
       {
+        heading: "語言建議",
+        paragraphs: [
+          "為了在未含語言前綴的首頁提供語言建議，HandFuture 會依序查看已儲存的語言偏好與瀏覽器回報的語言清單。只有兩者都沒有支援的語言時，才會向同源的 Vercel 端點請求由連線 IP 推導的兩字母國家代碼；網址中已指定語言時不會進行這項判斷。",
+          "這項功能不會取得或儲存完整 IP 位址，也不會建立位置檔案。Vercel 可能依其主機服務與政策處理產生國家代碼所需的請求資料；端點只向 HandFuture 頁面回傳國家代碼或空值，不回傳城市或更精確的位置。",
+        ],
+      },
+      {
         heading: "Vercel 主機與分析",
         paragraphs: [
           "Vercel 提供網站主機託管。網站內容的傳遞記錄由主機供應商依其服務與政策處理；Vercel Web Analytics 提供整體使用分析。HandFuture 傳送的分析事件不包含手部照片。",
@@ -215,6 +222,13 @@ export const PRIVACY_CONTENT: Record<Locale, EditorialPage> = {
         paragraphs: [
           "The site writes only three local-storage keys, all of them interface preferences: palm-reading-storage stores disclaimer acceptance only; language-store stores the language preference; and palm-theme stores the theme preference. These keys do not store the hand photo, the decoded image element, or landmark coordinates.",
           "Visitors can inspect and clear everything stored locally for handfortune.com through their browser's site-data or privacy settings. Clearing it resets the related preferences, and the site may show the disclaimer again on a later visit.",
+        ],
+      },
+      {
+        heading: "Language suggestion",
+        paragraphs: [
+          "To suggest a language on the unprefixed home page, HandFuture checks the saved language preference first and then the browser languages. Only when neither identifies a supported language does the page request a two-letter, IP-derived country code from a same-origin Vercel endpoint; a URL that already names a locale bypasses this process.",
+          "This feature does not obtain or store the full IP address and does not create a location profile. Vercel may process request data needed to derive the country code under its hosting service and policies; the endpoint returns only the country code or null to the HandFuture page, never a city or more precise location.",
         ],
       },
       {

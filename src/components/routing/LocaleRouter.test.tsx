@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import SiteLayout from "@/components/layout/SiteLayout";
 import RouteMeta from "@/components/seo/RouteMeta";
 import { SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
@@ -40,6 +40,10 @@ function robotsContent() {
 }
 
 describe("LocaleRouter", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   beforeEach(() => {
     localStorage.clear();
     document.querySelector('meta[name="robots"]')?.remove();
@@ -185,6 +189,27 @@ describe("LocaleRouter", () => {
     renderAt("/");
 
     await waitFor(() => expect(window.location.pathname).toBe("/ko/"));
+    expect(useLanguageStore.getState().hasExplicitPreference).toBe(false);
+  });
+
+  it("uses the country endpoint only after browser languages have no match", async () => {
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      languages: ["de-DE"],
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(JSON.stringify({ country: "BR" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
+
+    renderAt("/");
+
+    await waitFor(() => expect(window.location.pathname).toBe("/pt-BR/"));
     expect(useLanguageStore.getState().hasExplicitPreference).toBe(false);
   });
 

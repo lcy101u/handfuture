@@ -1,13 +1,16 @@
-import { lazy, type ReactNode, useEffect, useLayoutEffect } from "react";
+import { lazy, type ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { isPublicPath, type GuidePath, type PublicPath } from "@/config/public-routes";
 import {
   SUPPORTED_LOCALES,
   buildLocalizedPath,
-  localeFromBrowserLanguages,
   parseLocalizedPath,
   type Locale,
 } from "@/i18n/locales";
+import {
+  fetchCountryCode,
+  resolveInitialLocale,
+} from "@/i18n/locale-detection";
 import { useLanguageStore } from "@/store/language-store";
 import {
   finishManualLocaleChange,
@@ -89,8 +92,25 @@ function Gateway() {
   const preferredLanguage = useLanguageStore(
     (state) => state.preferredLanguage,
   );
-  const locale =
-    preferredLanguage ?? localeFromBrowserLanguages(navigator.languages) ?? "en";
+  const [locale, setLocale] = useState<Locale | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    void resolveInitialLocale({
+      explicitLocale: preferredLanguage,
+      browserLanguages: navigator.languages,
+      fetchCountry: fetchCountryCode,
+    }).then((resolvedLocale) => {
+      if (active) setLocale(resolvedLocale);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [preferredLanguage]);
+
+  if (!locale) return null;
 
   return <Navigate replace to={buildLocalizedPath(locale, "/")} />;
 }

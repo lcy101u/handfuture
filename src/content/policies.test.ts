@@ -14,6 +14,74 @@ const requiredPrivacyLinks = [
   "https://support.google.com/adsense/answer/13554116",
 ];
 
+const localeSuggestionDisclosure: Record<
+  Locale,
+  {
+    headings: string[];
+    browser: RegExp;
+    saved: RegExp;
+    country: RegExp;
+    minimization: RegExp;
+  }
+> = {
+  "zh-TW": {
+    headings: ["適用範圍與日期", "手部影像", "外部資源請求", "瀏覽器儲存", "語言建議", "Vercel 主機與分析", "Google 廣告", "區域同意", "Cloudflare DNS", "選擇與權利", "聯絡方式"],
+    browser: /瀏覽器.*語言/,
+    saved: /儲存.*語言偏好/,
+    country: /Vercel.*IP.*國家代碼/,
+    minimization: /不會.*(?:儲存.*完整.*IP|完整.*IP.*(?:儲存|保存)).*不會.*位置.*檔案/,
+  },
+  "zh-CN": {
+    headings: ["适用范围与日期", "手部图像", "外部资源请求", "浏览器存储", "语言建议", "Vercel 托管与分析", "Google 广告", "区域同意", "Cloudflare DNS", "选择与权利", "联系方式"],
+    browser: /浏览器.*语言/,
+    saved: /保存.*语言偏好/,
+    country: /Vercel.*IP.*国家代码/,
+    minimization: /不会.*(?:存储.*完整.*IP|完整.*IP.*(?:存储|保存)).*不会.*位置.*档案/,
+  },
+  en: {
+    headings: ["Scope and date", "Hand images", "External resource requests", "Browser storage", "Language suggestion", "Vercel hosting and analytics", "Google advertising", "Regional consent", "Cloudflare DNS", "Choices and rights", "Contact"],
+    browser: /browser languages/i,
+    saved: /saved language preference/i,
+    country: /(?:Vercel.*IP-derived country code|IP-derived country code.*Vercel)/i,
+    minimization: /does not.*store.*full IP.*(?:create|build).*location profile/i,
+  },
+  ja: {
+    headings: ["適用範囲と日付", "手の画像", "外部リソースへの要求", "ブラウザー保存", "言語の提案", "Vercel のホスティングと分析", "Google 広告", "地域別の同意", "Cloudflare DNS", "選択肢と権利", "連絡先"],
+    browser: /ブラウザー.*言語/,
+    saved: /保存済み.*言語/,
+    country: /Vercel.*IP.*国コード/,
+    minimization: /完全な IP.*保存.*位置プロファイル.*作成/,
+  },
+  ko: {
+    headings: ["범위와 날짜", "손 이미지", "외부 리소스 요청", "브라우저 저장", "언어 제안", "Vercel 호스팅과 분석", "Google 광고", "지역별 동의", "Cloudflare DNS", "선택과 권리", "연락처"],
+    browser: /브라우저.*언어/,
+    saved: /저장.*언어/,
+    country: /Vercel.*IP.*국가 코드/,
+    minimization: /전체 IP.*저장.*위치 프로필.*만들/,
+  },
+  es: {
+    headings: ["Ámbito y fecha", "Imágenes de manos", "Solicitudes de recursos externos", "Almacenamiento del navegador", "Sugerencia de idioma", "Alojamiento y análisis de Vercel", "Publicidad de Google", "Consentimiento regional", "DNS de Cloudflare", "Opciones y derechos", "Contacto"],
+    browser: /idiomas del navegador/i,
+    saved: /preferencia de idioma guardada/i,
+    country: /Vercel.*código de país.*derivado.*IP/i,
+    minimization: /no.*guarda.*IP completa.*ni crea.*perfil de ubicación/i,
+  },
+  "pt-BR": {
+    headings: ["Escopo e data", "Imagens de mãos", "Solicitações de recursos externos", "Armazenamento do navegador", "Sugestão de idioma", "Hospedagem e análises da Vercel", "Publicidade do Google", "Consentimento regional", "DNS da Cloudflare", "Escolhas e direitos", "Contato"],
+    browser: /idiomas do navegador/i,
+    saved: /preferência de idioma salva/i,
+    country: /Vercel.*código de país.*derivado.*IP/i,
+    minimization: /não.*armazena.*IP completo.*nem cria.*perfil de localização/i,
+  },
+  fr: {
+    headings: ["Champ d’application et date", "Images de mains", "Requêtes de ressources externes", "Stockage du navigateur", "Suggestion de langue", "Hébergement et analyses Vercel", "Publicité Google", "Consentement régional", "DNS Cloudflare", "Choix et droits", "Contact"],
+    browser: /langues du navigateur/i,
+    saved: /préférence linguistique enregistrée/i,
+    country: /Vercel.*code pays.*dérivé.*IP/i,
+    minimization: /ne.*(?:stocke|ni ne stocke).*IP complète.*(?:ne crée|ni ne crée).*profil de localisation/i,
+  },
+};
+
 // Matches any English or Chinese phrasing that attributes ownership of
 // jsDelivr / cdn.jsdelivr.net to Google. jsDelivr is an independent CDN;
 // @mediapipe/hands merely publishes its npm package assets there.
@@ -79,6 +147,24 @@ describe("ABOUT_CONTENT", () => {
 });
 
 describe("PRIVACY_CONTENT", () => {
+  it.each(SUPPORTED_LOCALES)(
+    "discloses privacy-minimized locale suggestion without replacing sections in %s",
+    (locale) => {
+      const page = PRIVACY_CONTENT[locale];
+      const expectation = localeSuggestionDisclosure[locale];
+      const disclosure = page.sections[4]?.paragraphs.join(" ") ?? "";
+
+      expect(page.sections.map(({ heading }) => heading)).toEqual(
+        expectation.headings,
+      );
+      expect(disclosure).toMatch(expectation.browser);
+      expect(disclosure).toMatch(expectation.saved);
+      expect(disclosure).toMatch(expectation.country);
+      expect(disclosure).toMatch(expectation.minimization);
+      expect(page.sources.map(({ url }) => url)).toEqual(requiredPrivacyLinks);
+    },
+  );
+
   it.each(establishedLocales)("lists every observed browser-storage key and its purpose in %s", (locale) => {
     const text = pageText(PRIVACY_CONTENT[locale]);
 

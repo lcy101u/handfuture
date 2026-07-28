@@ -166,7 +166,7 @@ describe("publisher and crawl files", () => {
     expect(html).not.toContain("data-ad-slot");
   });
 
-  it("redirects apex, rewrites each non-root public route, and applies safe headers", () => {
+  it("redirects apex and applies safe headers", () => {
     const config = JSON.parse(read("vercel.json"));
     expect(config.redirects).toContainEqual({
       source: "/:path*",
@@ -174,7 +174,6 @@ describe("publisher and crawl files", () => {
       destination: "https://www.handfortune.com/:path*",
       permanent: true,
     });
-    expect(config.rewrites).toEqual(PUBLIC_PATHS.filter((route) => route !== "/").map((source) => ({ source, destination: "/index.html" })));
     const allHeaders = config.headers.flatMap((entry: { headers: { key: string; value: string }[] }) => entry.headers);
     expect(allHeaders).toEqual(expect.arrayContaining([
       { key: "X-Content-Type-Options", value: "nosniff" },
@@ -183,5 +182,38 @@ describe("publisher and crawl files", () => {
       { key: "X-Frame-Options", value: "SAMEORIGIN" },
     ]));
     expect(fs.existsSync(path.join(root, "public/_headers"))).toBe(false);
+  });
+
+  it("rewrites every supported SPA route without swallowing excluded or unknown paths", () => {
+    const config = JSON.parse(read("vercel.json"));
+    const supportedSpaPaths = [
+      ...PUBLIC_PATHS.filter((route) => route !== "/"),
+      ...SUPPORTED_LOCALES.flatMap((locale) =>
+        PUBLIC_PATHS.map((route) => buildLocalizedPath(locale, route)),
+      ),
+    ];
+    expect(config.rewrites).toEqual(
+      supportedSpaPaths.map((source) => ({ source, destination: "/index.html" })),
+    );
+    expect(new Set(supportedSpaPaths).size).toBe(71);
+    for (const excluded of [
+      "/api/locale",
+      "/ads.txt",
+      "/robots.txt",
+      "/sitemap.xml",
+      "/assets/index.js",
+      "/en/not-a-public-page",
+      "/not-a-public-page",
+    ]) {
+      expect(config.rewrites).not.toContainEqual({
+        source: excluded,
+        destination: "/index.html",
+      });
+    }
+    expect(config.rewrites).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ source: expect.stringMatching(/[:*()]|\.\*/) }),
+      ]),
+    );
   });
 });
