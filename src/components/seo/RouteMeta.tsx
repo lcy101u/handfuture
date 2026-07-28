@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { isPublicPath } from "@/config/public-routes";
 import { buildStructuredData, getRouteMetadata } from "@/config/site-metadata";
-import { parseLocalizedPath, type Locale } from "@/i18n/locales";
+import { getTranslation } from "@/i18n/catalogs";
+import { SUPPORTED_LOCALES, parseLocalizedPath, type Locale } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
 const OPEN_GRAPH_LOCALES = {
@@ -15,6 +16,13 @@ const OPEN_GRAPH_LOCALES = {
   "pt-BR": "pt_BR",
   fr: "fr_FR",
 } satisfies Record<Locale, string>;
+
+function exactLocalePrefix(pathname: string): Locale | null {
+  const prefix = pathname.split("/")[1];
+  return (SUPPORTED_LOCALES as readonly string[]).includes(prefix)
+    ? (prefix as Locale)
+    : null;
+}
 
 function upsertMeta(attribute: "name" | "property", key: string, content: string) {
   const matches = Array.from(
@@ -58,14 +66,12 @@ export default function RouteMeta() {
     const localizedRoute = parseLocalizedPath(pathname);
     const publicPath =
       localizedRoute?.publicPath ?? (isPublicPath(pathname) ? pathname : null);
-    const routeLocale = localizedRoute?.locale ?? currentLanguage;
+    const routeLocale =
+      localizedRoute?.locale ?? exactLocalePrefix(pathname) ?? currentLanguage;
     document.documentElement.lang = routeLocale;
 
     if (!publicPath) {
-      document.title =
-        routeLocale.startsWith("zh")
-          ? "找不到頁面｜HandFuture"
-          : "Page not found | HandFuture";
+      document.title = getTranslation(routeLocale, "notFound.documentTitle");
       upsertMeta("name", "robots", "noindex, follow");
       document.querySelectorAll("#route-structured-data").forEach((script) => script.remove());
       return;

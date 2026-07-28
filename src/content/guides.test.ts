@@ -65,7 +65,7 @@ const nativeText: Record<Exclude<Locale, "en">, RegExp> = {
   ko: /문화적 오락과 자기 성찰/,
   es: /entretenimiento cultural y la autorreflexión/i,
   "pt-BR": /entretenimento cultural e a autorreflexão/i,
-  fr: /divertissement culturel et l’autoréflexion/i,
+  fr: /destinée à l’exploration culturelle et à l’autoréflexion dans un cadre de divertissement culturel non scientifique/i,
 };
 
 describe("eight-locale guide editorial contract", () => {

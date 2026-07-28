@@ -184,6 +184,34 @@ describe("RouteMeta", () => {
 
   it.each([
     {
+      path: "/ja/missing",
+      title: "ページが見つかりません｜HandFuture",
+      lang: "ja",
+    },
+    {
+      path: "/fr/missing",
+      title: "Page introuvable | HandFuture",
+      lang: "fr",
+    },
+  ] as const)(
+    "uses the localized 404 document title for $path",
+    async ({ path, title, lang }) => {
+      useLanguageStore.setState({ currentLanguage: "en" });
+
+      renderMetadata(path);
+
+      await waitFor(() => expect(document.title).toBe(title));
+      expect(document.documentElement.lang).toBe(lang);
+      expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+        "content",
+        "noindex, follow",
+      );
+      expect(document.querySelector("#route-structured-data")).not.toBeInTheDocument();
+    },
+  );
+
+  it.each([
+    {
       path: "/about",
       Page: AboutPage,
       title: "關於 HandFuture",

@@ -46,7 +46,7 @@ export const frEditorial: LocalizedEditorialBundle = {
         heading: "Choisir une carte de réflexion",
         paragraphs: [
           "Après une détection réussie, et seulement lorsque vous appuyez sur le bouton, le programme transforme les coordonnées normalisées en une signature géométrique fixe. Celle-ci choisit l’une de quatre questions générales. Des coordonnées identiques donnent la même clé : il ne s’agit pas d’un nouveau tirage aléatoire à chaque clic.",
-          "Cette étape n’infère ni personnalité, ni compatibilité, ni santé, ni carrière, ni fortune, ni avenir. La carte est une question ouverte d’un ensemble fixe, destinée au divertissement culturel et l’autoréflexion non scientifique. La géométrie fournit seulement une clé de sélection stable ; elle ne mesure personne.",
+          "Cette étape n’infère ni personnalité, ni compatibilité, ni santé, ni carrière, ni fortune, ni avenir. La carte est une question ouverte d’un ensemble fixe, destinée à l’exploration culturelle et à l’autoréflexion dans un cadre de divertissement culturel non scientifique. La géométrie fournit seulement une clé de sélection stable ; elle ne mesure personne.",
         ],
       },
       {
