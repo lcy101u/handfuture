@@ -1,10 +1,13 @@
 // @vitest-environment node
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
-import { ADS_TXT_RECORD, PUBLISHER_ID, SITE_ORIGIN } from "@/config/site-metadata";
+import { ADS_TXT_RECORD, LAST_UPDATED, PUBLISHER_ID, SITE_ORIGIN } from "@/config/site-metadata";
 import { PUBLIC_PATHS } from "@/config/public-routes";
+import { buildLocalizedPath, SUPPORTED_LOCALES } from "@/i18n/locales";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
@@ -67,7 +70,11 @@ describe("publisher and crawl files", () => {
   });
 
   it("copies every public asset byte-for-byte into the built site", () => {
-    for (const relativePath of collectRelativeFiles(path.join(root, "public"))) {
+    const staticAssets = collectRelativeFiles(path.join(root, "public")).filter(
+      (relativePath) => relativePath !== "sitemap.xml",
+    );
+
+    for (const relativePath of staticAssets) {
       expect(
         fs.readFileSync(path.join(root, "dist", relativePath)),
         relativePath,
@@ -94,11 +101,53 @@ describe("publisher and crawl files", () => {
     expect(read("public/ads.txt")).toBe(`${ADS_TXT_RECORD}\n`);
   });
 
-  it("lists exactly the public canonical URLs", () => {
+  it("regenerates exactly the 64 localized canonical URLs in deterministic order", () => {
+    const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "handfuture-sitemap-"));
+    const generatedPath = path.join(temporaryDirectory, "sitemap.xml");
+    const generation = spawnSync("npm", ["run", "generate:sitemap"], {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, SITEMAP_OUTPUT: generatedPath },
+    });
+
+    try {
+      expect(generation.status, generation.stderr || generation.stdout).toBe(0);
+      expect(fs.readFileSync(generatedPath, "utf8")).toBe(read("public/sitemap.xml"));
+    } finally {
+      fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
+
     const sitemap = read("public/sitemap.xml");
     const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-    expect(locations).toEqual(PUBLIC_PATHS.map((route) => `${SITE_ORIGIN}${route === "/" ? "/" : route}`));
+    expect(locations).toEqual(
+      SUPPORTED_LOCALES.flatMap((locale) =>
+        PUBLIC_PATHS.map((route) => `${SITE_ORIGIN}${buildLocalizedPath(locale, route)}`),
+      ),
+    );
+    expect(locations).toHaveLength(64);
+    expect(new Set(locations).size).toBe(64);
+    expect(locations.every((location) => !location.includes("?") && !location.includes("#"))).toBe(true);
+    expect(sitemap.match(new RegExp(`<lastmod>${LAST_UPDATED}<\\/lastmod>`, "g"))).toHaveLength(64);
     expect(sitemap).not.toContain("/batch");
+  });
+
+  it("escapes dynamic XML text emitted by the sitemap renderer", () => {
+    const moduleUrl = pathToFileURL(path.join(root, "scripts/generate-sitemap.mjs")).href;
+    const probe = [
+      `import { renderSitemap } from ${JSON.stringify(moduleUrl)};`,
+      `process.stdout.write(renderSitemap([${JSON.stringify('https://example.test/a?x=1&label=<Palm "Guide">')}], ${JSON.stringify("2026-07-26&later")}));`,
+    ].join("\n");
+    const result = spawnSync(process.execPath, ["--input-type=module", "--eval", probe], {
+      cwd: root,
+      encoding: "utf8",
+    });
+
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain(
+      "<loc>https://example.test/a?x=1&amp;label=&lt;Palm &quot;Guide&quot;&gt;</loc>",
+    );
+    expect(result.stdout).toContain("<lastmod>2026-07-26&amp;later</lastmod>");
+    expect(result.stdout).not.toContain("label=<Palm");
   });
 
   it("allows search and ad crawlers and advertises the sitemap", () => {

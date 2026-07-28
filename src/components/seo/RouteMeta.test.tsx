@@ -15,6 +15,7 @@ function MetadataNavigation() {
     <>
       <RouteMeta />
       <Link to="/guides/science-and-limitations">Science guide</Link>
+      <Link to="/fr/privacy">French privacy</Link>
       <Link to="/missing">Missing</Link>
       <Link to="/">Home</Link>
     </>
@@ -36,7 +37,12 @@ describe("RouteMeta", () => {
     document.head.innerHTML = `${originalHead}
       <meta name="description" content="duplicate description">
       <meta property="og:locale:alternate" content="en_US">
+      <meta property="og:locale:alternate" content="en_US">
+      <meta property="og:locale:alternate" content="de_DE">
       <link rel="canonical" href="https://duplicate.example/">
+      <link rel="alternate" hreflang="fr" href="https://duplicate.example/fr">
+      <link rel="alternate" hreflang="fr" href="https://duplicate.example/fr-again">
+      <link rel="alternate" hreflang="de" href="https://duplicate.example/de">
     `;
     document.documentElement.lang = "en";
   });
@@ -63,11 +69,11 @@ describe("RouteMeta", () => {
     expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
       "href",
-      "https://www.handfortune.com/guides/science-and-limitations",
+      "https://www.handfortune.com/zh-TW/guides/science-and-limitations",
     );
     expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
       "content",
-      "https://www.handfortune.com/guides/science-and-limitations",
+      "https://www.handfortune.com/zh-TW/guides/science-and-limitations",
     );
     expect(document.querySelectorAll("#route-structured-data")).toHaveLength(1);
     expect(
@@ -75,7 +81,9 @@ describe("RouteMeta", () => {
     ).toMatchObject({
       "@type": "Article",
       dateModified: "2026-07-26",
+      inLanguage: "zh-TW",
       publisher: { name: "HandFuture" },
+      url: "https://www.handfortune.com/zh-TW/guides/science-and-limitations",
     });
   });
 
@@ -88,8 +96,13 @@ describe("RouteMeta", () => {
       "zh_TW",
     );
     expect(
-      document.querySelector('meta[property="og:locale:alternate"]'),
-    ).toHaveAttribute("content", "en_US");
+      Array.from(
+        document.querySelectorAll<HTMLMetaElement>(
+          'meta[property="og:locale:alternate"]',
+        ),
+        (meta) => meta.content,
+      ),
+    ).toEqual(["zh_CN", "en_US", "ja_JP", "ko_KR", "es_ES", "pt_BR", "fr_FR"]);
     act(() => useLanguageStore.getState().setLanguage("en"));
 
     await waitFor(() => {
@@ -102,8 +115,17 @@ describe("RouteMeta", () => {
       "en_US",
     );
     expect(
-      document.querySelector('meta[property="og:locale:alternate"]'),
-    ).toHaveAttribute("content", "zh_TW");
+      Array.from(
+        document.querySelectorAll<HTMLMetaElement>(
+          'meta[property="og:locale:alternate"]',
+        ),
+        (meta) => meta.content,
+      ),
+    ).toEqual(["zh_TW", "zh_CN", "ja_JP", "ko_KR", "es_ES", "pt_BR", "fr_FR"]);
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://www.handfortune.com/en/guides/science-and-limitations",
+    );
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       "content",
       "Understand the difference between hand-landmark detection and palm reading, how the Barnum effect shapes impressions, and why palmistry should not guide medical, financial, or life decisions.",
@@ -114,7 +136,6 @@ describe("RouteMeta", () => {
       'meta[property="og:description"]',
       'meta[property="og:url"]',
       'meta[property="og:locale"]',
-      'meta[property="og:locale:alternate"]',
       'meta[name="twitter:title"]',
       'meta[name="twitter:description"]',
       'link[rel="canonical"]',
@@ -122,6 +143,122 @@ describe("RouteMeta", () => {
     ]) {
       expect(document.querySelectorAll(selector), selector).toHaveLength(1);
     }
+    expect(document.querySelectorAll('meta[property="og:locale:alternate"]')).toHaveLength(7);
+  });
+
+  it("publishes reciprocal locale alternates plus the matching x-default gateway", async () => {
+    renderMetadata("/ja/about");
+
+    await waitFor(() => expect(document.documentElement.lang).toBe("ja"));
+
+    const alternates = Array.from(
+      document.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]'),
+      (link) => [link.hreflang, link.href],
+    );
+    expect(alternates).toEqual([
+      ["zh-TW", "https://www.handfortune.com/zh-TW/about"],
+      ["zh-CN", "https://www.handfortune.com/zh-CN/about"],
+      ["en", "https://www.handfortune.com/en/about"],
+      ["ja", "https://www.handfortune.com/ja/about"],
+      ["ko", "https://www.handfortune.com/ko/about"],
+      ["es", "https://www.handfortune.com/es/about"],
+      ["pt-BR", "https://www.handfortune.com/pt-BR/about"],
+      ["fr", "https://www.handfortune.com/fr/about"],
+      ["x-default", "https://www.handfortune.com/about"],
+    ]);
+    expect(new Set(alternates.map(([hreflang]) => hreflang)).size).toBe(9);
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://www.handfortune.com/ja/about",
+    );
+    expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+      "content",
+      "https://www.handfortune.com/ja/about",
+    );
+    expect(
+      JSON.parse(document.querySelector("#route-structured-data")?.textContent ?? "{}"),
+    ).toMatchObject({
+      inLanguage: "ja",
+      url: "https://www.handfortune.com/ja/about",
+    });
+  });
+
+  it("replaces alternate destinations on navigation without leaving stale identities", async () => {
+    renderMetadata("/ja/about");
+
+    await waitFor(() =>
+      expect(document.querySelector('link[hreflang="fr"]')).toHaveAttribute(
+        "href",
+        "https://www.handfortune.com/fr/about",
+      ),
+    );
+    fireEvent.click(screen.getByRole("link", { name: "French privacy" }));
+
+    await waitFor(() =>
+      expect(document.querySelector('link[hreflang="fr"]')).toHaveAttribute(
+        "href",
+        "https://www.handfortune.com/fr/privacy",
+      ),
+    );
+    const alternates = Array.from(
+      document.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]'),
+    );
+    expect(alternates).toHaveLength(9);
+    expect(alternates.filter((link) => link.hreflang === "fr")).toHaveLength(1);
+    expect(alternates.some((link) => link.href.endsWith("/about"))).toBe(false);
+    expect(document.querySelector('link[hreflang="x-default"]')).toHaveAttribute(
+      "href",
+      "https://www.handfortune.com/privacy",
+    );
+  });
+
+  it("uses the unprefixed root only as the localized home x-default", async () => {
+    renderMetadata("/pt-BR/");
+
+    await waitFor(() => expect(document.documentElement.lang).toBe("pt-BR"));
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://www.handfortune.com/pt-BR/",
+    );
+    expect(document.querySelector('link[hreflang="x-default"]')).toHaveAttribute(
+      "href",
+      "https://www.handfortune.com/",
+    );
+  });
+
+  it.each([
+    {
+      path: "/zh-CN/privacy",
+      primary: "zh_CN",
+      alternates: ["zh_TW", "en_US", "ja_JP", "ko_KR", "es_ES", "pt_BR", "fr_FR"],
+    },
+    {
+      path: "/ja/privacy",
+      primary: "ja_JP",
+      alternates: ["zh_TW", "zh_CN", "en_US", "ko_KR", "es_ES", "pt_BR", "fr_FR"],
+    },
+    {
+      path: "/pt-BR/privacy",
+      primary: "pt_BR",
+      alternates: ["zh_TW", "zh_CN", "en_US", "ja_JP", "ko_KR", "es_ES", "fr_FR"],
+    },
+  ])("publishes valid Open Graph locale arrays for $path", async ({ path, primary, alternates }) => {
+    renderMetadata(path);
+
+    await waitFor(() =>
+      expect(document.querySelector('meta[property="og:locale"]')).toHaveAttribute(
+        "content",
+        primary,
+      ),
+    );
+    expect(
+      Array.from(
+        document.querySelectorAll<HTMLMetaElement>(
+          'meta[property="og:locale:alternate"]',
+        ),
+        (meta) => meta.content,
+      ),
+    ).toEqual(alternates);
   });
 
   it("noindexes unknown paths without home schema and restores valid state", async () => {
@@ -132,6 +269,10 @@ describe("RouteMeta", () => {
       "content",
       "noindex, follow",
     );
+    expect(document.querySelector('link[rel="canonical"]')).not.toBeInTheDocument();
+    expect(
+      document.querySelectorAll('link[rel="alternate"][hreflang]'),
+    ).toHaveLength(0);
     expect(document.querySelector("#route-structured-data")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("link", { name: "Home" }));
@@ -268,11 +409,16 @@ describe("RouteMeta", () => {
       "content",
       "fr_FR",
     );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://www.handfortune.com/fr/privacy",
+    );
     expect(
       JSON.parse(document.querySelector("#route-structured-data")?.textContent ?? "{}"),
     ).toMatchObject({
       "@type": "WebPage",
       inLanguage: "fr",
+      url: "https://www.handfortune.com/fr/privacy",
     });
   });
 });

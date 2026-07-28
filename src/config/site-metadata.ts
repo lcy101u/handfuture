@@ -1,4 +1,5 @@
 import type { Locale, PublicPath } from "./public-routes";
+import { buildLocalizedPath } from "../i18n/locales";
 
 export const SITE_ORIGIN = "https://www.handfortune.com";
 export const SITE_NAME = "HandFuture";
@@ -103,13 +104,21 @@ const metadata = {
 
 export function getRouteMetadata(path: PublicPath, locale: Locale): RouteMetadata {
   const localized = metadata[path][locale];
-  const canonical = `${SITE_ORIGIN}${path === "/" ? "/" : path}`;
+  const canonical = buildLocalizedPublicUrl(path, locale);
   return {
     ...localized,
     canonical,
     ogUrl: canonical,
     ogImage: SOCIAL_IMAGE_URL,
   };
+}
+
+export function buildLocalizedPublicUrl(path: PublicPath, locale: Locale): string {
+  return `${SITE_ORIGIN}${buildLocalizedPath(locale, path)}`;
+}
+
+export function buildPublicGatewayUrl(path: PublicPath): string {
+  return `${SITE_ORIGIN}${path === "/" ? "/" : path}`;
 }
 
 export function buildStructuredData(path: PublicPath, locale: Locale): Record<string, unknown> {

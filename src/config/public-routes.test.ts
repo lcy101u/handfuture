@@ -25,7 +25,7 @@ describe("public route contract", () => {
     expect(new Set(records.map(({ title }) => title)).size).toBe(records.length);
     for (const [index, record] of records.entries()) {
       const path = PUBLIC_PATHS[index];
-      const suffix = path === "/" ? "/" : path;
+      const suffix = `/${locale}${path === "/" ? "/" : path}`;
       expect(record.description.length).toBeGreaterThanOrEqual(50);
       expect(record.canonical).toBe(`${SITE_ORIGIN}${suffix}`);
       expect(record.ogUrl).toBe(record.canonical);
@@ -43,8 +43,13 @@ describe("public route contract", () => {
     for (const { locale, path, meta } of records) {
       expect(meta.title.trim()).not.toBe("");
       expect(meta.description.trim()).not.toBe("");
-      expect(meta.canonical).toBe(`${SITE_ORIGIN}${path === "/" ? "/" : path}`);
-      expect(buildStructuredData(path, locale).inLanguage).toBe(locale);
+      expect(meta.canonical).toBe(
+        `${SITE_ORIGIN}/${locale}${path === "/" ? "/" : path}`,
+      );
+      expect(buildStructuredData(path, locale)).toMatchObject({
+        inLanguage: locale,
+        url: meta.canonical,
+      });
     }
   });
 

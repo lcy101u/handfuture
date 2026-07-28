@@ -1,7 +1,12 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { isPublicPath } from "@/config/public-routes";
-import { buildStructuredData, getRouteMetadata } from "@/config/site-metadata";
+import {
+  buildLocalizedPublicUrl,
+  buildPublicGatewayUrl,
+  buildStructuredData,
+  getRouteMetadata,
+} from "@/config/site-metadata";
 import { getTranslation } from "@/i18n/catalogs";
 import { SUPPORTED_LOCALES, parseLocalizedPath, type Locale } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
@@ -46,6 +51,48 @@ function upsertLink(rel: string, href: string) {
   matches.forEach((duplicate) => duplicate.remove());
 }
 
+function upsertMetaValues(attribute: "name" | "property", key: string, contents: string[]) {
+  const matches = Array.from(
+    document.head.querySelectorAll<HTMLMetaElement>(`meta[${attribute}="${key}"]`),
+  );
+
+  contents.forEach((content, index) => {
+    const meta = matches[index] ?? document.createElement("meta");
+    meta.setAttribute(attribute, key);
+    meta.content = content;
+    document.head.append(meta);
+  });
+  matches.slice(contents.length).forEach((stale) => stale.remove());
+}
+
+function upsertAlternateLinks(publicPath: Parameters<typeof buildLocalizedPublicUrl>[0]) {
+  const desired = [
+    ...SUPPORTED_LOCALES.map((locale) => ({
+      hreflang: locale,
+      href: buildLocalizedPublicUrl(publicPath, locale),
+    })),
+    { hreflang: "x-default", href: buildPublicGatewayUrl(publicPath) },
+  ];
+  const desiredLanguages = new Set(desired.map(({ hreflang }) => hreflang));
+  const existing = Array.from(
+    document.head.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]'),
+  );
+
+  existing
+    .filter((link) => !desiredLanguages.has(link.hreflang))
+    .forEach((stale) => stale.remove());
+
+  desired.forEach(({ hreflang, href }) => {
+    const matches = existing.filter((link) => link.hreflang === hreflang);
+    const link = matches.shift() ?? document.createElement("link");
+    link.rel = "alternate";
+    link.hreflang = hreflang;
+    link.href = href;
+    document.head.append(link);
+    matches.forEach((duplicate) => duplicate.remove());
+  });
+}
+
 function upsertJsonLd(id: string, data: Record<string, unknown>) {
   const matches = Array.from(
     document.head.querySelectorAll<HTMLScriptElement>(`script#${id}`),
@@ -73,6 +120,10 @@ export default function RouteMeta() {
     if (!publicPath) {
       document.title = getTranslation(routeLocale, "notFound.documentTitle");
       upsertMeta("name", "robots", "noindex, follow");
+      document
+        .querySelectorAll('link[rel="canonical"], link[rel="alternate"][hreflang]')
+        .forEach((link) => link.remove());
+      upsertMetaValues("property", "og:locale:alternate", []);
       document.querySelectorAll("#route-structured-data").forEach((script) => script.remove());
       return;
     }
@@ -89,16 +140,19 @@ export default function RouteMeta() {
     upsertMeta("property", "og:image", meta.ogImage);
     upsertMeta("property", "og:image:alt", meta.ogImageAlt);
     upsertMeta("property", "og:locale", OPEN_GRAPH_LOCALES[routeLocale]);
-    upsertMeta(
+    upsertMetaValues(
       "property",
       "og:locale:alternate",
-      routeLocale === "en" ? "zh_TW" : "en_US",
+      SUPPORTED_LOCALES.filter((locale) => locale !== routeLocale).map(
+        (locale) => OPEN_GRAPH_LOCALES[locale],
+      ),
     );
     upsertMeta("name", "twitter:title", meta.title);
     upsertMeta("name", "twitter:description", meta.description);
     upsertMeta("name", "twitter:image", meta.ogImage);
     upsertMeta("name", "twitter:image:alt", meta.ogImageAlt);
     upsertLink("canonical", meta.canonical);
+    upsertAlternateLinks(publicPath);
     upsertJsonLd("route-structured-data", buildStructuredData(publicPath, routeLocale));
   }, [currentLanguage, pathname]);
 
