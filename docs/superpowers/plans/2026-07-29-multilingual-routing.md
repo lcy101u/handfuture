@@ -200,13 +200,23 @@ git commit -m "feat: route public pages by locale"
 - Modify: `src/content/guides.ts`
 - Modify: `src/content/policies.ts`
 - Modify: `src/config/site-metadata.ts`
+- Modify: `src/config/public-routes.ts`
+- Modify: `src/components/routing/LocaleRouter.tsx`
+- Modify: `src/components/routing/RouteErrorBoundary.tsx`
+- Modify: `src/pages/GuidePage.tsx`
+- Modify: `src/pages/AboutPage.tsx`
+- Modify: `src/pages/PrivacyPolicyPage.tsx`
+- Modify: `src/pages/TermsPage.tsx`
+- Modify: `src/i18n/catalogs.ts`
 - Modify: `src/content/guides.test.ts`
 - Modify: `src/content/policies.test.ts`
 - Modify: `src/config/public-routes.test.ts`
+- Modify: `src/pages/PublicPages.test.tsx`
 
 **Interfaces:**
 - Consumes: the eight-locale `Locale` union.
 - Produces: complete `Record<Locale, EditorialPage>` and `Record<Locale, RouteMetadata>` data for every public page.
+- Produces: all 64 localized public routes as real indexable content pages; removes the temporary English-only long-form gate and the legacy two-language `Locale` compatibility alias.
 
 - [ ] **Step 1: Expand content tests and verify RED**
 
@@ -228,6 +238,8 @@ Expected: FAIL for the six missing locales.
 
 Translate each heading, summary, paragraph, bullet, metadata title, description, and image alt. Preserve source link labels when they are proper publication/product names and preserve every source URL byte-for-byte.
 
+Replace remaining `locale === "zh"` long-form branches with catalog-backed eight-locale labels (publisher, updated date, sources, related reading, page eyebrows, and route-error copy). Switch `src/config/public-routes.ts` to the canonical eight-locale type, remove the temporary long-form availability gate, and add rendered-route coverage proving representative guide, about, privacy, and terms pages are indexable and visibly translated outside English/Chinese.
+
 - [ ] **Step 3: Audit high-risk meaning**
 
 Add table-driven assertions that every locale retains explicit statements equivalent to: non-scientific entertainment, no medical/financial/life-decision use, photos are not uploaded to HandFuture, and MediaPipe detects joints rather than palm creases.
@@ -240,7 +252,7 @@ Expected: all content and metadata tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/content src/config/site-metadata.ts src/config/public-routes.test.ts
+git add src/content src/config src/components/routing src/pages/GuidePage.tsx src/pages/AboutPage.tsx src/pages/PrivacyPolicyPage.tsx src/pages/TermsPage.tsx src/pages/PublicPages.test.tsx src/i18n/catalogs.ts
 git commit -m "feat: translate public content into eight locales"
 ```
 
