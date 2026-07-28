@@ -244,5 +244,6 @@ export function renderPrerenderedDocument(
   const afterHeadEnd = headEnd + ROUTE_HEAD_END.length;
   return `${template.slice(0, headStart)}${ROUTE_HEAD_START}\n${renderRouteHead(locale, publicPath)}\n  ${ROUTE_HEAD_END}${template.slice(afterHeadEnd)}`
     .replace(/<html lang="[^"]*">/, `<html lang="${escapeAttribute(locale)}">`)
-    .replace('<div id="root"></div>', `<div id="root">${renderRouteBody(locale, publicPath)}</div>`);
+    .replace('<div id="root"></div>', `<div id="root">${renderRouteBody(locale, publicPath)}</div>`)
+    .replace(/[ \t]+$/gm, "");
 }

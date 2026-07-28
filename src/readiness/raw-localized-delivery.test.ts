@@ -69,6 +69,7 @@ describe("raw localized delivery", () => {
       expect(html, relativePath).toMatch(
         /<script type="module" crossorigin src="\/assets\/[^"<]+\.js"><\/script>/,
       );
+      expect(html, relativePath).not.toMatch(/[ \t]+$/m);
     }
   });
 
