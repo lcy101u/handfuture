@@ -37,8 +37,13 @@ describe("locale domain", () => {
     });
   });
 
-  it("rejects unsupported locale prefixes", () => {
-    expect(parseLocalizedPath("/de/about")).toBeNull();
+  it.each([
+    "/de/about",
+    "/ja-JP/about",
+    "/zh-Hant-HK/about",
+    "/fr/not-a-public-page",
+  ])("rejects non-canonical or non-public localized paths: %s", (pathname) => {
+    expect(parseLocalizedPath(pathname)).toBeNull();
   });
 
   it("builds a slash-safe localized home path", () => {

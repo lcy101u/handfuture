@@ -110,7 +110,9 @@ export function parseLocalizedPath(
   const match = /^\/([^/]+)(\/.*)$/.exec(pathname);
   if (!match) return null;
 
-  const locale = normalizeLocale(match[1]);
+  const locale = (SUPPORTED_LOCALES as readonly string[]).includes(match[1])
+    ? (match[1] as Locale)
+    : null;
   const publicPath = match[2];
   if (!locale || !isPublicPath(publicPath)) return null;
 
