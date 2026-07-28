@@ -3,28 +3,29 @@ import { Link, NavLink } from "react-router-dom";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import type { PublicPath } from "@/config/public-routes";
+import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
 const navigation: Array<{
   path: Exclude<PublicPath, "/">;
-  label: { zh: string; en: string };
+  labelKey: string;
 }> = [
-  { path: "/how-it-works", label: { zh: "運作方式", en: "How it works" } },
+  { path: "/how-it-works", labelKey: "footer.howItWorks" },
   {
     path: "/guides/palmistry-basics",
-    label: { zh: "手相文化入門", en: "Palmistry basics" },
+    labelKey: "guide.basics.title",
   },
   {
     path: "/guides/science-and-limitations",
-    label: { zh: "科學與限制", en: "Science and limitations" },
+    labelKey: "guide.science.title",
   },
   {
     path: "/guides/hand-photo-guide",
-    label: { zh: "手部照片指南", en: "Hand photo guide" },
+    labelKey: "guide.photo.title",
   },
-  { path: "/about", label: { zh: "關於", en: "About" } },
-  { path: "/privacy", label: { zh: "隱私政策", en: "Privacy" } },
-  { path: "/terms", label: { zh: "使用條款", en: "Terms" } },
+  { path: "/about", labelKey: "nav.about" },
+  { path: "/privacy", labelKey: "nav.privacy" },
+  { path: "/terms", labelKey: "nav.terms" },
 ];
 
 export default function SiteHeader() {
@@ -34,9 +35,9 @@ export default function SiteHeader() {
     <header className="border-b border-white/10 bg-slate-950 text-white">
       <div className="container mx-auto flex flex-wrap items-center gap-x-6 gap-y-4 px-4 py-5">
         <Link
-          to="/"
+          to={buildLocalizedPath(currentLanguage, "/")}
           className="flex min-w-fit items-center gap-3 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          aria-label={currentLanguage === "zh" ? "HandFuture 首頁" : "HandFuture home"}
+          aria-label={t("nav.homeAria")}
         >
           <span className="relative" aria-hidden="true">
             <Hand className="h-8 w-8 text-primary" />
@@ -50,22 +51,20 @@ export default function SiteHeader() {
 
         <nav
           className="ml-auto flex flex-wrap items-center justify-end gap-x-4 gap-y-3 text-sm"
-          aria-label={currentLanguage === "zh" ? "主要導覽" : "Primary navigation"}
+          aria-label={t("nav.primaryAria")}
         >
-          <span className="sr-only">
-            {currentLanguage === "zh" ? "指南" : "Guides"}
-          </span>
-          {navigation.map(({ path, label }) => (
+          <span className="sr-only">{t("nav.guidesLabel")}</span>
+          {navigation.map(({ path, labelKey }) => (
             <NavLink
               key={path}
-              to={path}
+              to={buildLocalizedPath(currentLanguage, path)}
               className={({ isActive }) =>
                 `rounded-sm hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   isActive ? "font-semibold text-primary" : "text-white"
                 }`
               }
             >
-              {label[currentLanguage]}
+              {t(labelKey)}
             </NavLink>
           ))}
           <LanguageSwitcher />

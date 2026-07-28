@@ -33,6 +33,10 @@ function renderInLayout(page: React.ReactNode, entry: PublicPath = "/") {
   );
 }
 
+function setLegacyContentLanguage(locale: "zh" | "en") {
+  useLanguageStore.setState({ currentLanguage: locale as never });
+}
+
 describe("public page shell", () => {
   beforeEach(() => {
     localStorage.clear();
@@ -47,7 +51,11 @@ describe("public page shell", () => {
         .getAllByRole("link")
         .map((link) => link.getAttribute("href"));
 
-      expect(hrefs).toEqual(PUBLIC_PATHS);
+      expect(hrefs).toEqual(
+        PUBLIC_PATHS.map((path) =>
+          path === "/" ? "/en/" : `/en${path}`,
+        ),
+      );
       expect(new Set(hrefs).size).toBe(PUBLIC_PATHS.length);
       expect(hrefs).not.toContain("/batch");
       expect(hrefs).not.toContain("#");
@@ -133,7 +141,7 @@ describe("sourced public articles", () => {
   ])(
     "describes the visible detector result instead of a nonexistent overlay in $locale",
     ({ locale, validatedResult, visiblePreview, nonexistentDrawing }) => {
-      useLanguageStore.setState({ currentLanguage: locale });
+      setLegacyContentLanguage(locale);
       renderInLayout(<HowItWorksPage />, "/how-it-works");
       const article = screen.getByRole("article");
 
@@ -162,7 +170,7 @@ describe("sourced public articles", () => {
   ])(
     "renders the actual detector behavior in the science guide for $locale",
     ({ locale, falseVisualization, usableHand, visibleResult }) => {
-      useLanguageStore.setState({ currentLanguage: locale });
+      setLegacyContentLanguage(locale);
       renderInLayout(
         <GuidePage path="/guides/science-and-limitations" />,
         "/guides/science-and-limitations",
@@ -179,7 +187,7 @@ describe("sourced public articles", () => {
     const path: GuidePath = "/guides/palmistry-basics";
     renderInLayout(<GuidePage path={path} />, path);
 
-    act(() => useLanguageStore.getState().setLanguage("zh"));
+    act(() => setLegacyContentLanguage("zh"));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       GUIDE_CONTENT[path].zh.title,
@@ -327,7 +335,7 @@ describe("factual trust and policy pages", () => {
   it("rerenders policy content in Chinese", () => {
     renderInLayout(<PrivacyPolicyPage />, "/privacy");
 
-    act(() => useLanguageStore.getState().setLanguage("zh"));
+    act(() => setLegacyContentLanguage("zh"));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("隱私政策");
     expect(screen.getByRole("heading", { name: "瀏覽器儲存" })).toBeVisible();

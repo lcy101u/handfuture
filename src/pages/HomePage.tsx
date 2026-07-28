@@ -22,6 +22,7 @@ import HandPreview from "@/components/palm/HandPreview";
 import ImageUploader from "@/components/palm/ImageUploader";
 import ReflectionResult from "@/components/palm/ReflectionResult";
 import type { GuidePath } from "@/config/public-routes";
+import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
 
@@ -79,7 +80,7 @@ function HomePage() {
   const disclaimerAccepted = usePalmStore(
     (state) => state.disclaimerAccepted,
   );
-  const { t } = useLanguageStore();
+  const { currentLanguage, t } = useLanguageStore();
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   const handleReflectionClick = () => {
@@ -169,7 +170,10 @@ function HomePage() {
           </Card>
         </section>
 
-        <section className="grid gap-5 md:grid-cols-3" aria-label="Product facts">
+        <section
+          className="grid gap-5 md:grid-cols-3"
+          aria-label={t("home.productFacts")}
+        >
           {features.map(({ icon: Icon, titleKey, descriptionKey }) => (
             <Card key={titleKey} className="h-full border-border/70">
               <CardHeader>
@@ -200,7 +204,7 @@ function HomePage() {
             {guideLinks.map((guide) => (
               <Link
                 key={guide.path}
-                to={guide.path}
+                to={buildLocalizedPath(currentLanguage, guide.path)}
                 className="group rounded-xl border border-border/70 bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md"
               >
                 <h3 className="text-lg font-semibold group-hover:text-primary">

@@ -10,26 +10,18 @@ import { useLanguageStore } from '@/store/language-store'
 export default function ImageUploader() {
   const { toast } = useToast()
   const setImage = usePalmStore(state => state.setImage)
-  const { t, currentLanguage } = useLanguageStore()
+  const { t } = useLanguageStore()
   const [uploadError, setUploadError] = useState<string | null>(null)
   const activeReaderRef = useRef<FileReader | null>(null)
   const requestIdRef = useRef(0)
 
-  const messages = currentLanguage === 'zh'
-    ? {
-        type: '請選擇 JPG、PNG 或 WebP 圖片。',
-        size: '圖片超過 10MB，請選擇較小的檔案。',
-        unreadable: '無法讀取圖片，請選擇其他檔案。',
-        selected: '已在本機選擇照片',
-        detecting: '正在開始手部關節偵測。',
-      }
-    : {
-        type: 'Choose a JPG, PNG, or WebP image.',
-        size: 'The image is larger than 10MB. Choose a smaller file.',
-        unreadable: 'The image could not be read. Choose another file.',
-        selected: 'Photo selected locally',
-        detecting: 'Hand-joint detection is starting.',
-      }
+  const messages = {
+    type: t('upload.typeError'),
+    size: t('upload.sizeError'),
+    unreadable: t('upload.unreadableError'),
+    selected: t('upload.selected'),
+    detecting: t('upload.detecting'),
+  }
 
   const cancelPendingRead = useCallback(() => {
     requestIdRef.current += 1
@@ -56,8 +48,8 @@ export default function ImageUploader() {
     if (file.size > 10 * 1024 * 1024) {
       setUploadError(messages.size)
       toast({
-        title: currentLanguage === 'zh' ? "檔案過大" : "File Too Large",
-        description: currentLanguage === 'zh' ? "請選擇小於 10MB 的圖片" : "Please select an image smaller than 10MB",
+        title: t('upload.sizeTitle'),
+        description: t('upload.sizeDescription'),
         variant: "destructive"
       })
       return
@@ -97,7 +89,7 @@ export default function ImageUploader() {
       setUploadError(messages.unreadable)
     }
     reader.readAsDataURL(file)
-  }, [cancelPendingRead, currentLanguage, messages.detecting, messages.selected, messages.size, messages.type, messages.unreadable, setImage, toast])
+  }, [cancelPendingRead, messages.detecting, messages.selected, messages.size, messages.type, messages.unreadable, setImage, t, toast])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -165,12 +157,12 @@ export default function ImageUploader() {
           <div>
             <p className="font-medium">
               {isDragActive 
-                ? (currentLanguage === 'zh' ? '放開以上傳照片' : 'Drop to upload photo')
-                : (currentLanguage === 'zh' ? '拖放照片至此處' : t('upload.drag'))
+                ? t('upload.dropActive')
+                : t('upload.drag')
               }
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              {t('upload.formats')} {currentLanguage === 'zh' ? '，最大 10MB' : ', max 10MB'}
+              {t('upload.formats')} {t('upload.maxSize')}
             </p>
           </div>
         </div>

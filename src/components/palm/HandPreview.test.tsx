@@ -115,7 +115,9 @@ describe("HandPreview", () => {
         /the hand model or image could not be loaded\. keep this image and retry/i,
       ),
     ).toBeVisible();
-    expect(screen.getByRole("img", { name: /uploaded hand/i })).toHaveAttribute(
+    expect(
+      screen.getByRole("img", { name: /selected hand photo/i }),
+    ).toHaveAttribute(
       "src",
       "data:image/png;base64,palm",
     );
@@ -249,5 +251,28 @@ describe("HandPreview", () => {
       isDetecting: false,
       error: null,
     });
+  });
+
+  it("localizes detector errors, retry, and image alternatives in French", async () => {
+    useLanguageStore.getState().setLanguage("fr");
+    render(
+      <HandPreview
+        detectorFactory={vi
+          .fn()
+          .mockResolvedValue(detectorWith({ status: "no-hand" }))}
+      />,
+    );
+
+    expect(
+      await screen.findByText(
+        "Montrez une main entière sur un arrière-plan uni, puis réessayez.",
+      ),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Relancer la détection" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("img", { name: "Photo de main sélectionnée" }),
+    ).toBeVisible();
   });
 });

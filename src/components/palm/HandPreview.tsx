@@ -19,29 +19,6 @@ interface HandPreviewProps {
 const createDefaultDetector = (options?: Pick<HandDetectorOptions, "signal">) =>
   createHandDetector(undefined, options);
 
-const copy = {
-  zh: {
-    alt: "已上傳的手部照片",
-    detecting: "正在偵測手部關節，請稍候。",
-    success: "已偵測到 21 個手部關節，可以選擇反思卡。",
-    noHand: "請在單純背景前完整顯示一隻手，然後重試。",
-    multipleHands: "畫面中只保留一隻手，然後重試。",
-    unavailable: "手部模型或圖片無法載入。照片會保留，請重試。",
-    retry: "重新偵測",
-  },
-  en: {
-    alt: "Uploaded hand",
-    detecting: "Detecting hand joints. Please wait.",
-    success: "21 hand joints detected. Ready to choose a reflection card.",
-    noHand:
-      "Show one fully visible hand against a plain background, then retry.",
-    multipleHands: "Keep only one hand in frame, then retry.",
-    unavailable:
-      "The hand model or image could not be loaded. Keep this image and retry.",
-    retry: "Retry detection",
-  },
-} as const;
-
 function decodeImage(source: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -80,9 +57,8 @@ export default function HandPreview({
   const setDetection = usePalmStore((state) => state.setDetection);
   const setDetecting = usePalmStore((state) => state.setDetecting);
   const setError = usePalmStore((state) => state.setError);
-  const currentLanguage = useLanguageStore((state) => state.currentLanguage);
+  const t = useLanguageStore((state) => state.t);
   const [retryAttempt, setRetryAttempt] = useState(0);
-  const text = copy[currentLanguage];
 
   useEffect(() => {
     if (!image) {
@@ -150,11 +126,11 @@ export default function HandPreview({
 
   const errorMessage =
     error === "no-hand"
-      ? text.noHand
+      ? t("detector.noHand")
       : error === "multiple-hands"
-        ? text.multipleHands
+        ? t("detector.multipleHands")
         : error === "detector-unavailable"
-          ? text.unavailable
+          ? t("detector.unavailable")
           : null;
 
   return (
@@ -162,7 +138,7 @@ export default function HandPreview({
       {isDetecting && (
         <Alert>
           <Loader2 className="h-4 w-4 animate-spin" />
-          <AlertDescription>{text.detecting}</AlertDescription>
+          <AlertDescription>{t("detector.detecting")}</AlertDescription>
         </Alert>
       )}
 
@@ -170,7 +146,7 @@ export default function HandPreview({
         <Alert className="border-green-200 bg-green-50 dark:bg-green-950/20">
           <CheckCircle className="h-4 w-4 text-green-600" />
           <AlertDescription className="text-green-800 dark:text-green-200">
-            {text.success}
+            {t("detector.success")}
           </AlertDescription>
         </Alert>
       )}
@@ -186,7 +162,7 @@ export default function HandPreview({
               size="sm"
               onClick={() => setRetryAttempt((attempt) => attempt + 1)}
             >
-              {text.retry}
+              {t("detector.retry")}
             </Button>
           </AlertDescription>
         </Alert>
@@ -194,7 +170,7 @@ export default function HandPreview({
 
       <img
         src={image}
-        alt={text.alt}
+        alt={t("detector.alt")}
         className="mx-auto max-h-[300px] w-full max-w-md rounded-lg border border-border object-contain shadow-lg"
       />
     </div>

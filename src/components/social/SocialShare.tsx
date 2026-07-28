@@ -8,28 +8,6 @@ interface SocialShareProps {
   className?: string;
 }
 
-const shareCopy = {
-  zh: "我正在 HandFuture 探索手相文化與非科學的反思提示。",
-  en: "I’m exploring palmistry culture and a non-scientific reflection prompt on HandFuture.",
-} as const;
-
-const interfaceCopy = {
-  zh: {
-    title: "分享這個頁面",
-    share: "分享這個頁面",
-    copy: "複製分享連結",
-    copied: "分享連結已複製",
-    failed: "無法複製連結，請從瀏覽器網址列手動複製。",
-  },
-  en: {
-    title: "Share this page",
-    share: "Share this page",
-    copy: "Copy share link",
-    copied: "Share link copied",
-    failed: "The link could not be copied. Copy it from the address bar instead.",
-  },
-} as const;
-
 function getCanonicalCurrentUrl(): string {
   const currentUrl = new URL(window.location.href);
   currentUrl.hash = "";
@@ -47,17 +25,16 @@ function getCanonicalCurrentUrl(): string {
 }
 
 export default function SocialShare({ className = "" }: SocialShareProps) {
-  const currentLanguage = useLanguageStore((state) => state.currentLanguage);
-  const text = interfaceCopy[currentLanguage];
-  const message = shareCopy[currentLanguage];
+  const t = useLanguageStore((state) => state.t);
+  const message = t("share.message");
   const supportsNativeShare = typeof navigator.share === "function";
 
   const copyShareText = async (content: string) => {
     try {
       await navigator.clipboard.writeText(content);
-      toast({ title: text.copied });
+      toast({ title: t("share.copied") });
     } catch {
-      toast({ title: text.failed, variant: "destructive" });
+      toast({ title: t("share.failed"), variant: "destructive" });
     }
   };
 
@@ -82,7 +59,7 @@ export default function SocialShare({ className = "" }: SocialShareProps) {
       <CardContent className="flex items-center justify-between gap-4 p-4">
         <div className="flex items-center gap-2">
           <Share2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-          <span className="text-sm font-medium">{text.title}</span>
+          <span className="text-sm font-medium">{t("share.title")}</span>
         </div>
         <Button type="button" size="sm" variant="outline" onClick={handleShare}>
           {supportsNativeShare ? (
@@ -90,7 +67,7 @@ export default function SocialShare({ className = "" }: SocialShareProps) {
           ) : (
             <LinkIcon className="h-4 w-4" aria-hidden="true" />
           )}
-          {supportsNativeShare ? text.share : text.copy}
+          {supportsNativeShare ? t("share.share") : t("share.copy")}
         </Button>
       </CardContent>
     </Card>

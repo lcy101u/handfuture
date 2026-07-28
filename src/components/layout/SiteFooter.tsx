@@ -1,20 +1,21 @@
 import { Link } from "react-router-dom";
 import { PUBLIC_PATHS, type PublicPath } from "@/config/public-routes";
+import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
-const labels: Record<PublicPath, { zh: string; en: string }> = {
-  "/": { zh: "首頁", en: "Home" },
-  "/how-it-works": { zh: "運作方式", en: "How it works" },
-  "/guides/palmistry-basics": { zh: "手相文化入門", en: "Palmistry basics" },
-  "/guides/science-and-limitations": { zh: "科學與限制", en: "Science and limitations" },
-  "/guides/hand-photo-guide": { zh: "手部照片指南", en: "Hand photo guide" },
-  "/about": { zh: "關於", en: "About" },
-  "/privacy": { zh: "隱私政策", en: "Privacy" },
-  "/terms": { zh: "使用條款", en: "Terms" },
+const labelKeys: Record<PublicPath, string> = {
+  "/": "nav.home",
+  "/how-it-works": "footer.howItWorks",
+  "/guides/palmistry-basics": "guide.basics.title",
+  "/guides/science-and-limitations": "guide.science.title",
+  "/guides/hand-photo-guide": "guide.photo.title",
+  "/about": "nav.about",
+  "/privacy": "nav.privacy",
+  "/terms": "nav.terms",
 };
 
 export default function SiteFooter() {
-  const currentLanguage = useLanguageStore((state) => state.currentLanguage);
+  const { currentLanguage, t } = useLanguageStore();
 
   return (
     <footer className="border-t border-border/60 bg-card/70">
@@ -22,18 +23,16 @@ export default function SiteFooter() {
         <div>
           <p className="text-lg font-bold">HandFuture</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {currentLanguage === "zh"
-              ? "獨立文化探索網頁專案"
-              : "Independent cultural exploration web project"}
+            {t("footer.tagline")}
           </p>
         </div>
         <nav
           className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
-          aria-label={currentLanguage === "zh" ? "頁尾導覽" : "Footer navigation"}
+          aria-label={t("nav.footerAria")}
         >
           {PUBLIC_PATHS.map((path) => (
-            <Link key={path} to={path} className="rounded-sm hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-              {labels[path][currentLanguage]}
+            <Link key={path} to={buildLocalizedPath(currentLanguage, path)} className="rounded-sm hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+              {t(labelKeys[path])}
             </Link>
           ))}
         </nav>

@@ -56,6 +56,27 @@ describe("ImageUploader errors", () => {
     expect(await screen.findByText(/image could not be read/i)).toBeVisible();
     await waitFor(() => expect(usePalmStore.getState().image).toBeNull());
   });
+
+  it("localizes validation, limits, and controls in Spanish", async () => {
+    useLanguageStore.getState().setLanguage("es");
+    render(<ImageUploader />);
+
+    expect(
+      screen.getByText("Suelta una foto aquí o haz clic para elegir un archivo"),
+    ).toBeVisible();
+    expect(screen.getByText(/máximo 10 MB/)).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Seleccionar archivo" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Abrir cámara" }),
+    ).toBeVisible();
+
+    upload(new File(["text"], "notes.txt", { type: "text/plain" }));
+    expect(
+      await screen.findByText("Elige una imagen JPG, PNG o WebP."),
+    ).toBeVisible();
+  });
 });
 
 interface ControlledReader {
@@ -121,7 +142,7 @@ describe("ImageUploader request lifecycle", () => {
   });
 
   it("describes a successful Chinese selection as local joint detection", async () => {
-    useLanguageStore.getState().setLanguage("zh");
+    useLanguageStore.getState().setLanguage("zh-TW");
     render(
       <>
         <ImageUploader />

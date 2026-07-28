@@ -82,4 +82,26 @@ describe("DisclaimerModal", () => {
     expect(onAccept).toHaveBeenCalledOnce();
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  it("preserves the full safety and privacy warning in Japanese", () => {
+    useLanguageStore.getState().setLanguage("ja");
+    render(<DisclaimerModal open onClose={vi.fn()} onAccept={vi.fn()} />);
+
+    expect(
+      screen.getByText(
+        "これは文化的な娯楽と自己省察のための非科学的なツールです。",
+      ),
+    ).toBeVisible();
+    expect(document.body).toHaveTextContent(
+      "医療、メンタルヘルス、法律、金融、雇用、人間関係",
+    );
+    expect(document.body).toHaveTextContent(
+      "写真はブラウザー内でのみ処理され、この機能によってアップロードされることはありません。",
+    );
+    expect(
+      screen.getByRole("button", {
+        name: "理解して同意します（娯楽と自己省察のみ）",
+      }),
+    ).toBeVisible();
+  });
 });

@@ -44,7 +44,7 @@ describe("SocialShare", () => {
       configurable: true,
       value: { writeText },
     });
-    useLanguageStore.getState().setLanguage("zh");
+    useLanguageStore.getState().setLanguage("zh-TW");
 
     render(<SocialShare />);
     fireEvent.click(screen.getByRole("button", { name: "複製分享連結" }));
@@ -111,5 +111,35 @@ describe("SocialShare", () => {
       ),
     );
     expect(await screen.findByText("Share link copied")).toBeVisible();
+  });
+
+  it("localizes safe share copy and feedback in French", async () => {
+    Object.defineProperty(navigator, "share", {
+      configurable: true,
+      value: undefined,
+    });
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    useLanguageStore.getState().setLanguage("fr");
+
+    render(
+      <>
+        <SocialShare />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Copier le lien de partage" }),
+    );
+
+    await waitFor(() =>
+      expect(writeText).toHaveBeenCalledWith(
+        `J’explore la culture de la chiromancie et une invite de réflexion non scientifique sur HandFuture.\n\n${window.location.origin}/guides/science-and-limitations`,
+      ),
+    );
+    expect(await screen.findByText("Lien de partage copié")).toBeVisible();
   });
 });

@@ -89,28 +89,28 @@ describe("HomePage truthful reflection flow", () => {
       .getAllByRole("link")
       .map((link) => link.getAttribute("href"));
     expect(guideLinks).toEqual([
-      "/guides/palmistry-basics",
-      "/guides/science-and-limitations",
-      "/guides/hand-photo-guide",
+      "/en/guides/palmistry-basics",
+      "/en/guides/science-and-limitations",
+      "/en/guides/hand-photo-guide",
     ]);
 
     const footerLinks = within(screen.getByRole("contentinfo"))
       .getAllByRole("link")
       .map((link) => link.getAttribute("href"));
     expect(footerLinks).toEqual([
-      "/",
-      "/how-it-works",
-      "/guides/palmistry-basics",
-      "/guides/science-and-limitations",
-      "/guides/hand-photo-guide",
-      "/about",
-      "/privacy",
-      "/terms",
+      "/en/",
+      "/en/how-it-works",
+      "/en/guides/palmistry-basics",
+      "/en/guides/science-and-limitations",
+      "/en/guides/hand-photo-guide",
+      "/en/about",
+      "/en/privacy",
+      "/en/terms",
     ]);
   });
 
-  it("renders the factual home copy in Chinese", () => {
-    useLanguageStore.getState().setLanguage("zh");
+  it("renders the factual home copy in Traditional Chinese", () => {
+    useLanguageStore.getState().setLanguage("zh-TW");
     renderHome();
 
     expect(
@@ -120,6 +120,15 @@ describe("HomePage truthful reflection flow", () => {
     expect(screen.getByRole("heading", { name: "文化反思卡" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "照片不會上傳" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "繼續閱讀" })).toBeVisible();
+  });
+
+  it("localizes direct home-page accessible labels", () => {
+    useLanguageStore.getState().setLanguage("ja");
+    renderHome();
+
+    expect(screen.getByRole("region", { name: "手の写真を選択" })).toBeVisible();
+    expect(screen.getByRole("region", { name: "製品の特徴" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "HandFuture ホーム" })).toBeVisible();
   });
 
   it("does not open the disclaimer automatically", () => {
