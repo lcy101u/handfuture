@@ -1,0 +1,1 @@
+import{D as e,O as t,k as n}from"./index-C82eJCKl.js";import{r}from"./policies-wXMpTVDJ.js";import{EditorialArticle as i}from"./GuidePage-BNb_i_dh.js";var a=e();function o(){let e=t(e=>e.currentLanguage);return(0,a.jsx)(i,{content:r[e],locale:e,relatedPaths:[`/how-it-works`,`/guides/science-and-limitations`],eyebrow:n(e,`editorial.eyebrow.terms`)})}export{o as default};

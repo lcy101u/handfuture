@@ -1,35 +1,259 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.handfortune.com/</loc>
+    <loc>https://www.handfortune.com/zh-TW/</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
   <url>
-    <loc>https://www.handfortune.com/how-it-works</loc>
+    <loc>https://www.handfortune.com/zh-TW/how-it-works</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
   <url>
-    <loc>https://www.handfortune.com/guides/palmistry-basics</loc>
+    <loc>https://www.handfortune.com/zh-TW/guides/palmistry-basics</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
   <url>
-    <loc>https://www.handfortune.com/guides/science-and-limitations</loc>
+    <loc>https://www.handfortune.com/zh-TW/guides/science-and-limitations</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
   <url>
-    <loc>https://www.handfortune.com/guides/hand-photo-guide</loc>
+    <loc>https://www.handfortune.com/zh-TW/guides/hand-photo-guide</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
   <url>
-    <loc>https://www.handfortune.com/about</loc>
+    <loc>https://www.handfortune.com/zh-TW/about</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
   <url>
-    <loc>https://www.handfortune.com/privacy</loc>
+    <loc>https://www.handfortune.com/zh-TW/privacy</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
   <url>
-    <loc>https://www.handfortune.com/terms</loc>
+    <loc>https://www.handfortune.com/zh-TW/terms</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/guides/palmistry-basics</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/guides/science-and-limitations</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/guides/hand-photo-guide</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/about</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/privacy</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/zh-CN/terms</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/guides/palmistry-basics</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/guides/science-and-limitations</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/guides/hand-photo-guide</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/about</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/privacy</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/en/terms</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/guides/palmistry-basics</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/guides/science-and-limitations</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/guides/hand-photo-guide</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/about</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/privacy</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ja/terms</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/guides/palmistry-basics</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/guides/science-and-limitations</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/guides/hand-photo-guide</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/about</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/privacy</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/ko/terms</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/guides/palmistry-basics</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/guides/science-and-limitations</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/guides/hand-photo-guide</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/about</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/privacy</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/es/terms</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/guides/palmistry-basics</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/guides/science-and-limitations</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/guides/hand-photo-guide</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/about</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/privacy</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/pt-BR/terms</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/guides/palmistry-basics</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/guides/science-and-limitations</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/guides/hand-photo-guide</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/about</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/privacy</loc>
+    <lastmod>2026-07-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.handfortune.com/fr/terms</loc>
     <lastmod>2026-07-26</lastmod>
   </url>
 </urlset>

@@ -1,0 +1,1 @@
+import{D as e,O as t,k as n}from"./index-C82eJCKl.js";import{n as r}from"./policies-wXMpTVDJ.js";import{EditorialArticle as i}from"./GuidePage-BNb_i_dh.js";var a=e();function o(){let e=t(e=>e.currentLanguage);return(0,a.jsx)(i,{content:r[e],locale:e,relatedPaths:[`/how-it-works`,`/guides/hand-photo-guide`],eyebrow:n(e,`editorial.eyebrow.privacy`)})}export{o as default};
