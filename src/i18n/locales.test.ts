@@ -11,6 +11,12 @@ describe("locale domain", () => {
   it.each([
     ["zh-Hant-HK", "zh-TW"],
     ["zh-Hans-CN", "zh-CN"],
+    ["zh-HK", "zh-TW"],
+    ["zh-mo", "zh-TW"],
+    ["ZH-sg", "zh-CN"],
+    ["zh-TW-u-nu-hanidec", "zh-TW"],
+    ["zh-Hant-CN-u-ca-chinese", "zh-TW"],
+    ["zh-Hans-TW-x-private", "zh-CN"],
     ["PT-br", "pt-BR"],
     ["de-DE", null],
   ])("normalizes %s using BCP-47 language tags", (value, expected) => {

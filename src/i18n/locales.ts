@@ -79,14 +79,27 @@ export function normalizeLocale(value: string): Locale | null {
   const exactLocale = localeByLowercaseCode[normalized];
 
   if (exactLocale) return exactLocale;
-  if (normalized === "zh" || normalized.startsWith("zh-hant")) return "zh-TW";
-  if (normalized.startsWith("zh-hans")) return "zh-CN";
-  if (normalized === "ja" || normalized.startsWith("ja-")) return "ja";
-  if (normalized === "ko" || normalized.startsWith("ko-")) return "ko";
-  if (normalized === "es" || normalized.startsWith("es-")) return "es";
-  if (normalized === "fr" || normalized.startsWith("fr-")) return "fr";
-  if (normalized === "en" || normalized.startsWith("en-")) return "en";
-  if (normalized === "pt" || normalized.startsWith("pt-")) return "pt-BR";
+
+  let parsed: Intl.Locale;
+  try {
+    parsed = new Intl.Locale(value.trim());
+  } catch {
+    return null;
+  }
+
+  if (parsed.language === "zh") {
+    if (parsed.script === "Hant") return "zh-TW";
+    if (parsed.script === "Hans") return "zh-CN";
+    if (["TW", "HK", "MO"].includes(parsed.region ?? "")) return "zh-TW";
+    if (["CN", "SG"].includes(parsed.region ?? "")) return "zh-CN";
+    return "zh-TW";
+  }
+  if (parsed.language === "ja") return "ja";
+  if (parsed.language === "ko") return "ko";
+  if (parsed.language === "es") return "es";
+  if (parsed.language === "fr") return "fr";
+  if (parsed.language === "en") return "en";
+  if (parsed.language === "pt") return "pt-BR";
 
   return null;
 }

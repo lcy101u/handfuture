@@ -6,21 +6,11 @@ import {
   buildPublicGatewayUrl,
   buildStructuredData,
   getRouteMetadata,
+  OPEN_GRAPH_LOCALES,
 } from "@/config/site-metadata";
 import { getTranslation } from "@/i18n/catalogs";
 import { SUPPORTED_LOCALES, parseLocalizedPath, type Locale } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
-
-const OPEN_GRAPH_LOCALES = {
-  "zh-TW": "zh_TW",
-  "zh-CN": "zh_CN",
-  en: "en_US",
-  ja: "ja_JP",
-  ko: "ko_KR",
-  es: "es_ES",
-  "pt-BR": "pt_BR",
-  fr: "fr_FR",
-} satisfies Record<Locale, string>;
 
 function exactLocalePrefix(pathname: string): Locale | null {
   const prefix = pathname.split("/")[1];
@@ -71,7 +61,7 @@ function upsertAlternateLinks(publicPath: Parameters<typeof buildLocalizedPublic
       hreflang: locale,
       href: buildLocalizedPublicUrl(publicPath, locale),
     })),
-    { hreflang: "x-default", href: buildPublicGatewayUrl(publicPath) },
+    { hreflang: "x-default", href: buildPublicGatewayUrl() },
   ];
   const desiredLanguages = new Set(desired.map(({ hreflang }) => hreflang));
   const existing = Array.from(
@@ -121,10 +111,28 @@ export default function RouteMeta() {
       document.title = getTranslation(routeLocale, "notFound.documentTitle");
       upsertMeta("name", "robots", "noindex, follow");
       document
-        .querySelectorAll('link[rel="canonical"], link[rel="alternate"][hreflang]')
-        .forEach((link) => link.remove());
-      upsertMetaValues("property", "og:locale:alternate", []);
-      document.querySelectorAll("#route-structured-data").forEach((script) => script.remove());
+        .querySelectorAll(
+          [
+            'meta[name="title"]',
+            'meta[name="description"]',
+            'meta[property="og:type"]',
+            'meta[property="og:title"]',
+            'meta[property="og:description"]',
+            'meta[property="og:url"]',
+            'meta[property="og:image"]',
+            'meta[property="og:image:alt"]',
+            'meta[property="og:locale"]',
+            'meta[property="og:locale:alternate"]',
+            'meta[name="twitter:title"]',
+            'meta[name="twitter:description"]',
+            'meta[name="twitter:image"]',
+            'meta[name="twitter:image:alt"]',
+            'link[rel="canonical"]',
+            'link[rel="alternate"][hreflang]',
+            "#route-structured-data",
+          ].join(","),
+        )
+        .forEach((node) => node.remove());
       return;
     }
 

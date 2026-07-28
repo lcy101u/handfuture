@@ -8,6 +8,17 @@ export const PUBLISHER_ID = "ca-pub-3713047615080346";
 export const ADS_TXT_RECORD = "google.com, pub-3713047615080346, DIRECT, f08c47fec0942fa0";
 export const LAST_UPDATED = "2026-07-26";
 
+export const OPEN_GRAPH_LOCALES = {
+  "zh-TW": "zh_TW",
+  "zh-CN": "zh_CN",
+  en: "en_US",
+  ja: "ja_JP",
+  ko: "ko_KR",
+  es: "es_ES",
+  "pt-BR": "pt_BR",
+  fr: "fr_FR",
+} satisfies Record<Locale, string>;
+
 export interface RouteMetadata {
   title: string;
   description: string;
@@ -117,8 +128,8 @@ export function buildLocalizedPublicUrl(path: PublicPath, locale: Locale): strin
   return `${SITE_ORIGIN}${buildLocalizedPath(locale, path)}`;
 }
 
-export function buildPublicGatewayUrl(path: PublicPath): string {
-  return `${SITE_ORIGIN}${path === "/" ? "/" : path}`;
+export function buildPublicGatewayUrl(): string {
+  return `${SITE_ORIGIN}/`;
 }
 
 export function buildStructuredData(path: PublicPath, locale: Locale): Record<string, unknown> {

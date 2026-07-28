@@ -184,36 +184,56 @@ describe("publisher and crawl files", () => {
     expect(fs.existsSync(path.join(root, "public/_headers"))).toBe(false);
   });
 
-  it("rewrites every supported SPA route without swallowing excluded or unknown paths", () => {
+  it("redirects every legacy route and orders exact prerenders before locale 404s", () => {
     const config = JSON.parse(read("vercel.json"));
-    const supportedSpaPaths = [
-      ...PUBLIC_PATHS.filter((route) => route !== "/"),
-      ...SUPPORTED_LOCALES.flatMap((locale) =>
-        PUBLIC_PATHS.map((route) => buildLocalizedPath(locale, route)),
-      ),
-    ];
-    expect(config.rewrites).toEqual(
-      supportedSpaPaths.map((source) => ({ source, destination: "/index.html" })),
+    const legacyRedirects = PUBLIC_PATHS.filter((route) => route !== "/").map(
+      (source) => ({
+        source,
+        destination: buildLocalizedPath("zh-TW", source),
+        permanent: true,
+      }),
     );
-    expect(new Set(supportedSpaPaths).size).toBe(71);
+    expect(config.redirects).toEqual([
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "handfortune.com" }],
+        destination: "https://www.handfortune.com/:path*",
+        permanent: true,
+      },
+      ...legacyRedirects,
+    ]);
+
+    const exactPrerenders = SUPPORTED_LOCALES.flatMap((locale) =>
+      PUBLIC_PATHS.map((publicPath) => ({
+        source: buildLocalizedPath(locale, publicPath),
+        destination:
+          publicPath === "/"
+            ? `/_prerender/${locale}/index.html`
+            : `/_prerender/${locale}${publicPath}.html`,
+      })),
+    );
+    const localizedNotFoundCatchalls = SUPPORTED_LOCALES.map((locale) => ({
+      source: `/${locale}/:path*`,
+      destination: `/api/localized-not-found?locale=${locale}`,
+    }));
+    expect(config.rewrites).toEqual(
+      [...exactPrerenders, ...localizedNotFoundCatchalls],
+    );
+    expect(exactPrerenders).toHaveLength(64);
+    expect(new Set(exactPrerenders.map(({ source }) => source)).size).toBe(64);
     for (const excluded of [
       "/api/locale",
+      "/api/localized-not-found",
       "/ads.txt",
       "/robots.txt",
       "/sitemap.xml",
       "/assets/index.js",
-      "/en/not-a-public-page",
       "/not-a-public-page",
     ]) {
-      expect(config.rewrites).not.toContainEqual({
-        source: excluded,
-        destination: "/index.html",
-      });
+      expect(config.rewrites.some(({ source }: { source: string }) => source === excluded)).toBe(
+        false,
+      );
     }
-    expect(config.rewrites).not.toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ source: expect.stringMatching(/[:*()]|\.\*/) }),
-      ]),
-    );
+    expect(config).not.toHaveProperty("routes");
   });
 });

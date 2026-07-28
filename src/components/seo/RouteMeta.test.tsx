@@ -164,7 +164,7 @@ describe("RouteMeta", () => {
       ["es", "https://www.handfortune.com/es/about"],
       ["pt-BR", "https://www.handfortune.com/pt-BR/about"],
       ["fr", "https://www.handfortune.com/fr/about"],
-      ["x-default", "https://www.handfortune.com/about"],
+      ["x-default", "https://www.handfortune.com/"],
     ]);
     expect(new Set(alternates.map(([hreflang]) => hreflang)).size).toBe(9);
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
@@ -208,11 +208,11 @@ describe("RouteMeta", () => {
     expect(alternates.some((link) => link.href.endsWith("/about"))).toBe(false);
     expect(document.querySelector('link[hreflang="x-default"]')).toHaveAttribute(
       "href",
-      "https://www.handfortune.com/privacy",
+      "https://www.handfortune.com/",
     );
   });
 
-  it("uses the unprefixed root only as the localized home x-default", async () => {
+  it("uses the unprefixed root as x-default for every route", async () => {
     renderMetadata("/pt-BR/");
 
     await waitFor(() => expect(document.documentElement.lang).toBe("pt-BR"));
@@ -289,6 +289,46 @@ describe("RouteMeta", () => {
         "@type"
       ],
     ).toBe("WebApplication");
+  });
+
+  it("clears every route-specific preview field after valid-to-invalid navigation", async () => {
+    renderMetadata("/fr/privacy");
+
+    await waitFor(() =>
+      expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+        "content",
+        "https://www.handfortune.com/fr/privacy",
+      ),
+    );
+    fireEvent.click(screen.getByRole("link", { name: "Missing" }));
+
+    await waitFor(() =>
+      expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+        "content",
+        "noindex, follow",
+      ),
+    );
+    for (const selector of [
+      'meta[name="title"]',
+      'meta[name="description"]',
+      'meta[property="og:type"]',
+      'meta[property="og:title"]',
+      'meta[property="og:description"]',
+      'meta[property="og:url"]',
+      'meta[property="og:image"]',
+      'meta[property="og:image:alt"]',
+      'meta[property="og:locale"]',
+      'meta[property="og:locale:alternate"]',
+      'meta[name="twitter:title"]',
+      'meta[name="twitter:description"]',
+      'meta[name="twitter:image"]',
+      'meta[name="twitter:image:alt"]',
+      'link[rel="canonical"]',
+      'link[rel="alternate"][hreflang]',
+      "#route-structured-data",
+    ]) {
+      expect(document.querySelectorAll(selector), selector).toHaveLength(0);
+    }
   });
 
   it("normalizes the document language on a direct English unknown route", async () => {

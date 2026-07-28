@@ -7,21 +7,21 @@ import { useToast } from '@/hooks/use-toast'
 import { usePalmStore } from '@/store/palm-store'
 import { useLanguageStore } from '@/store/language-store'
 
+type UploadErrorCode = 'type' | 'size' | 'unreadable'
+
+const uploadErrorKeys: Record<UploadErrorCode, string> = {
+  type: 'upload.typeError',
+  size: 'upload.sizeError',
+  unreadable: 'upload.unreadableError',
+}
+
 export default function ImageUploader() {
   const { toast } = useToast()
   const setImage = usePalmStore(state => state.setImage)
   const { t } = useLanguageStore()
-  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<UploadErrorCode | null>(null)
   const activeReaderRef = useRef<FileReader | null>(null)
   const requestIdRef = useRef(0)
-
-  const messages = {
-    type: t('upload.typeError'),
-    size: t('upload.sizeError'),
-    unreadable: t('upload.unreadableError'),
-    selected: t('upload.selected'),
-    detecting: t('upload.detecting'),
-  }
 
   const cancelPendingRead = useCallback(() => {
     requestIdRef.current += 1
@@ -40,13 +40,13 @@ export default function ImageUploader() {
     if (!file) return
 
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setUploadError(messages.type)
+      setUploadError('type')
       return
     }
 
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      setUploadError(messages.size)
+      setUploadError('size')
       toast({
         title: t('upload.sizeTitle'),
         description: t('upload.sizeDescription'),
@@ -70,32 +70,32 @@ export default function ImageUploader() {
         setImage(result)
 
         toast({
-          title: messages.selected,
-          description: messages.detecting,
+          title: t('upload.selected'),
+          description: t('upload.detecting'),
         })
       } else {
         activeReaderRef.current = null
-        setUploadError(messages.unreadable)
+        setUploadError('unreadable')
       }
     }
     reader.onerror = () => {
       if (!isCurrentRequest()) return
       activeReaderRef.current = null
-      setUploadError(messages.unreadable)
+      setUploadError('unreadable')
     }
     reader.onabort = () => {
       if (!isCurrentRequest()) return
       activeReaderRef.current = null
-      setUploadError(messages.unreadable)
+      setUploadError('unreadable')
     }
     reader.readAsDataURL(file)
-  }, [cancelPendingRead, messages.detecting, messages.selected, messages.size, messages.type, messages.unreadable, setImage, t, toast])
+  }, [cancelPendingRead, setImage, t, toast])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     onDropRejected: () => {
       cancelPendingRead()
-      setUploadError(messages.type)
+      setUploadError('type')
     },
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.webp']
@@ -124,7 +124,7 @@ export default function ImageUploader() {
       {uploadError && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{uploadError}</AlertDescription>
+          <AlertDescription>{t(uploadErrorKeys[uploadError])}</AlertDescription>
         </Alert>
       )}
       {/* Dropzone */}

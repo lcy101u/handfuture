@@ -77,6 +77,23 @@ describe("ImageUploader errors", () => {
       await screen.findByText("Elige una imagen JPG, PNG o WebP."),
     ).toBeVisible();
   });
+
+  it("retranslates an already visible validation error after a locale change", async () => {
+    render(<ImageUploader />);
+    upload(new File(["text"], "notes.txt", { type: "text/plain" }));
+    expect(
+      await screen.findByText("Choose a JPG, PNG, or WebP image."),
+    ).toBeVisible();
+
+    act(() => useLanguageStore.getState().setLanguage("es"));
+
+    expect(
+      await screen.findByText("Elige una imagen JPG, PNG o WebP."),
+    ).toBeVisible();
+    expect(
+      screen.queryByText("Choose a JPG, PNG, or WebP image."),
+    ).not.toBeInTheDocument();
+  });
 });
 
 interface ControlledReader {
@@ -184,5 +201,26 @@ describe("ImageUploader request lifecycle", () => {
     act(() => completeReader(readers[0], "data:image/png;base64,a"));
 
     expect(usePalmStore.getState().image).toBeNull();
+  });
+
+  it("localizes a pending read error using the latest route language", async () => {
+    render(<ImageUploader />);
+    upload(new File(["image"], "hand.png", { type: "image/png" }));
+    await waitFor(() => expect(readers).toHaveLength(1));
+
+    act(() => useLanguageStore.getState().setLanguage("es"));
+    act(() => {
+      readers[0].onerror?.call(
+        readers[0] as unknown as FileReader,
+        new ProgressEvent("error") as ProgressEvent<FileReader>,
+      );
+    });
+
+    expect(
+      await screen.findByText("No se pudo leer la imagen. Elige otro archivo."),
+    ).toBeVisible();
+    expect(
+      screen.queryByText("The image could not be read. Choose another file."),
+    ).not.toBeInTheDocument();
   });
 });
