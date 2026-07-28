@@ -1,5 +1,5 @@
-import { SUPPORTED_LOCALES, type Locale } from "../src/i18n/locales";
-import { renderLocalizedNotFoundDocument } from "../src/server/localized-html";
+import { SUPPORTED_LOCALES, type Locale } from "../src/i18n/locales.js";
+import { renderLocalizedNotFoundDocument } from "../src/server/localized-html.js";
 
 interface LocalizedNotFoundRequest {
   query: Record<string, string | string[] | undefined>;

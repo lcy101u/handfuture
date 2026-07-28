@@ -1,5 +1,5 @@
-import { getTranslation } from "../i18n/catalogs";
-import { buildLocalizedPath, type Locale } from "../i18n/locales";
+import { getTranslation } from "../i18n/catalogs.js";
+import { buildLocalizedPath, type Locale } from "../i18n/locales.js";
 
 const htmlEscapes: Record<string, string> = {
   "&": "&amp;",

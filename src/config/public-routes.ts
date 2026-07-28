@@ -12,7 +12,7 @@ export const PUBLIC_PATHS = [
 export type PublicPath = (typeof PUBLIC_PATHS)[number];
 export type GuidePath = Extract<PublicPath, `/guides/${string}`>;
 
-export type { Locale } from "../i18n/locales";
+export type { Locale } from "../i18n/locales.js";
 
 export function isPublicPath(value: string): value is PublicPath {
   return (PUBLIC_PATHS as readonly string[]).includes(value);

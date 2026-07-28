@@ -1,4 +1,4 @@
-import { isPublicPath, type PublicPath } from "../config/public-routes";
+import { isPublicPath, type PublicPath } from "../config/public-routes.js";
 
 export const SUPPORTED_LOCALES = [
   "zh-TW",

@@ -7,6 +7,26 @@ import { describe, expect, it } from "vitest";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 describe("localized not-found function", () => {
+  it("type-checks under Vercel's NodeNext function compiler contract", () => {
+    const typecheck = spawnSync(
+      path.join(root, "node_modules/.bin/tsc"),
+      [
+        "--noEmit",
+        "--target",
+        "ES2022",
+        "--module",
+        "NodeNext",
+        "--moduleResolution",
+        "NodeNext",
+        "--skipLibCheck",
+        "api/localized-not-found.ts",
+      ],
+      { cwd: root, encoding: "utf8" },
+    );
+
+    expect(typecheck.status, typecheck.stderr || typecheck.stdout).toBe(0);
+  });
+
   it("returns a private localized HTML response with a real 404 status", () => {
     const modulePath = pathToFileURL(
       path.join(root, "api/localized-not-found.ts"),

@@ -1,4 +1,4 @@
-import { SUPPORTED_LOCALES, type Locale } from "./locales";
+import { SUPPORTED_LOCALES, type Locale } from "./locales.js";
 
 type CatalogSeed = Record<string, string>;
 type CompleteCatalogFamily<English extends CatalogSeed> = { en: English } & {
