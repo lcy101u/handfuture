@@ -131,28 +131,47 @@ git commit -m "feat: add eight locale UI catalogs"
 
 **Files:**
 - Modify: `src/App.tsx`
+- Modify: `src/pages/HomePage.tsx`
+- Modify: `src/pages/NotFoundPage.tsx`
+- Modify: `src/components/layout/SiteHeader.tsx`
+- Modify: `src/components/layout/SiteFooter.tsx`
+- Modify: `src/components/layout/SiteLayout.tsx`
+- Modify: `src/components/palm/DisclaimerModal.tsx`
+- Modify: `src/components/palm/HandPreview.tsx`
+- Modify: `src/components/palm/ImageUploader.tsx`
+- Modify: `src/components/palm/ReflectionResult.tsx`
+- Modify: `src/components/social/SocialShare.tsx`
 - Modify: `src/components/ui/LanguageSwitcher.tsx`
+- Modify: `src/i18n/catalogs.ts`
+- Modify: `src/lib/reflection-engine.ts`
 - Create: `src/components/routing/LocaleRouter.tsx`
 - Create: `src/components/routing/LocaleRouter.test.tsx`
+- Modify: `src/pages/HomePage.test.tsx`
+- Modify: `src/components/palm/DisclaimerModal.test.tsx`
+- Modify: `src/components/palm/HandPreview.test.tsx`
+- Modify: `src/components/palm/ImageUploader.test.tsx`
+- Modify: `src/components/palm/ReflectionResult.test.tsx`
+- Modify: `src/components/social/SocialShare.test.tsx`
 - Modify: `src/pages/PublicPages.test.tsx`
 
 **Interfaces:**
 - Consumes: path parsing/building from Task 1 and explicit preference store from Task 2.
 - Produces: route locale synchronization and same-page language navigation.
+- Produces: eight-locale copy for every tracked interactive component reachable from the localized home page; no component may index a two-key `zh`/`en` object with the eight-locale store value.
 
 - [ ] **Step 1: Write failing routing behavior tests**
 
 ```tsx
-renderAt("/ja/privacy");
+renderAt("/ja/");
 expect(document.documentElement.lang).toBe("ja");
-expect(screen.getByRole("heading", { name: "プライバシーポリシー" })).toBeVisible();
+expect(screen.getByRole("heading", { name: "1枚の手の写真から、文化を探る旅へ" })).toBeVisible();
 
 await user.click(screen.getByRole("button", { name: /language/i }));
 await user.click(screen.getByRole("menuitem", { name: /Français/ }));
-expect(window.location.pathname).toBe("/fr/privacy");
+expect(window.location.pathname).toBe("/fr/");
 ```
 
-Also cover legacy `/about` navigation to `/zh-TW/about`, unsupported `/de/about`, and a missing localized content path.
+Also cover a pure same-page builder assertion from `/en/privacy` to `/fr/privacy`, legacy `/about` navigation to `/zh-TW/about`, unsupported `/de/about`, and a missing localized content path. Do not render non-English long-form content until Task 4 supplies it.
 
 - [ ] **Step 2: Run tests and verify RED**
 
@@ -161,7 +180,7 @@ Expected: FAIL because localized routes are not registered.
 
 - [ ] **Step 3: Implement localized routes**
 
-Make localized path state authoritative, reuse existing page components, preserve the content path on switch, and prevent redirect loops. The `/` gateway chooses a locale only after checking explicit preference and browser languages; country fallback is wired in Task 6.
+Make localized path state authoritative, reuse existing page components, preserve the content path on switch, and prevent redirect loops. The `/` gateway chooses a locale only after checking explicit preference and browser languages; country fallback is wired in Task 6. Move every tracked home/interactive/layout/not-found/social component's direct bilingual copy into the complete catalog (or a complete typed eight-locale content record for reflection cards), including accessible labels and validation/errors, so all eight localized home routes render without English-only branches or undefined lookups.
 
 - [ ] **Step 4: Run tests and verify GREEN**
 
@@ -171,7 +190,7 @@ Expected: all localized routing tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/App.tsx src/components/ui/LanguageSwitcher.tsx src/components/routing src/pages/PublicPages.test.tsx
+git add src/App.tsx src/pages/HomePage.tsx src/pages/NotFoundPage.tsx src/components/layout src/components/palm src/components/social src/components/ui/LanguageSwitcher.tsx src/components/routing src/i18n/catalogs.ts src/lib/reflection-engine.ts src/pages/HomePage.test.tsx src/pages/PublicPages.test.tsx
 git commit -m "feat: route public pages by locale"
 ```
 
