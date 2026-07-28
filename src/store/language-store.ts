@@ -17,6 +17,11 @@ type PersistedLanguageState = Pick<
   "currentLanguage" | "hasExplicitPreference"
 >;
 
+function synchronizeLanguageDocument(language: Locale) {
+  document.documentElement.lang = language;
+  document.title = getTranslation(language, "app.title");
+}
+
 function migrateLanguageState(
   persistedState: unknown,
 ): PersistedLanguageState {
@@ -46,8 +51,7 @@ export const useLanguageStore = create<LanguageState>()(
 
       setLanguage: (language, explicit = true) => {
         set({ currentLanguage: language, hasExplicitPreference: explicit });
-        document.documentElement.lang = language;
-        document.title = getTranslation(language, "app.title");
+        synchronizeLanguageDocument(language);
       },
 
       t: (key) => getTranslation(get().currentLanguage, key),
@@ -60,6 +64,9 @@ export const useLanguageStore = create<LanguageState>()(
         hasExplicitPreference,
       }),
       migrate: (persistedState) => migrateLanguageState(persistedState),
+      onRehydrateStorage: () => (state) => {
+        if (state) synchronizeLanguageDocument(state.currentLanguage);
+      },
     },
   ),
 );
