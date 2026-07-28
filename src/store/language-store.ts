@@ -7,6 +7,7 @@ export type Language = Locale;
 
 export interface LanguageState {
   currentLanguage: Locale;
+  preferredLanguage: Locale | null;
   hasExplicitPreference: boolean;
   setLanguage: (language: Locale, explicit?: boolean) => void;
   t: (key: string) => string;
@@ -14,7 +15,7 @@ export interface LanguageState {
 
 type PersistedLanguageState = Pick<
   LanguageState,
-  "currentLanguage" | "hasExplicitPreference"
+  "currentLanguage" | "preferredLanguage" | "hasExplicitPreference"
 >;
 
 function synchronizeLanguageDocument(language: Locale) {
@@ -27,6 +28,7 @@ function migrateLanguageState(
 ): PersistedLanguageState {
   const persisted = persistedState as Partial<PersistedLanguageState> & {
     currentLanguage?: unknown;
+    preferredLanguage?: unknown;
   };
   const legacyLanguage = persisted.currentLanguage;
   const currentLanguage =
@@ -34,12 +36,22 @@ function migrateLanguageState(
       ? normalizeLocale(legacyLanguage) ?? "zh-TW"
       : "zh-TW";
 
+  const persistedPreferredLanguage =
+    typeof persisted.preferredLanguage === "string"
+      ? normalizeLocale(persisted.preferredLanguage)
+      : null;
+  const preferredLanguage =
+    persistedPreferredLanguage ??
+    (persisted.hasExplicitPreference === false
+      ? null
+      : typeof legacyLanguage === "string"
+        ? currentLanguage
+        : null);
+
   return {
     currentLanguage,
-    hasExplicitPreference:
-      typeof persisted.hasExplicitPreference === "boolean"
-        ? persisted.hasExplicitPreference
-        : typeof legacyLanguage === "string",
+    preferredLanguage,
+    hasExplicitPreference: preferredLanguage !== null,
   };
 }
 
@@ -47,10 +59,19 @@ export const useLanguageStore = create<LanguageState>()(
   persist(
     (set, get) => ({
       currentLanguage: "zh-TW",
+      preferredLanguage: null,
       hasExplicitPreference: false,
 
       setLanguage: (language, explicit = true) => {
-        set({ currentLanguage: language, hasExplicitPreference: explicit });
+        set(
+          explicit
+            ? {
+                currentLanguage: language,
+                preferredLanguage: language,
+                hasExplicitPreference: true,
+              }
+            : { currentLanguage: language },
+        );
         synchronizeLanguageDocument(language);
       },
 
@@ -58,9 +79,14 @@ export const useLanguageStore = create<LanguageState>()(
     }),
     {
       name: "language-store",
-      version: 1,
-      partialize: ({ currentLanguage, hasExplicitPreference }) => ({
+      version: 2,
+      partialize: ({
         currentLanguage,
+        preferredLanguage,
+        hasExplicitPreference,
+      }) => ({
+        currentLanguage,
+        preferredLanguage,
         hasExplicitPreference,
       }),
       migrate: (persistedState) => migrateLanguageState(persistedState),

@@ -4,6 +4,7 @@ import SocialShare from "@/components/social/SocialShare";
 import type { EditorialPage } from "@/content/guides";
 import { GUIDE_CONTENT } from "@/content/guides";
 import type { GuidePath, Locale, PublicPath } from "@/config/public-routes";
+import { buildLocalizedPath, normalizeLocale } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
 const guidePaths = Object.keys(GUIDE_CONTENT) as GuidePath[];
@@ -29,6 +30,9 @@ export function EditorialArticle({
   relatedPaths,
   eyebrow,
 }: EditorialArticleProps) {
+  const activeLocale = useLanguageStore((state) => state.currentLanguage);
+  const routeLocale =
+    normalizeLocale(activeLocale) ?? (locale === "zh" ? "zh-TW" : "en");
   const relatedLabel = (path: PublicPath) => {
     if (path === "/how-it-works") {
       return locale === "zh" ? "HandFuture 如何運作" : "How HandFuture works";
@@ -86,7 +90,7 @@ export function EditorialArticle({
               <li key={source.url}>
                 {isInternalPath(source.url) ? (
                   <Link
-                    to={source.url}
+                    to={buildLocalizedPath(routeLocale, source.url)}
                     className="inline-flex items-start gap-2 text-primary underline-offset-4 hover:underline"
                   >
                     <span>{source.label}</span>
@@ -120,7 +124,10 @@ export function EditorialArticle({
         <ul className="space-y-2">
           {relatedPaths.map((path) => (
             <li key={path}>
-              <Link to={path} className="text-primary underline-offset-4 hover:underline">
+              <Link
+                to={buildLocalizedPath(routeLocale, path)}
+                className="text-primary underline-offset-4 hover:underline"
+              >
                 {relatedLabel(path)}
               </Link>
             </li>

@@ -32,7 +32,10 @@ export default function DisclaimerModal({
         if (!nextOpen) onClose();
       }}
     >
-      <DialogContent className="max-h-[80vh] max-w-2xl">
+      <DialogContent
+        className="max-h-[80vh] max-w-2xl"
+        closeLabel={t("dialog.close")}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Shield className="h-6 w-6 text-amber-500" aria-hidden="true" />

@@ -1,19 +1,22 @@
 import { isPublicPath } from "@/config/public-routes";
 import {
+  SUPPORTED_LOCALES,
   buildLocalizedPath,
-  parseLocalizedPath,
   type Locale,
 } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
 let pendingManualLocale: Locale | null = null;
 
-export function buildSamePageLocalePath(
+export function localizedPathForCurrentRoute(
   pathname: string,
   locale: Locale,
 ): string {
-  const localized = parseLocalizedPath(pathname);
-  if (localized) return buildLocalizedPath(locale, localized.publicPath);
+  const firstSegment = pathname.split("/")[1];
+  if ((SUPPORTED_LOCALES as readonly string[]).includes(firstSegment)) {
+    const suffix = pathname.slice(firstSegment.length + 1);
+    return `/${locale}${suffix || "/"}`;
+  }
   if (isPublicPath(pathname)) return buildLocalizedPath(locale, pathname);
   return buildLocalizedPath(locale, "/");
 }

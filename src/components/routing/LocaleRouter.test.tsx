@@ -8,7 +8,7 @@ import { SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
 import LocaleRouter from "./LocaleRouter";
-import { buildSamePageLocalePath } from "./locale-routing";
+import { localizedPathForCurrentRoute } from "./locale-routing";
 
 const localizedHeadings: Record<Locale, string> = {
   "zh-TW": "從一張手部照片，開始一段文化探索",
@@ -45,6 +45,7 @@ describe("LocaleRouter", () => {
     document.querySelector('meta[name="robots"]')?.remove();
     useLanguageStore.setState({
       currentLanguage: "en",
+      preferredLanguage: null,
       hasExplicitPreference: false,
     });
     usePalmStore.setState({
@@ -71,6 +72,7 @@ describe("LocaleRouter", () => {
       expect(document.documentElement.lang).toBe(locale);
       expect(useLanguageStore.getState()).toMatchObject({
         currentLanguage: locale,
+        preferredLanguage: null,
         hasExplicitPreference: false,
       });
       expect(robotsContent()).toBe("index, follow");
@@ -92,6 +94,7 @@ describe("LocaleRouter", () => {
     await waitFor(() => expect(window.location.pathname).toBe("/fr/"));
     expect(useLanguageStore.getState()).toMatchObject({
       currentLanguage: "fr",
+      preferredLanguage: "fr",
       hasExplicitPreference: true,
     });
     expect(
@@ -100,7 +103,10 @@ describe("LocaleRouter", () => {
   });
 
   it("builds a same-page locale path without rendering untranslated content", () => {
-    expect(buildSamePageLocalePath("/en/privacy", "fr")).toBe("/fr/privacy");
+    expect(localizedPathForCurrentRoute("/en/privacy", "fr")).toBe("/fr/privacy");
+    expect(
+      localizedPathForCurrentRoute("/fr/not-a-public-page", "ja"),
+    ).toBe("/ja/not-a-public-page");
   });
 
   it("keeps all reachable public shell and home links under the active prefix", async () => {
@@ -160,7 +166,8 @@ describe("LocaleRouter", () => {
       languages: ["ja-JP"],
     });
     useLanguageStore.setState({
-      currentLanguage: "fr",
+      currentLanguage: "ja",
+      preferredLanguage: "fr",
       hasExplicitPreference: true,
     });
 
@@ -181,18 +188,63 @@ describe("LocaleRouter", () => {
     expect(useLanguageStore.getState().hasExplicitPreference).toBe(false);
   });
 
-  it("does not turn direct localized navigation into an explicit preference", async () => {
+  it("keeps a saved preference while a shared URL controls rendering and reuses it at root", async () => {
     useLanguageStore.setState({
       currentLanguage: "fr",
+      preferredLanguage: "fr",
       hasExplicitPreference: true,
     });
 
-    renderAt("/ja/");
+    const sharedRoute = renderAt("/ja/");
 
     await screen.findByRole("heading", { name: localizedHeadings.ja });
     expect(useLanguageStore.getState()).toMatchObject({
       currentLanguage: "ja",
-      hasExplicitPreference: false,
+      preferredLanguage: "fr",
+      hasExplicitPreference: true,
     });
+
+    sharedRoute.unmount();
+    renderAt("/");
+    await waitFor(() => expect(window.location.pathname).toBe("/fr/"));
+  });
+
+  it("records an already-active locale as an explicit picker choice", async () => {
+    renderAt("/fr/");
+    await screen.findByRole("heading", { name: localizedHeadings.fr });
+
+    fireEvent.pointerDown(
+      screen.getByRole("button", { name: "Changer de langue" }),
+      { button: 0, ctrlKey: false },
+    );
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /Français/ }),
+    );
+
+    expect(window.location.pathname).toBe("/fr/");
+    expect(useLanguageStore.getState()).toMatchObject({
+      currentLanguage: "fr",
+      preferredLanguage: "fr",
+      hasExplicitPreference: true,
+    });
+  });
+
+  it("preserves an unknown suffix when switching a localized 404", async () => {
+    renderAt("/fr/not-a-public-page");
+    expect(await screen.findByRole("heading", { name: "404" })).toBeVisible();
+
+    fireEvent.pointerDown(
+      screen.getByRole("button", { name: "Changer de langue" }),
+      { button: 0, ctrlKey: false },
+    );
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /日本語/ }),
+    );
+
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/ja/not-a-public-page"),
+    );
+    expect(await screen.findByRole("heading", { name: "404" })).toBeVisible();
+    expect(robotsContent()).toBe("noindex, follow");
   });
 });

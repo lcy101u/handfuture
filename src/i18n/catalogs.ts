@@ -1,6 +1,17 @@
-import type { Locale } from "./locales";
+import { SUPPORTED_LOCALES, type Locale } from "./locales";
 
-export type LanguageCatalog = Record<string, string>;
+type CatalogSeed = Record<string, string>;
+type CompleteCatalogFamily<English extends CatalogSeed> = { en: English } & {
+  [Language in Exclude<Locale, "en">]: {
+    [Key in keyof English]: string;
+  };
+};
+
+function defineCompleteCatalogs<const English extends CatalogSeed>(
+  catalogs: CompleteCatalogFamily<English>,
+): CompleteCatalogFamily<English> {
+  return catalogs;
+}
 
 export interface LanguageOption {
   code: Locale;
@@ -19,7 +30,7 @@ export const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
   { code: "fr", name: "Français", shortLabel: "FR" },
 ];
 
-export const catalogs: Record<Locale, LanguageCatalog> = {
+const baseCatalogs = defineCompleteCatalogs({
   "zh-TW": {
     "app.title": "HandFuture",
     "app.subtitle": "手相文化探索與手部偵測",
@@ -64,7 +75,7 @@ export const catalogs: Record<Locale, LanguageCatalog> = {
   ja: {
     "app.title": "HandFuture", "app.subtitle": "手相文化の探究と手の検出",
     "nav.home": "ホーム", "nav.about": "概要", "nav.privacy": "プライバシー", "nav.terms": "利用規約", "language.switch": "言語を切り替える",
-    "hero.title": "一枚の手の写真から、文化の探究を始めましょう", "hero.description": "写真はブラウザー内で手の関節を検出するために使われます。結果は、文化の探究と自己省察のための非科学的な娯楽用プロンプトカードです。",
+    "hero.title": "1枚の手の写真から、文化を探る旅へ", "hero.description": "写真はブラウザー内で手の関節を検出するために使われます。結果は、文化の探究と自己省察のための非科学的な娯楽用プロンプトカードです。",
     "disclaimer.prompt": "分析を始める前に、免責事項を確認して同意してください。", "button.viewDisclaimer": "免責事項を読む",
     "tool.uploadTitle": "手の写真を選択", "tool.uploadDescription": "無地の背景を使い、片手全体がフレームに入るようにしてください。", "tool.previewTitle": "手の関節検出", "tool.previewDescription": "検出に成功した後、リフレクションカードを自分で選べます。", "tool.reset": "別の写真を選ぶ", "tool.choose": "リフレクションカードを選ぶ",
     "upload.drag": "ここに写真をドロップするか、クリックしてファイルを選択", "upload.formats": "JPG、PNG、WebP に対応", "upload.open_camera": "カメラを開く", "upload.select_file": "ファイルを選択", "upload.tip1": "片手全体をフレームに入れる", "upload.tip2": "明るく均一な照明を使う", "upload.tip3": "無地の背景を選び、ぼやけを避ける",
@@ -126,9 +137,9 @@ export const catalogs: Record<Locale, LanguageCatalog> = {
     "footer.explore": "Explorer", "footer.guides": "Guides", "footer.project": "Projet", "footer.howItWorks": "Comment ça marche",
     "theme.light": "Mode clair", "theme.dark": "Mode sombre", "theme.system": "Système", "theme.toggle": "Changer de thème",
   },
-};
+});
 
-const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
+const trackedComponentCatalogs = defineCompleteCatalogs({
   "zh-TW": {
     "route.loading": "正在載入頁面…",
     "nav.homeAria": "HandFuture 首頁", "nav.primaryAria": "主要導覽", "nav.guidesLabel": "指南", "nav.footerAria": "頁尾導覽",
@@ -138,7 +149,7 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "偵測與選卡方式", "disclaimer.service": "模型只偵測 21 個手部關節位置，不會辨識或解讀掌紋、掌褶，也不會測量性格、能力、健康或命運。反思卡只依手部幾何固定選擇。",
     "disclaimer.decisionsTitle": "重要決策", "disclaimer.decisions": "請勿根據反思卡做出醫療、心理健康、法律、財務、工作、關係或其他重大決策；需要協助時，請諮詢合格專業人士。",
     "disclaimer.privacyTitle": "隱私保護", "disclaimer.privacy": "照片只在您的瀏覽器中處理，不會由本功能上傳。重新上傳或重設時，先前的照片與結果會從目前工作階段清除。",
-    "disclaimer.final": "按下同意代表您了解：這張卡不是科學評估或未來預測，只能作為娛樂性的反思起點。", "disclaimer.accept": "我了解並同意（僅供娛樂與反思）",
+    "disclaimer.final": "按下同意代表您了解：這張卡不是科學評估或未來預測，只能作為娛樂性的反思起點。", "disclaimer.accept": "我了解並同意（僅供娛樂與反思）", "dialog.close": "關閉",
     "detector.alt": "已選擇的手部照片", "detector.detecting": "正在偵測手部關節，請稍候。", "detector.success": "已偵測到 21 個手部關節，可以選擇反思卡。",
     "detector.noHand": "請在單純背景前完整顯示一隻手，然後重試。", "detector.multipleHands": "畫面中只保留一隻手，然後重試。", "detector.unavailable": "手部模型或圖片無法載入。照片會保留，請重試。", "detector.retry": "重新偵測",
     "upload.typeError": "請選擇 JPG、PNG 或 WebP 圖片。", "upload.sizeError": "圖片超過 10MB，請選擇較小的檔案。", "upload.unreadableError": "無法讀取圖片，請選擇其他檔案。",
@@ -154,7 +165,7 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "检测与选卡方式", "disclaimer.service": "模型只检测 21 个手部关节位置，不会识别或解读掌纹、掌褶，也不会衡量性格、能力、健康或命运。手部几何信息只用于固定选择反思卡。",
     "disclaimer.decisionsTitle": "重要决策", "disclaimer.decisions": "请勿依靠反思卡做出医疗、心理健康、法律、财务、工作、关系或其他重大决策；需要帮助时，请咨询合格的专业人士。",
     "disclaimer.privacyTitle": "隐私保护", "disclaimer.privacy": "照片只在您的浏览器中处理，不会由本功能上传。选择其他图片或重置时，先前的照片与结果会从当前会话中清除。",
-    "disclaimer.final": "点击同意即表示您了解：这张卡不是科学评估或未来预测，只能作为娱乐性的反思起点。", "disclaimer.accept": "我了解并同意（仅供娱乐与反思）",
+    "disclaimer.final": "点击同意即表示您了解：这张卡不是科学评估或未来预测，只能作为娱乐性的反思起点。", "disclaimer.accept": "我了解并同意（仅供娱乐与反思）", "dialog.close": "关闭",
     "detector.alt": "已选择的手部照片", "detector.detecting": "正在检测手部关节，请稍候。", "detector.success": "已检测到 21 个手部关节，可以选择反思卡。",
     "detector.noHand": "请在简单背景前完整显示一只手，然后重试。", "detector.multipleHands": "画面中只保留一只手，然后重试。", "detector.unavailable": "手部模型或图片无法加载。照片会保留，请重试。", "detector.retry": "重新检测",
     "upload.typeError": "请选择 JPG、PNG 或 WebP 图片。", "upload.sizeError": "图片超过 10MB，请选择较小的文件。", "upload.unreadableError": "无法读取图片，请选择其他文件。",
@@ -170,7 +181,7 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "Detection and card selection", "disclaimer.service": "The model detects only 21 hand-joint positions. It does not identify or interpret palm creases, and it does not measure personality, ability, health, or destiny. Hand geometry only makes the card selection deterministic.",
     "disclaimer.decisionsTitle": "Consequential decisions", "disclaimer.decisions": "Do not rely on a reflection card for medical, mental-health, legal, financial, employment, relationship, or other consequential decisions. Consult a qualified professional when needed.",
     "disclaimer.privacyTitle": "Privacy", "disclaimer.privacy": "The photo is processed only in your browser and is not uploaded by this feature. Uploading another image or resetting clears the prior photo and result from the current session.",
-    "disclaimer.final": "By accepting, you understand that the card is not a scientific assessment or a forecast, only an entertainment prompt for reflection.", "disclaimer.accept": "I understand and agree (entertainment and reflection only)",
+    "disclaimer.final": "By accepting, you understand that the card is not a scientific assessment or a forecast, only an entertainment prompt for reflection.", "disclaimer.accept": "I understand and agree (entertainment and reflection only)", "dialog.close": "Close",
     "detector.alt": "Selected hand photo", "detector.detecting": "Detecting hand joints. Please wait.", "detector.success": "21 hand joints detected. Ready to choose a reflection card.",
     "detector.noHand": "Show one fully visible hand against a plain background, then retry.", "detector.multipleHands": "Keep only one hand in frame, then retry.", "detector.unavailable": "The hand model or image could not be loaded. Keep this image and retry.", "detector.retry": "Retry detection",
     "upload.typeError": "Choose a JPG, PNG, or WebP image.", "upload.sizeError": "The image is larger than 10MB. Choose a smaller file.", "upload.unreadableError": "The image could not be read. Choose another file.",
@@ -178,7 +189,6 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "share.message": "I’m exploring palmistry culture and a non-scientific reflection prompt on HandFuture.", "share.title": "Share this page", "share.share": "Share this page", "share.copy": "Copy share link", "share.copied": "Share link copied", "share.failed": "The link could not be copied. Copy it from the address bar instead.",
   },
   ja: {
-    "hero.title": "1枚の手の写真から、文化を探る旅へ",
     "route.loading": "ページを読み込んでいます…",
     "nav.homeAria": "HandFuture ホーム", "nav.primaryAria": "メインナビゲーション", "nav.guidesLabel": "ガイド", "nav.footerAria": "フッターナビゲーション",
     "footer.tagline": "独立した文化探究ウェブプロジェクト", "layout.skip": "メインコンテンツへ移動", "home.productFacts": "製品の特徴",
@@ -187,7 +197,7 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "検出とカード選択", "disclaimer.service": "モデルが検出するのは21個の手の関節位置だけです。手相線や掌のしわを識別・解釈せず、性格、能力、健康、運命も測定しません。手の形状はカードを一定の方法で選ぶためにのみ使われます。",
     "disclaimer.decisionsTitle": "重大な決定", "disclaimer.decisions": "リフレクションカードを、医療、メンタルヘルス、法律、金融、雇用、人間関係、その他の重大な決定の根拠にしないでください。必要な場合は有資格の専門家に相談してください。",
     "disclaimer.privacyTitle": "プライバシー", "disclaimer.privacy": "写真はブラウザー内でのみ処理され、この機能によってアップロードされることはありません。別の画像の選択またはリセットにより、以前の写真と結果は現在のセッションから消去されます。",
-    "disclaimer.final": "同意すると、このカードが科学的評価や予測ではなく、娯楽として省察を始めるためのプロンプトにすぎないことを理解したものとします。", "disclaimer.accept": "理解して同意します（娯楽と自己省察のみ）",
+    "disclaimer.final": "同意すると、このカードが科学的評価や予測ではなく、娯楽として省察を始めるためのプロンプトにすぎないことを理解したものとします。", "disclaimer.accept": "理解して同意します（娯楽と自己省察のみ）", "dialog.close": "閉じる",
     "detector.alt": "選択した手の写真", "detector.detecting": "手の関節を検出しています。お待ちください。", "detector.success": "21個の手の関節を検出しました。リフレクションカードを選べます。",
     "detector.noHand": "無地の背景の前で片手全体を見せてから、再試行してください。", "detector.multipleHands": "フレーム内の手を一つだけにして、再試行してください。", "detector.unavailable": "手のモデルまたは画像を読み込めませんでした。画像を残したまま再試行してください。", "detector.retry": "検出を再試行",
     "upload.typeError": "JPG、PNG、WebP の画像を選択してください。", "upload.sizeError": "画像が10MBを超えています。より小さいファイルを選択してください。", "upload.unreadableError": "画像を読み込めませんでした。別のファイルを選択してください。",
@@ -203,7 +213,7 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "감지 및 카드 선택", "disclaimer.service": "모델은 손의 관절 위치 21개만 감지합니다. 손금 선이나 주름을 식별하거나 해석하지 않으며 성격, 능력, 건강 또는 운명을 측정하지 않습니다. 손의 기하 정보는 카드를 일관되게 선택하는 데만 사용됩니다.",
     "disclaimer.decisionsTitle": "중대한 결정", "disclaimer.decisions": "성찰 카드를 의료, 정신 건강, 법률, 재정, 고용, 관계 또는 기타 중대한 결정의 근거로 삼지 마세요. 필요하면 자격을 갖춘 전문가와 상담하세요.",
     "disclaimer.privacyTitle": "개인정보 보호", "disclaimer.privacy": "사진은 브라우저에서만 처리되며 이 기능으로 업로드되지 않습니다. 다른 이미지를 선택하거나 재설정하면 이전 사진과 결과가 현재 세션에서 지워집니다.",
-    "disclaimer.final": "동의하면 이 카드가 과학적 평가나 예측이 아니라 오락용 성찰을 시작하기 위한 질문일 뿐임을 이해한 것입니다.", "disclaimer.accept": "이해하고 동의합니다(오락 및 성찰 전용)",
+    "disclaimer.final": "동의하면 이 카드가 과학적 평가나 예측이 아니라 오락용 성찰을 시작하기 위한 질문일 뿐임을 이해한 것입니다.", "disclaimer.accept": "이해하고 동의합니다(오락 및 성찰 전용)", "dialog.close": "닫기",
     "detector.alt": "선택한 손 사진", "detector.detecting": "손 관절을 감지하고 있습니다. 잠시 기다려 주세요.", "detector.success": "손 관절 21개를 감지했습니다. 성찰 카드를 선택할 수 있습니다.",
     "detector.noHand": "단순한 배경 앞에서 한 손 전체를 보인 뒤 다시 시도하세요.", "detector.multipleHands": "프레임에는 손 하나만 남기고 다시 시도하세요.", "detector.unavailable": "손 모델이나 이미지를 불러올 수 없습니다. 이미지를 유지한 채 다시 시도하세요.", "detector.retry": "감지 다시 시도",
     "upload.typeError": "JPG, PNG 또는 WebP 이미지를 선택하세요.", "upload.sizeError": "이미지가 10MB보다 큽니다. 더 작은 파일을 선택하세요.", "upload.unreadableError": "이미지를 읽을 수 없습니다. 다른 파일을 선택하세요.",
@@ -219,7 +229,7 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "Detección y selección de tarjeta", "disclaimer.service": "El modelo solo detecta 21 posiciones de articulaciones de la mano. No identifica ni interpreta líneas o pliegues de la palma, ni mide la personalidad, la capacidad, la salud o el destino. La geometría de la mano solo hace determinista la selección de la tarjeta.",
     "disclaimer.decisionsTitle": "Decisiones importantes", "disclaimer.decisions": "No uses una tarjeta de reflexión para tomar decisiones médicas, de salud mental, legales, financieras, laborales, sentimentales u otras decisiones importantes. Consulta a un profesional cualificado cuando sea necesario.",
     "disclaimer.privacyTitle": "Privacidad", "disclaimer.privacy": "La foto se procesa solo en tu navegador y esta función no la sube. Elegir otra imagen o restablecer borra la foto y el resultado anteriores de la sesión actual.",
-    "disclaimer.final": "Al aceptar, entiendes que la tarjeta no es una evaluación científica ni un pronóstico, sino solo una sugerencia de entretenimiento para reflexionar.", "disclaimer.accept": "Entiendo y acepto (solo entretenimiento y reflexión)",
+    "disclaimer.final": "Al aceptar, entiendes que la tarjeta no es una evaluación científica ni un pronóstico, sino solo una sugerencia de entretenimiento para reflexionar.", "disclaimer.accept": "Entiendo y acepto (solo entretenimiento y reflexión)", "dialog.close": "Cerrar",
     "detector.alt": "Foto de mano seleccionada", "detector.detecting": "Detectando articulaciones de la mano. Espera un momento.", "detector.success": "Se detectaron 21 articulaciones de la mano. Ya puedes elegir una tarjeta de reflexión.",
     "detector.noHand": "Muestra una mano completa sobre un fondo liso y vuelve a intentarlo.", "detector.multipleHands": "Deja solo una mano en el encuadre y vuelve a intentarlo.", "detector.unavailable": "No se pudo cargar el modelo de mano o la imagen. Conserva esta imagen y vuelve a intentarlo.", "detector.retry": "Reintentar detección",
     "upload.typeError": "Elige una imagen JPG, PNG o WebP.", "upload.sizeError": "La imagen supera los 10 MB. Elige un archivo más pequeño.", "upload.unreadableError": "No se pudo leer la imagen. Elige otro archivo.",
@@ -235,7 +245,7 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "Detecção e seleção do cartão", "disclaimer.service": "O modelo detecta apenas 21 posições das articulações da mão. Ele não identifica nem interpreta linhas ou dobras da palma e não mede personalidade, habilidade, saúde ou destino. A geometria da mão apenas torna determinística a escolha do cartão.",
     "disclaimer.decisionsTitle": "Decisões importantes", "disclaimer.decisions": "Não confie em um cartão de reflexão para decisões médicas, de saúde mental, jurídicas, financeiras, profissionais, de relacionamento ou outras decisões importantes. Consulte um profissional qualificado quando necessário.",
     "disclaimer.privacyTitle": "Privacidade", "disclaimer.privacy": "A foto é processada apenas no seu navegador e não é enviada por este recurso. Escolher outra imagem ou redefinir apaga a foto e o resultado anteriores da sessão atual.",
-    "disclaimer.final": "Ao aceitar, você entende que o cartão não é uma avaliação científica nem uma previsão, apenas uma sugestão de entretenimento para reflexão.", "disclaimer.accept": "Entendo e concordo (somente entretenimento e reflexão)",
+    "disclaimer.final": "Ao aceitar, você entende que o cartão não é uma avaliação científica nem uma previsão, apenas uma sugestão de entretenimento para reflexão.", "disclaimer.accept": "Entendo e concordo (somente entretenimento e reflexão)", "dialog.close": "Fechar",
     "detector.alt": "Foto de mão selecionada", "detector.detecting": "Detectando articulações da mão. Aguarde.", "detector.success": "Foram detectadas 21 articulações da mão. Você já pode escolher um cartão de reflexão.",
     "detector.noHand": "Mostre uma mão inteira diante de um fundo simples e tente novamente.", "detector.multipleHands": "Mantenha apenas uma mão no enquadramento e tente novamente.", "detector.unavailable": "Não foi possível carregar o modelo de mão ou a imagem. Mantenha esta imagem e tente novamente.", "detector.retry": "Tentar detecção novamente",
     "upload.typeError": "Escolha uma imagem JPG, PNG ou WebP.", "upload.sizeError": "A imagem tem mais de 10 MB. Escolha um arquivo menor.", "upload.unreadableError": "Não foi possível ler a imagem. Escolha outro arquivo.",
@@ -251,21 +261,33 @@ const trackedComponentCatalogs: Record<Locale, LanguageCatalog> = {
     "disclaimer.serviceTitle": "Détection et sélection de la carte", "disclaimer.service": "Le modèle détecte uniquement 21 positions d’articulations de la main. Il n’identifie ni n’interprète les lignes ou plis de la paume et ne mesure ni la personnalité, ni les aptitudes, ni la santé, ni le destin. La géométrie de la main sert uniquement à rendre le choix de la carte déterministe.",
     "disclaimer.decisionsTitle": "Décisions importantes", "disclaimer.decisions": "Ne vous fiez pas à une carte de réflexion pour des décisions médicales, de santé mentale, juridiques, financières, professionnelles, relationnelles ou toute autre décision importante. Consultez un professionnel qualifié si nécessaire.",
     "disclaimer.privacyTitle": "Confidentialité", "disclaimer.privacy": "La photo est traitée uniquement dans votre navigateur et n’est pas téléversée par cette fonctionnalité. Choisir une autre image ou réinitialiser efface la photo et le résultat précédents de la session en cours.",
-    "disclaimer.final": "En acceptant, vous comprenez que la carte n’est ni une évaluation scientifique ni une prévision, mais seulement une invite de divertissement pour réfléchir.", "disclaimer.accept": "Je comprends et j’accepte (divertissement et réflexion uniquement)",
+    "disclaimer.final": "En acceptant, vous comprenez que la carte n’est ni une évaluation scientifique ni une prévision, mais seulement une invite de divertissement pour réfléchir.", "disclaimer.accept": "Je comprends et j’accepte (divertissement et réflexion uniquement)", "dialog.close": "Fermer",
     "detector.alt": "Photo de main sélectionnée", "detector.detecting": "Détection des articulations de la main. Veuillez patienter.", "detector.success": "21 articulations de la main ont été détectées. Vous pouvez choisir une carte de réflexion.",
     "detector.noHand": "Montrez une main entière sur un arrière-plan uni, puis réessayez.", "detector.multipleHands": "Gardez une seule main dans le cadre, puis réessayez.", "detector.unavailable": "Le modèle de main ou l’image n’a pas pu être chargé. Conservez cette image et réessayez.", "detector.retry": "Relancer la détection",
     "upload.typeError": "Choisissez une image JPG, PNG ou WebP.", "upload.sizeError": "L’image dépasse 10 Mo. Choisissez un fichier plus petit.", "upload.unreadableError": "L’image n’a pas pu être lue. Choisissez un autre fichier.",
     "upload.selected": "Photo sélectionnée localement", "upload.detecting": "La détection des articulations de la main démarre.", "upload.sizeTitle": "Fichier trop volumineux", "upload.sizeDescription": "Choisissez une image de moins de 10 Mo", "upload.dropActive": "Déposez pour sélectionner la photo", "upload.maxSize": ", 10 Mo maximum",
     "share.message": "J’explore la culture de la chiromancie et une invite de réflexion non scientifique sur HandFuture.", "share.title": "Partager cette page", "share.share": "Partager cette page", "share.copy": "Copier le lien de partage", "share.copied": "Lien de partage copié", "share.failed": "Le lien n’a pas pu être copié. Copiez-le depuis la barre d’adresse.",
   },
-};
+});
 
-for (const locale of Object.keys(trackedComponentCatalogs) as Locale[]) {
-  Object.assign(catalogs[locale], trackedComponentCatalogs[locale]);
-}
+export type CatalogKey =
+  | keyof typeof baseCatalogs.en
+  | keyof typeof trackedComponentCatalogs.en;
+export type LanguageCatalog = Record<CatalogKey, string>;
+
+export const catalogs = Object.fromEntries(
+  SUPPORTED_LOCALES.map((locale) => [
+    locale,
+    { ...baseCatalogs[locale], ...trackedComponentCatalogs[locale] },
+  ]),
+) as Record<Locale, LanguageCatalog>;
 
 export function getTranslation(locale: Locale, key: string): string {
   const resolvedLocale =
     (locale as string) === "zh" ? "zh-TW" : locale;
-  return catalogs[resolvedLocale][key] ?? catalogs.en[key] ?? key;
+  return (
+    catalogs[resolvedLocale][key as CatalogKey] ??
+    catalogs.en[key as CatalogKey] ??
+    key
+  );
 }

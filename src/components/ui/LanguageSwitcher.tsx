@@ -2,7 +2,7 @@ import { Check, Languages } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   beginManualLocaleChange,
-  buildSamePageLocalePath,
+  localizedPathForCurrentRoute,
 } from "@/components/routing/locale-routing";
 import { LANGUAGE_OPTIONS } from "@/i18n/catalogs";
 import type { Locale } from "@/i18n/locales";
@@ -25,9 +25,12 @@ export default function LanguageSwitcher() {
   );
 
   const handleLanguageChange = (locale: Locale) => {
-    if (locale === currentLanguage) return;
+    if (locale === currentLanguage) {
+      useLanguageStore.getState().setLanguage(locale, true);
+      return;
+    }
     beginManualLocaleChange(locale);
-    navigate(buildSamePageLocalePath(pathname, locale));
+    navigate(localizedPathForCurrentRoute(pathname, locale));
   };
 
   return (

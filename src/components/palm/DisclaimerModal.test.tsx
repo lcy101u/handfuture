@@ -103,5 +103,6 @@ describe("DisclaimerModal", () => {
         name: "理解して同意します（娯楽と自己省察のみ）",
       }),
     ).toBeVisible();
+    expect(screen.getByRole("button", { name: "閉じる" })).toBeVisible();
   });
 });

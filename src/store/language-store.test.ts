@@ -8,6 +8,7 @@ function persistedLanguageState() {
 async function rehydrateFrom(payload: unknown) {
   useLanguageStore.setState({
     currentLanguage: "en",
+    preferredLanguage: null,
     hasExplicitPreference: false,
   });
   document.documentElement.lang = "en";
@@ -22,6 +23,7 @@ describe("language store public copy", () => {
     localStorage.clear();
     useLanguageStore.setState({
       currentLanguage: "en",
+      preferredLanguage: null,
       hasExplicitPreference: false,
     });
     document.documentElement.lang = "en";
@@ -58,18 +60,24 @@ describe("language store public copy", () => {
 
     expect(useLanguageStore.getState()).toMatchObject({
       currentLanguage: "ja",
+      preferredLanguage: "ja",
       hasExplicitPreference: true,
     });
     expect(document.documentElement.lang).toBe("ja");
     expect(persistedLanguageState()).toEqual({
-      state: { currentLanguage: "ja", hasExplicitPreference: true },
-      version: 1,
+      state: {
+        currentLanguage: "ja",
+        preferredLanguage: "ja",
+        hasExplicitPreference: true,
+      },
+      version: 2,
     });
 
     await rehydrateFrom(persistedLanguageState());
 
     expect(useLanguageStore.getState()).toMatchObject({
       currentLanguage: "ja",
+      preferredLanguage: "ja",
       hasExplicitPreference: true,
     });
     expect(document.documentElement.lang).toBe("ja");
@@ -81,17 +89,23 @@ describe("language store public copy", () => {
 
     expect(useLanguageStore.getState()).toMatchObject({
       currentLanguage: "ko",
+      preferredLanguage: null,
       hasExplicitPreference: false,
     });
     expect(persistedLanguageState()).toEqual({
-      state: { currentLanguage: "ko", hasExplicitPreference: false },
-      version: 1,
+      state: {
+        currentLanguage: "ko",
+        preferredLanguage: null,
+        hasExplicitPreference: false,
+      },
+      version: 2,
     });
 
     await rehydrateFrom(persistedLanguageState());
 
     expect(useLanguageStore.getState()).toMatchObject({
       currentLanguage: "ko",
+      preferredLanguage: null,
       hasExplicitPreference: false,
     });
     expect(document.documentElement.lang).toBe("ko");
@@ -103,9 +117,29 @@ describe("language store public copy", () => {
 
     expect(useLanguageStore.getState()).toMatchObject({
       currentLanguage: "zh-TW",
+      preferredLanguage: "zh-TW",
       hasExplicitPreference: true,
     });
     expect(document.documentElement.lang).toBe("zh-TW");
     expect(document.title).toBe("HandFuture");
+  });
+
+  it("keeps a saved explicit preference when URL state changes the render locale", () => {
+    useLanguageStore.getState().setLanguage("fr", true);
+    useLanguageStore.getState().setLanguage("ja", false);
+
+    expect(useLanguageStore.getState()).toMatchObject({
+      currentLanguage: "ja",
+      preferredLanguage: "fr",
+      hasExplicitPreference: true,
+    });
+    expect(persistedLanguageState()).toEqual({
+      state: {
+        currentLanguage: "ja",
+        preferredLanguage: "fr",
+        hasExplicitPreference: true,
+      },
+      version: 2,
+    });
   });
 });

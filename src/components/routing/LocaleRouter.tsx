@@ -86,13 +86,11 @@ function PublicPage({ path }: { path: PublicPath }) {
 }
 
 function Gateway() {
-  const currentLanguage = useLanguageStore((state) => state.currentLanguage);
-  const hasExplicitPreference = useLanguageStore(
-    (state) => state.hasExplicitPreference,
+  const preferredLanguage = useLanguageStore(
+    (state) => state.preferredLanguage,
   );
-  const locale = hasExplicitPreference
-    ? currentLanguage
-    : localeFromBrowserLanguages(navigator.languages) ?? "en";
+  const locale =
+    preferredLanguage ?? localeFromBrowserLanguages(navigator.languages) ?? "en";
 
   return <Navigate replace to={buildLocalizedPath(locale, "/")} />;
 }

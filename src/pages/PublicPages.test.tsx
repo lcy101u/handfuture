@@ -247,7 +247,7 @@ describe("factual trust and policy pages", () => {
     for (const source of content.sources) {
       expect(within(article).getByRole("link", { name: source.label })).toHaveAttribute(
         "href",
-        source.url,
+        source.url.startsWith("/") ? `/en${source.url}` : source.url,
       );
     }
   });
@@ -299,7 +299,7 @@ describe("factual trust and policy pages", () => {
     expect(article).toHaveTextContent(/no uptime guarantee/);
     expect(within(article).getByRole("link", { name: "Privacy Policy" })).toHaveAttribute(
       "href",
-      "/privacy",
+      "/en/privacy",
     );
   });
 
@@ -327,9 +327,33 @@ describe("factual trust and policy pages", () => {
     const article = screen.getByRole("article");
     const link = within(article).getByRole("link", { name: "Privacy Policy" });
 
-    expect(link).toHaveAttribute("href", "/privacy");
+    expect(link).toHaveAttribute("href", "/en/privacy");
     expect(link).not.toHaveAttribute("target");
     expect(link).not.toHaveAttribute("rel");
+  });
+
+  it("keeps English editorial source and related-reading links under /en", () => {
+    renderInLayout(
+      <GuidePage path="/guides/science-and-limitations" />,
+      "/guides/science-and-limitations",
+    );
+    const article = screen.getByRole("article");
+    const relatedReading = within(article).getByRole("navigation", {
+      name: "Related reading",
+    });
+
+    for (const link of within(relatedReading).getAllByRole("link")) {
+      expect(link.getAttribute("href")).toMatch(/^\/en\//);
+    }
+
+    for (const source of GUIDE_CONTENT["/guides/science-and-limitations"].en.sources) {
+      const link = within(article).getByRole("link", { name: source.label });
+      if (source.url.startsWith("/")) {
+        expect(link).toHaveAttribute("href", `/en${source.url}`);
+      } else {
+        expect(link).toHaveAttribute("href", source.url);
+      }
+    }
   });
 
   it("rerenders policy content in Chinese", () => {
