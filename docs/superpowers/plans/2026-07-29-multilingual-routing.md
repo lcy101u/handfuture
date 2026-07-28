@@ -203,6 +203,8 @@ git commit -m "feat: route public pages by locale"
 - Modify: `src/config/public-routes.ts`
 - Modify: `src/components/routing/LocaleRouter.tsx`
 - Modify: `src/components/routing/RouteErrorBoundary.tsx`
+- Modify: `src/components/seo/RouteMeta.tsx`
+- Modify: `src/components/seo/RouteMeta.test.tsx`
 - Modify: `src/pages/GuidePage.tsx`
 - Modify: `src/pages/AboutPage.tsx`
 - Modify: `src/pages/PrivacyPolicyPage.tsx`
@@ -240,6 +242,8 @@ Translate each heading, summary, paragraph, bullet, metadata title, description,
 
 Replace remaining `locale === "zh"` long-form branches with catalog-backed eight-locale labels (publisher, updated date, sources, related reading, page eyebrows, and route-error copy). Switch `src/config/public-routes.ts` to the canonical eight-locale type, remove the temporary long-form availability gate, and add rendered-route coverage proving representative guide, about, privacy, and terms pages are indexable and visibly translated outside English/Chinese.
 
+Migrate `RouteMeta` just far enough to recognize a canonical locale-prefixed public route, select that route's locale metadata, and avoid incorrectly applying `noindex`. Locale-specific canonical URLs and reciprocal alternate links remain Task 5.
+
 - [ ] **Step 3: Audit high-risk meaning**
 
 Add table-driven assertions that every locale retains explicit statements equivalent to: non-scientific entertainment, no medical/financial/life-decision use, photos are not uploaded to HandFuture, and MediaPipe detects joints rather than palm creases.
@@ -252,7 +256,7 @@ Expected: all content and metadata tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/content src/config src/components/routing src/pages/GuidePage.tsx src/pages/AboutPage.tsx src/pages/PrivacyPolicyPage.tsx src/pages/TermsPage.tsx src/pages/PublicPages.test.tsx src/i18n/catalogs.ts
+git add src/content src/config src/components/routing src/components/seo/RouteMeta.tsx src/components/seo/RouteMeta.test.tsx src/pages/GuidePage.tsx src/pages/AboutPage.tsx src/pages/PrivacyPolicyPage.tsx src/pages/TermsPage.tsx src/pages/PublicPages.test.tsx src/i18n/catalogs.ts
 git commit -m "feat: translate public content into eight locales"
 ```
 
