@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import SiteFooter from "./SiteFooter";
 import SiteHeader from "./SiteHeader";
+import { getTranslation } from "@/i18n/catalogs";
 import { useLanguageStore } from "@/store/language-store";
 
 interface SiteLayoutProps {
@@ -8,7 +9,9 @@ interface SiteLayoutProps {
 }
 
 export default function SiteLayout({ children }: SiteLayoutProps) {
-  const t = useLanguageStore((state) => state.t);
+  const skipLabel = useLanguageStore((state) =>
+    getTranslation(state.currentLanguage, "layout.skip"),
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-secondary/20">
@@ -16,7 +19,7 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
         href="#main-content"
         className="sr-only z-50 rounded bg-background px-4 py-2 text-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
-        {t("layout.skip")}
+        {skipLabel}
       </a>
       <SiteHeader />
       <main id="main-content" className="flex-1" tabIndex={-1}>

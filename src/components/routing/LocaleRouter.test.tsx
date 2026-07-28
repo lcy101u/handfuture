@@ -106,6 +106,27 @@ describe("LocaleRouter", () => {
     ).toBeVisible();
   });
 
+  it("updates persistent shell copy when the route locale changes", async () => {
+    renderAt("/ja/");
+    await screen.findByRole("heading", { name: localizedHeadings.ja });
+    expect(
+      screen.getByRole("link", { name: "メインコンテンツへ移動" }),
+    ).toHaveAttribute("href", "#main-content");
+
+    fireEvent.pointerDown(
+      screen.getByRole("button", { name: "言語を切り替える" }),
+      { button: 0, ctrlKey: false },
+    );
+    fireEvent.click(
+      await screen.findByRole("menuitem", { name: /Français/ }),
+    );
+
+    await waitFor(() => expect(window.location.pathname).toBe("/fr/"));
+    expect(
+      screen.getByRole("link", { name: "Aller au contenu" }),
+    ).toHaveAttribute("href", "#main-content");
+  });
+
   it("builds a same-page locale path without rendering untranslated content", () => {
     expect(localizedPathForCurrentRoute("/en/privacy", "fr")).toBe("/fr/privacy");
     expect(
