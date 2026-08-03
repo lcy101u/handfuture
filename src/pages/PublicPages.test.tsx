@@ -66,7 +66,7 @@ describe("all localized public routes", () => {
   )("renders %s%s as indexable public content", async (locale, path) => {
     renderLocalizedPublicRoute(locale, path);
 
-    if (path === "/") {
+    if (path === "/" || path === "/guides") {
       expect(await screen.findByRole("heading", { level: 1 })).toBeVisible();
     } else {
       expect(await screen.findByRole("article")).toBeVisible();
@@ -118,7 +118,7 @@ describe("all localized public routes", () => {
       expect(within(article).getByRole("heading", { level: 1 })).toHaveTextContent(title);
       expect(within(article).getByRole("heading", { name: section })).toBeVisible();
       expect(within(article).getByText(eyebrow)).toBeVisible();
-      expect(within(article).getByText("HandFuture", { selector: "span" })).toBeVisible();
+      expect(within(article).getByText("Young LIN", { selector: "span" })).toBeVisible();
     },
   );
 });
@@ -129,23 +129,22 @@ describe("public page shell", () => {
     useLanguageStore.setState({ currentLanguage: "en" });
   });
 
-  it("links every approved route exactly once in the header and footer", () => {
+  it("keeps concise, localized primary and footer navigation", () => {
     renderInLayout(<HowItWorksPage />, "/how-it-works");
 
-    for (const landmark of [screen.getByRole("banner"), screen.getByRole("contentinfo")]) {
-      const hrefs = within(landmark)
-        .getAllByRole("link")
-        .map((link) => link.getAttribute("href"));
+    const headerHrefs = within(screen.getByRole("banner"))
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    expect(headerHrefs).toEqual(["/en/", "/en/guides", "/en/how-it-works", "/en/about"]);
 
-      expect(hrefs).toEqual(
-        PUBLIC_PATHS.map((path) =>
-          path === "/" ? "/en/" : `/en${path}`,
-        ),
-      );
-      expect(new Set(hrefs).size).toBe(PUBLIC_PATHS.length);
-      expect(hrefs).not.toContain("/batch");
-      expect(hrefs).not.toContain("#");
-    }
+    const footerHrefs = within(screen.getByRole("contentinfo"))
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    expect(footerHrefs).toEqual([
+      "/en/", "/en/guides", "/en/how-it-works", "/en/about", "/en/privacy", "/en/terms",
+    ]);
+    expect([...headerHrefs, ...footerHrefs]).not.toContain("/batch");
+    expect([...headerHrefs, ...footerHrefs]).not.toContain("#");
   });
 
   it("keeps the footer concise and free of unverified claims or contact links", () => {
@@ -176,10 +175,10 @@ describe("sourced public articles", () => {
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(within(article).getByRole("heading", { level: 1 })).toHaveTextContent(page.title);
-    expect(within(article).getByText("HandFuture", { selector: "span" })).toBeVisible();
-    expect(within(article).getByText("2026-07-26", { selector: "time" })).toHaveAttribute(
+    expect(within(article).getByText("Young LIN", { selector: "span" })).toBeVisible();
+    expect(within(article).getByText(page.updatedAt, { selector: "time" })).toHaveAttribute(
       "datetime",
-      "2026-07-26",
+      page.updatedAt,
     );
     for (const source of page.sources) {
       expect(within(article).getByRole("link", { name: source.label })).toHaveAttribute(
@@ -202,6 +201,20 @@ describe("sourced public articles", () => {
     ).toBeVisible();
   });
 
+  it("shows a crawlable Home → Learn → guide breadcrumb", () => {
+    const path: GuidePath = "/guides/hand-landmark-atlas";
+    renderInLayout(<GuidePage path={path} />, path);
+
+    expect(
+      within(screen.getByRole("navigation", { name: "Breadcrumbs" }))
+        .getAllByRole("link")
+        .map((link) => link.getAttribute("href")),
+    ).toEqual(["/en/", "/en/guides"]);
+    expect(screen.getByRole("navigation", { name: "Breadcrumbs" })).toHaveTextContent(
+      GUIDE_CONTENT[path].en.title,
+    );
+  });
+
   it("explains 21 landmarks and that palm creases are not detected", () => {
     renderInLayout(<HowItWorksPage />, "/how-it-works");
     const article = screen.getByRole("article");
@@ -215,17 +228,17 @@ describe("sourced public articles", () => {
     {
       locale: "zh-TW" as const,
       validatedResult: /確認單一結果包含恰好 21 個有限數值的關節座標/,
-      visiblePreview: /保留原始上傳照片，並以文字顯示偵測狀態/,
-      nonexistentDrawing: /畫出關節連線|畫面上的骨架/,
+      visiblePreview: /在原始上傳照片上顯示.*21 點關節骨架.*以文字顯示偵測狀態/,
+      nonexistentDrawing: /辨識生命線.*智慧線.*感情線/,
     },
     {
       locale: "en" as const,
       validatedResult: /validates that one result contains exactly 21 finite joint coordinates/i,
-      visiblePreview: /keeps the original uploaded photo and reports the detection status in text/i,
-      nonexistentDrawing: /draw a joint overlay|visible skeleton/i,
+      visiblePreview: /shows a 21-point joint skeleton over the original uploaded photo.*reports the detection status in text/i,
+      nonexistentDrawing: /does not identify the life.*head.*heart.*creases/i,
     },
   ])(
-    "describes the visible detector result instead of a nonexistent overlay in $locale",
+    "describes the implemented landmark overlay and its limits in $locale",
     ({ locale, validatedResult, visiblePreview, nonexistentDrawing }) => {
       setContentLanguage(locale);
       renderInLayout(<HowItWorksPage />, "/how-it-works");
@@ -233,29 +246,28 @@ describe("sourced public articles", () => {
 
       expect(article).toHaveTextContent(validatedResult);
       expect(article).toHaveTextContent(visiblePreview);
-      expect(article).not.toHaveTextContent(nonexistentDrawing);
+      expect(article).toHaveTextContent(nonexistentDrawing);
     },
   );
 
   it.each([
     {
       locale: "zh-TW" as const,
-      falseVisualization: /繪出手腕、手指關節與指尖的連線|關節骨架看起來精細/,
+      visualization: /21 點關節骨架|固定索引連線/,
       usableHand: /確認只找到一隻可用的手，並驗證.*恰好 21 個有限數值的關節座標/,
-      visibleResult: /保留原始上傳照片.*以文字顯示偵測狀態.*驗證成功.*選擇反思卡/,
+      visibleResult: /原始上傳照片.*21 點關節骨架.*偵測狀態.*驗證成功.*選擇反思卡/,
     },
     {
       locale: "en" as const,
-      falseVisualization:
-        /draw connections among the wrist, finger joints, and fingertips|detailed-looking joint skeleton/i,
+      visualization: /21-point joint skeleton|fixed-index connections/i,
       usableHand:
         /confirms that exactly one usable hand was found and validates.*exactly 21 finite joint coordinates/i,
       visibleResult:
-        /keeps the original uploaded photo.*reports the detection status in text.*after validation succeeds.*reflection card/i,
+        /21-point joint skeleton.*original uploaded photo.*detection status.*after validation succeeds.*reflection card/i,
     },
   ])(
     "renders the actual detector behavior in the science guide for $locale",
-    ({ locale, falseVisualization, usableHand, visibleResult }) => {
+    ({ locale, visualization, usableHand, visibleResult }) => {
       setContentLanguage(locale);
       renderInLayout(
         <GuidePage path="/guides/science-and-limitations" />,
@@ -263,7 +275,7 @@ describe("sourced public articles", () => {
       );
       const article = screen.getByRole("article");
 
-      expect(article).not.toHaveTextContent(falseVisualization);
+      expect(article).toHaveTextContent(visualization);
       expect(article).toHaveTextContent(usableHand);
       expect(article).toHaveTextContent(visibleResult);
     },
@@ -322,10 +334,10 @@ describe("factual trust and policy pages", () => {
     expect(screen.getAllByRole("contentinfo")).toHaveLength(1);
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(within(article).getByRole("heading", { level: 1 })).toHaveTextContent(content.title);
-    expect(within(article).getByText("HandFuture", { selector: "span" })).toBeVisible();
-    expect(within(article).getByText("2026-07-26", { selector: "time" })).toHaveAttribute(
+    expect(within(article).getByText("Young LIN", { selector: "span" })).toBeVisible();
+    expect(within(article).getByText(content.updatedAt, { selector: "time" })).toHaveAttribute(
       "datetime",
-      "2026-07-26",
+      content.updatedAt,
     );
     for (const section of content.sections) {
       expect(within(article).getByRole("heading", { name: section.heading })).toBeVisible();
@@ -406,6 +418,16 @@ describe("factual trust and policy pages", () => {
     expect(ABOUT_CONTENT.en.sources).toHaveLength(0);
     expect(screen.queryByRole("heading", { name: "Sources" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "參考資料" })).not.toBeInTheDocument();
+  });
+
+  it("publishes Young LIN's role, credential limits, method, and update history", () => {
+    renderInLayout(<AboutPage />, "/about");
+    const article = screen.getByRole("article");
+
+    expect(article).toHaveTextContent(/Young LIN is the independent developer and content editor/i);
+    expect(article).toHaveTextContent(/not a doctor, therapist, scientist, or certified palmistry professional/i);
+    expect(article).toHaveTextContent(/editorial process checks the implemented output first/i);
+    expect(article).toHaveTextContent(/2026-08-03: Added the 21-point atlas/i);
   });
 
   it("links Terms' Privacy Policy reference with an in-app router Link, not a new-tab anchor", () => {

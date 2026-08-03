@@ -19,6 +19,7 @@ import {
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const HowItWorksPage = lazy(() => import("@/pages/HowItWorksPage"));
+const GuideHubPage = lazy(() => import("@/pages/GuideHubPage"));
 const GuidePage = lazy(() => import("@/pages/GuidePage"));
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const PrivacyPolicyPage = lazy(() => import("@/pages/PrivacyPolicyPage"));
@@ -79,6 +80,7 @@ function LocaleBoundary({
 
 function PublicPage({ path }: { path: PublicPath }) {
   if (path === "/") return <HomePage />;
+  if (path === "/guides") return <GuideHubPage />;
   if (path === "/how-it-works") return <HowItWorksPage />;
   if (path.startsWith("/guides/")) {
     return <GuidePage path={path as GuidePath} />;

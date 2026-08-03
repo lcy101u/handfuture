@@ -20,7 +20,7 @@ const privacySources = [
 ];
 
 function page(content: Omit<EditorialPage, "updatedAt">): EditorialPage {
-  return { ...content, updatedAt: "2026-07-26" };
+  return { ...content, updatedAt: "2026-08-03" };
 }
 
 export const frEditorial: LocalizedEditorialBundle = {
@@ -39,7 +39,7 @@ export const frEditorial: LocalizedEditorialBundle = {
         heading: "Repérer les articulations de la main",
         paragraphs: [
           "MediaPipe recherche les mains et renvoie des repères standard ainsi que des informations sur le côté de la main. HandFuture vérifie qu’une seule main a été trouvée, puis que le résultat contient exactement 21 articulations décrites par des coordonnées aux valeurs finies avant de l’accepter.",
-          "L’interface conserve la photo d’origine et indique par écrit l’état de la détection ; le bouton de la carte est disponible après validation. Le modèle n’identifie pas la ligne de vie, de tête, de cœur, de destinée ni les autres plis de la paume, et ne tire aucune conclusion sur la personne photographiée.",
+          "L’interface affiche sur la photo d’origine un squelette de 21 articulations relié selon des indices fixes et indique aussi l’état par écrit ; la carte devient disponible après validation. Ces points ne sont pas des plis : le modèle n’identifie aucune ligne de vie, de tête, de cœur ou de destinée et ne conclut rien sur la personne.",
         ],
       },
       {
@@ -113,7 +113,7 @@ export const frEditorial: LocalizedEditorialBundle = {
           heading: "Détecter n’est pas interpréter",
           paragraphs: [
             "MediaPipe Hand Landmarker fournit des repères en coordonnées d’image et du monde, ainsi que le côté de la main. HandFuture confirme qu’une seule main utilisable est présente et valide exactement 21 coordonnées articulaires finies. Il s’agit d’une tâche de localisation en vision par ordinateur : estimer quels points correspondent aux articulations standard.",
-            "Le modèle ne renvoie ni ligne de vie, ni ligne de tête, de cœur ou de destinée. Sa sortie ne contient aucun nom de pli, sens symbolique, score de personnalité ou catégorie de vie. L’interface garde la photo et indique l’état par écrit ; après validation, la carte peut être choisie. Les points géométriques restent une localisation articulaire et ne deviennent pas une analyse de la paume en changeant de nom.",
+            "Le modèle ne renvoie ni ligne de vie, ni ligne de tête, de cœur ou de destinée. Sa sortie ne contient aucun nom de pli, sens symbolique, score de personnalité ou catégorie de vie. L’interface affiche sur la photo d’origine un squelette de 21 articulations avec des connexions à indices fixes et indique l’état par écrit ; après validation, la carte peut être choisie. Les points restent une localisation articulaire, pas une analyse de la paume.",
             "HandFuture utilise une signature géométrique fixe pour sélectionner une carte générale. La règle fait seulement produire la même clé à des coordonnées identiques. La reproductibilité d’un programme n’établit pas la vérité d’une interprétation ; elle répète simplement la sélection. Le texte de la carte n’est ni entraîné sur la personne ni utilisé pour l’évaluer.",
           ],
         },

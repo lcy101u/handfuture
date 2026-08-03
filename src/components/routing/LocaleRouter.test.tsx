@@ -11,14 +11,14 @@ import LocaleRouter from "./LocaleRouter";
 import { localizedPathForCurrentRoute } from "./locale-routing";
 
 const localizedHeadings: Record<Locale, string> = {
-  "zh-TW": "從一張手部照片，開始一段文化探索",
-  "zh-CN": "从一张手部照片，开始一段文化探索",
-  en: "Start a cultural exploration with one hand photo",
-  ja: "1枚の手の写真から、文化を探る旅へ",
-  ko: "손 사진 한 장으로 문화 탐구를 시작하세요",
-  es: "Empieza una exploración cultural con una foto de una mano",
-  "pt-BR": "Comece uma exploração cultural com uma foto de uma mão",
-  fr: "Commencez une exploration culturelle avec une photo de main",
+  "zh-TW": "看懂手部偵測，也看懂說法的界線",
+  "zh-CN": "看懂手部检测，也看懂说法的边界",
+  en: "Understand hand detection—and the limits of a claim",
+  ja: "手の検出と、主張の限界を理解する",
+  ko: "손 감지와 주장의 한계를 함께 이해하세요",
+  es: "Comprende la detección y los límites de una afirmación",
+  "pt-BR": "Entenda a detecção e os limites de uma afirmação",
+  fr: "Comprendre la détection et les limites d’une affirmation",
 };
 
 function renderAt(pathname: string) {
@@ -156,9 +156,11 @@ describe("LocaleRouter", () => {
         .getAllByRole("link")
         .map((link) => link.getAttribute("href")),
     ).toEqual([
-      "/ja/guides/palmistry-basics",
-      "/ja/guides/science-and-limitations",
-      "/ja/guides/hand-photo-guide",
+      "/ja/guides",
+      "/ja/guides/hand-landmark-atlas",
+      "/ja/guides/creases-vs-landmarks",
+      "/ja/guides/barnum-effect-lab",
+      "/ja/guides/evaluating-palmistry-claims",
     ]);
   });
 

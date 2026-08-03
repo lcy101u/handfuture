@@ -1,4 +1,4 @@
-import { PUBLIC_PATHS, type GuidePath, type PublicPath } from "../config/public-routes";
+import type { GuidePath, PublicPath } from "../config/public-routes";
 import {
   buildLocalizedPublicUrl,
   buildPublicGatewayUrl,
@@ -10,22 +10,40 @@ import {
 import { GUIDE_CONTENT, HOW_IT_WORKS_CONTENT, type EditorialPage } from "../content/guides";
 import { ABOUT_CONTENT, PRIVACY_CONTENT, TERMS_CONTENT } from "../content/policies";
 import { getTranslation } from "../i18n/catalogs";
+import { BREADCRUMB_COPY } from "../i18n/breadcrumbs";
 import { buildLocalizedPath, SUPPORTED_LOCALES, type Locale } from "../i18n/locales";
 import { escapeAttribute, escapeHtml, serializeJsonForHtml } from "./localized-html";
 
 const ROUTE_HEAD_START = "<!-- handfuture-route-head:start -->";
 const ROUTE_HEAD_END = "<!-- handfuture-route-head:end -->";
 
-const navigationLabels: Record<PublicPath, string> = {
-  "/": "nav.home",
-  "/how-it-works": "footer.howItWorks",
-  "/guides/palmistry-basics": "guide.basics.title",
-  "/guides/science-and-limitations": "guide.science.title",
-  "/guides/hand-photo-guide": "guide.photo.title",
-  "/about": "nav.about",
-  "/privacy": "nav.privacy",
-  "/terms": "nav.terms",
+const learnLabels: Record<Locale, string> = {
+  "zh-TW": "學習中心", "zh-CN": "学习中心", en: "Learn", ja: "学ぶ", ko: "학습",
+  es: "Aprender", "pt-BR": "Aprender", fr: "Apprendre",
 };
+
+const authorRoles: Record<Locale, string> = {
+  "zh-TW": "HandFuture 獨立開發者與內容編輯",
+  "zh-CN": "HandFuture 独立开发者与内容编辑",
+  en: "HandFuture independent developer and content editor",
+  ja: "HandFuture 個人開発者・コンテンツ編集者",
+  ko: "HandFuture 독립 개발자 및 콘텐츠 편집자",
+  es: "desarrollador independiente y editor de contenidos de HandFuture",
+  "pt-BR": "desenvolvedor independente e editor de conteúdo do HandFuture",
+  fr: "développeur indépendant et éditeur de contenu de HandFuture",
+};
+
+const navigationPaths = ["/", "/guides", "/how-it-works", "/about", "/privacy", "/terms"] as const;
+
+function navigationLabel(publicPath: PublicPath, locale: Locale): string {
+  if (publicPath === "/") return getTranslation(locale, "nav.home");
+  if (publicPath === "/guides") return learnLabels[locale];
+  if (publicPath === "/how-it-works") return getTranslation(locale, "footer.howItWorks");
+  if (publicPath === "/about") return getTranslation(locale, "nav.about");
+  if (publicPath === "/privacy") return getTranslation(locale, "nav.privacy");
+  if (publicPath === "/terms") return getTranslation(locale, "nav.terms");
+  return GUIDE_CONTENT[publicPath][locale].title;
+}
 
 const homeFeatures = [
   ["home.feature.browser.title", "home.feature.browser.description"],
@@ -34,9 +52,10 @@ const homeFeatures = [
 ] as const;
 
 const homeGuides = [
-  ["/guides/palmistry-basics", "guide.basics.title", "guide.basics.summary"],
-  ["/guides/science-and-limitations", "guide.science.title", "guide.science.summary"],
-  ["/guides/hand-photo-guide", "guide.photo.title", "guide.photo.summary"],
+  "/guides/hand-landmark-atlas",
+  "/guides/creases-vs-landmarks",
+  "/guides/barnum-effect-lab",
+  "/guides/evaluating-palmistry-claims",
 ] as const;
 
 const homeFaqs = [
@@ -90,10 +109,34 @@ ${alternateOpenGraphLocales}
 }
 
 function renderSiteNavigation(locale: Locale): string {
-  return PUBLIC_PATHS.map(
+  return navigationPaths.map(
     (publicPath) =>
-      `<a href="${escapeAttribute(buildLocalizedPath(locale, publicPath))}">${escapeHtml(getTranslation(locale, navigationLabels[publicPath]))}</a>`,
+      `<a href="${escapeAttribute(buildLocalizedPath(locale, publicPath))}">${escapeHtml(navigationLabel(publicPath, locale))}</a>`,
   ).join("\n        ");
+}
+
+function renderGuideHub(locale: Locale): string {
+  const meta = getRouteMetadata("/guides", locale);
+  const cards = (Object.keys(GUIDE_CONTENT) as GuidePath[]).map((path) => {
+    const content = GUIDE_CONTENT[path][locale];
+    return `<article>
+      <h2><a href="${escapeAttribute(buildLocalizedPath(locale, path))}">${escapeHtml(content.title)}</a></h2>
+      <p>${escapeHtml(content.summary)}</p>
+    </article>`;
+  }).join("\n");
+
+  const breadcrumb = BREADCRUMB_COPY[locale];
+  return `<nav aria-label="${escapeAttribute(breadcrumb.ariaLabel)}">
+    <a href="${escapeAttribute(buildLocalizedPath(locale, "/"))}">${escapeHtml(breadcrumb.home)}</a>
+    <span aria-current="page">${escapeHtml(breadcrumb.learn)}</span>
+  </nav>
+  <section>
+    <p>${escapeHtml(learnLabels[locale])}</p>
+    <h1>${escapeHtml(meta.title.replace(/\s*[|｜].*$/, ""))}</h1>
+    <p>${escapeHtml(meta.description)}</p>
+    <p>Young LIN — ${escapeHtml(authorRoles[locale])}</p>
+  </section>
+  <section>${cards}</section>`;
 }
 
 function renderHome(locale: Locale): string {
@@ -107,9 +150,9 @@ function renderHome(locale: Locale): string {
     .join("\n");
   const guides = homeGuides
     .map(
-      ([publicPath, titleKey, summaryKey]) => `<article>
-        <h3><a href="${escapeAttribute(buildLocalizedPath(locale, publicPath))}">${escapeHtml(getTranslation(locale, titleKey))}</a></h3>
-        <p>${escapeHtml(getTranslation(locale, summaryKey))}</p>
+      (publicPath) => `<article>
+        <h3><a href="${escapeAttribute(buildLocalizedPath(locale, publicPath))}">${escapeHtml(GUIDE_CONTENT[publicPath][locale].title)}</a></h3>
+        <p>${escapeHtml(GUIDE_CONTENT[publicPath][locale].summary)}</p>
       </article>`,
     )
     .join("\n");
@@ -131,6 +174,8 @@ ${features}
     </section>
     <section>
       <h2>${escapeHtml(getTranslation(locale, "home.continue.title"))}</h2>
+      <p>Young LIN — ${escapeHtml(authorRoles[locale])}</p>
+      <p><a href="${escapeAttribute(buildLocalizedPath(locale, "/guides"))}">${escapeHtml(learnLabels[locale])}</a></p>
 ${guides}
     </section>
     <section>
@@ -139,7 +184,7 @@ ${faqs}
     </section>`;
 }
 
-function editorialContent(publicPath: Exclude<PublicPath, "/">, locale: Locale): EditorialPage {
+function editorialContent(publicPath: Exclude<PublicPath, "/" | "/guides">, locale: Locale): EditorialPage {
   if (publicPath === "/how-it-works") return HOW_IT_WORKS_CONTENT[locale];
   if (publicPath.startsWith("/guides/")) {
     return GUIDE_CONTENT[publicPath as GuidePath][locale];
@@ -149,14 +194,14 @@ function editorialContent(publicPath: Exclude<PublicPath, "/">, locale: Locale):
   return TERMS_CONTENT[locale];
 }
 
-function editorialEyebrow(publicPath: Exclude<PublicPath, "/">, locale: Locale): string {
+function editorialEyebrow(publicPath: Exclude<PublicPath, "/" | "/guides">, locale: Locale): string {
   if (publicPath === "/about") return getTranslation(locale, "editorial.eyebrow.about");
   if (publicPath === "/privacy") return getTranslation(locale, "editorial.eyebrow.privacy");
   if (publicPath === "/terms") return getTranslation(locale, "editorial.eyebrow.terms");
   return getTranslation(locale, "editorial.eyebrow.guide");
 }
 
-function renderEditorial(publicPath: Exclude<PublicPath, "/">, locale: Locale): string {
+function renderEditorial(publicPath: Exclude<PublicPath, "/" | "/guides">, locale: Locale): string {
   const content = editorialContent(publicPath, locale);
   const sections = content.sections
     .map((section) => {
@@ -187,12 +232,20 @@ function renderEditorial(publicPath: Exclude<PublicPath, "/">, locale: Locale): 
     </section>`
     : "";
 
-  return `<article>
+  const breadcrumb = publicPath.startsWith("/guides/")
+    ? `<nav aria-label="${escapeAttribute(BREADCRUMB_COPY[locale].ariaLabel)}">
+      <a href="${escapeAttribute(buildLocalizedPath(locale, "/"))}">${escapeHtml(BREADCRUMB_COPY[locale].home)}</a>
+      <a href="${escapeAttribute(buildLocalizedPath(locale, "/guides"))}">${escapeHtml(BREADCRUMB_COPY[locale].learn)}</a>
+      <span aria-current="page">${escapeHtml(content.title)}</span>
+    </nav>`
+    : "";
+
+  return `${breadcrumb}<article>
     <header>
       <p>${escapeHtml(editorialEyebrow(publicPath, locale))}</p>
       <h1>${escapeHtml(content.title)}</h1>
       <p>${escapeHtml(content.summary)}</p>
-      <p>${escapeHtml(getTranslation(locale, "editorial.publisher"))}: HandFuture · ${escapeHtml(getTranslation(locale, "editorial.updated"))}: <time datetime="${escapeAttribute(content.updatedAt)}">${escapeHtml(content.updatedAt)}</time></p>
+      <p>Young LIN — ${escapeHtml(authorRoles[locale])} · ${escapeHtml(getTranslation(locale, "editorial.updated"))}: <time datetime="${escapeAttribute(content.updatedAt)}">${escapeHtml(content.updatedAt)}</time></p>
     </header>
     ${sections}
     ${sources}
@@ -200,7 +253,11 @@ function renderEditorial(publicPath: Exclude<PublicPath, "/">, locale: Locale): 
 }
 
 function renderRouteBody(locale: Locale, publicPath: PublicPath): string {
-  const content = publicPath === "/" ? renderHome(locale) : renderEditorial(publicPath, locale);
+  const content = publicPath === "/"
+    ? renderHome(locale)
+    : publicPath === "/guides"
+      ? renderGuideHub(locale)
+      : renderEditorial(publicPath, locale);
   const navigation = renderSiteNavigation(locale);
 
   return `<div data-prerendered="true" data-locale="${escapeAttribute(locale)}">

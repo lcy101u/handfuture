@@ -3,116 +3,578 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "handfortune.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "handfortune.com"
+        }
+      ],
       "destination": "https://www.handfortune.com/:path*",
       "permanent": true
     },
-    { "source": "/how-it-works", "destination": "/zh-TW/how-it-works", "permanent": true },
-    { "source": "/guides/palmistry-basics", "destination": "/zh-TW/guides/palmistry-basics", "permanent": true },
-    { "source": "/guides/science-and-limitations", "destination": "/zh-TW/guides/science-and-limitations", "permanent": true },
-    { "source": "/guides/hand-photo-guide", "destination": "/zh-TW/guides/hand-photo-guide", "permanent": true },
-    { "source": "/about", "destination": "/zh-TW/about", "permanent": true },
-    { "source": "/privacy", "destination": "/zh-TW/privacy", "permanent": true },
-    { "source": "/terms", "destination": "/zh-TW/terms", "permanent": true }
+    {
+      "source": "/guides",
+      "destination": "/zh-TW/guides",
+      "permanent": true
+    },
+    {
+      "source": "/how-it-works",
+      "destination": "/zh-TW/how-it-works",
+      "permanent": true
+    },
+    {
+      "source": "/guides/palmistry-basics",
+      "destination": "/zh-TW/guides/palmistry-basics",
+      "permanent": true
+    },
+    {
+      "source": "/guides/science-and-limitations",
+      "destination": "/zh-TW/guides/science-and-limitations",
+      "permanent": true
+    },
+    {
+      "source": "/guides/hand-photo-guide",
+      "destination": "/zh-TW/guides/hand-photo-guide",
+      "permanent": true
+    },
+    {
+      "source": "/guides/hand-landmark-atlas",
+      "destination": "/zh-TW/guides/hand-landmark-atlas",
+      "permanent": true
+    },
+    {
+      "source": "/guides/creases-vs-landmarks",
+      "destination": "/zh-TW/guides/creases-vs-landmarks",
+      "permanent": true
+    },
+    {
+      "source": "/guides/barnum-effect-lab",
+      "destination": "/zh-TW/guides/barnum-effect-lab",
+      "permanent": true
+    },
+    {
+      "source": "/guides/evaluating-palmistry-claims",
+      "destination": "/zh-TW/guides/evaluating-palmistry-claims",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/zh-TW/about",
+      "permanent": true
+    },
+    {
+      "source": "/privacy",
+      "destination": "/zh-TW/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/terms",
+      "destination": "/zh-TW/terms",
+      "permanent": true
+    }
   ],
   "rewrites": [
-    { "source": "/zh-TW/", "destination": "/_prerender/zh-TW/index.html" },
-    { "source": "/zh-TW/how-it-works", "destination": "/_prerender/zh-TW/how-it-works.html" },
-    { "source": "/zh-TW/guides/palmistry-basics", "destination": "/_prerender/zh-TW/guides/palmistry-basics.html" },
-    { "source": "/zh-TW/guides/science-and-limitations", "destination": "/_prerender/zh-TW/guides/science-and-limitations.html" },
-    { "source": "/zh-TW/guides/hand-photo-guide", "destination": "/_prerender/zh-TW/guides/hand-photo-guide.html" },
-    { "source": "/zh-TW/about", "destination": "/_prerender/zh-TW/about.html" },
-    { "source": "/zh-TW/privacy", "destination": "/_prerender/zh-TW/privacy.html" },
-    { "source": "/zh-TW/terms", "destination": "/_prerender/zh-TW/terms.html" },
-    { "source": "/zh-CN/", "destination": "/_prerender/zh-CN/index.html" },
-    { "source": "/zh-CN/how-it-works", "destination": "/_prerender/zh-CN/how-it-works.html" },
-    { "source": "/zh-CN/guides/palmistry-basics", "destination": "/_prerender/zh-CN/guides/palmistry-basics.html" },
-    { "source": "/zh-CN/guides/science-and-limitations", "destination": "/_prerender/zh-CN/guides/science-and-limitations.html" },
-    { "source": "/zh-CN/guides/hand-photo-guide", "destination": "/_prerender/zh-CN/guides/hand-photo-guide.html" },
-    { "source": "/zh-CN/about", "destination": "/_prerender/zh-CN/about.html" },
-    { "source": "/zh-CN/privacy", "destination": "/_prerender/zh-CN/privacy.html" },
-    { "source": "/zh-CN/terms", "destination": "/_prerender/zh-CN/terms.html" },
-    { "source": "/en/", "destination": "/_prerender/en/index.html" },
-    { "source": "/en/how-it-works", "destination": "/_prerender/en/how-it-works.html" },
-    { "source": "/en/guides/palmistry-basics", "destination": "/_prerender/en/guides/palmistry-basics.html" },
-    { "source": "/en/guides/science-and-limitations", "destination": "/_prerender/en/guides/science-and-limitations.html" },
-    { "source": "/en/guides/hand-photo-guide", "destination": "/_prerender/en/guides/hand-photo-guide.html" },
-    { "source": "/en/about", "destination": "/_prerender/en/about.html" },
-    { "source": "/en/privacy", "destination": "/_prerender/en/privacy.html" },
-    { "source": "/en/terms", "destination": "/_prerender/en/terms.html" },
-    { "source": "/ja/", "destination": "/_prerender/ja/index.html" },
-    { "source": "/ja/how-it-works", "destination": "/_prerender/ja/how-it-works.html" },
-    { "source": "/ja/guides/palmistry-basics", "destination": "/_prerender/ja/guides/palmistry-basics.html" },
-    { "source": "/ja/guides/science-and-limitations", "destination": "/_prerender/ja/guides/science-and-limitations.html" },
-    { "source": "/ja/guides/hand-photo-guide", "destination": "/_prerender/ja/guides/hand-photo-guide.html" },
-    { "source": "/ja/about", "destination": "/_prerender/ja/about.html" },
-    { "source": "/ja/privacy", "destination": "/_prerender/ja/privacy.html" },
-    { "source": "/ja/terms", "destination": "/_prerender/ja/terms.html" },
-    { "source": "/ko/", "destination": "/_prerender/ko/index.html" },
-    { "source": "/ko/how-it-works", "destination": "/_prerender/ko/how-it-works.html" },
-    { "source": "/ko/guides/palmistry-basics", "destination": "/_prerender/ko/guides/palmistry-basics.html" },
-    { "source": "/ko/guides/science-and-limitations", "destination": "/_prerender/ko/guides/science-and-limitations.html" },
-    { "source": "/ko/guides/hand-photo-guide", "destination": "/_prerender/ko/guides/hand-photo-guide.html" },
-    { "source": "/ko/about", "destination": "/_prerender/ko/about.html" },
-    { "source": "/ko/privacy", "destination": "/_prerender/ko/privacy.html" },
-    { "source": "/ko/terms", "destination": "/_prerender/ko/terms.html" },
-    { "source": "/es/", "destination": "/_prerender/es/index.html" },
-    { "source": "/es/how-it-works", "destination": "/_prerender/es/how-it-works.html" },
-    { "source": "/es/guides/palmistry-basics", "destination": "/_prerender/es/guides/palmistry-basics.html" },
-    { "source": "/es/guides/science-and-limitations", "destination": "/_prerender/es/guides/science-and-limitations.html" },
-    { "source": "/es/guides/hand-photo-guide", "destination": "/_prerender/es/guides/hand-photo-guide.html" },
-    { "source": "/es/about", "destination": "/_prerender/es/about.html" },
-    { "source": "/es/privacy", "destination": "/_prerender/es/privacy.html" },
-    { "source": "/es/terms", "destination": "/_prerender/es/terms.html" },
-    { "source": "/pt-BR/", "destination": "/_prerender/pt-BR/index.html" },
-    { "source": "/pt-BR/how-it-works", "destination": "/_prerender/pt-BR/how-it-works.html" },
-    { "source": "/pt-BR/guides/palmistry-basics", "destination": "/_prerender/pt-BR/guides/palmistry-basics.html" },
-    { "source": "/pt-BR/guides/science-and-limitations", "destination": "/_prerender/pt-BR/guides/science-and-limitations.html" },
-    { "source": "/pt-BR/guides/hand-photo-guide", "destination": "/_prerender/pt-BR/guides/hand-photo-guide.html" },
-    { "source": "/pt-BR/about", "destination": "/_prerender/pt-BR/about.html" },
-    { "source": "/pt-BR/privacy", "destination": "/_prerender/pt-BR/privacy.html" },
-    { "source": "/pt-BR/terms", "destination": "/_prerender/pt-BR/terms.html" },
-    { "source": "/fr/", "destination": "/_prerender/fr/index.html" },
-    { "source": "/fr/how-it-works", "destination": "/_prerender/fr/how-it-works.html" },
-    { "source": "/fr/guides/palmistry-basics", "destination": "/_prerender/fr/guides/palmistry-basics.html" },
-    { "source": "/fr/guides/science-and-limitations", "destination": "/_prerender/fr/guides/science-and-limitations.html" },
-    { "source": "/fr/guides/hand-photo-guide", "destination": "/_prerender/fr/guides/hand-photo-guide.html" },
-    { "source": "/fr/about", "destination": "/_prerender/fr/about.html" },
-    { "source": "/fr/privacy", "destination": "/_prerender/fr/privacy.html" },
-    { "source": "/fr/terms", "destination": "/_prerender/fr/terms.html" },
-    { "source": "/zh-TW/:path*", "destination": "/api/localized-not-found?locale=zh-TW" },
-    { "source": "/zh-CN/:path*", "destination": "/api/localized-not-found?locale=zh-CN" },
-    { "source": "/en/:path*", "destination": "/api/localized-not-found?locale=en" },
-    { "source": "/ja/:path*", "destination": "/api/localized-not-found?locale=ja" },
-    { "source": "/ko/:path*", "destination": "/api/localized-not-found?locale=ko" },
-    { "source": "/es/:path*", "destination": "/api/localized-not-found?locale=es" },
-    { "source": "/pt-BR/:path*", "destination": "/api/localized-not-found?locale=pt-BR" },
-    { "source": "/fr/:path*", "destination": "/api/localized-not-found?locale=fr" }
+    {
+      "source": "/zh-TW/",
+      "destination": "/_prerender/zh-TW/index.html"
+    },
+    {
+      "source": "/zh-TW/guides",
+      "destination": "/_prerender/zh-TW/guides.html"
+    },
+    {
+      "source": "/zh-TW/how-it-works",
+      "destination": "/_prerender/zh-TW/how-it-works.html"
+    },
+    {
+      "source": "/zh-TW/guides/palmistry-basics",
+      "destination": "/_prerender/zh-TW/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/zh-TW/guides/science-and-limitations",
+      "destination": "/_prerender/zh-TW/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/zh-TW/guides/hand-photo-guide",
+      "destination": "/_prerender/zh-TW/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/zh-TW/guides/hand-landmark-atlas",
+      "destination": "/_prerender/zh-TW/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/zh-TW/guides/creases-vs-landmarks",
+      "destination": "/_prerender/zh-TW/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/zh-TW/guides/barnum-effect-lab",
+      "destination": "/_prerender/zh-TW/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/zh-TW/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/zh-TW/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/zh-TW/about",
+      "destination": "/_prerender/zh-TW/about.html"
+    },
+    {
+      "source": "/zh-TW/privacy",
+      "destination": "/_prerender/zh-TW/privacy.html"
+    },
+    {
+      "source": "/zh-TW/terms",
+      "destination": "/_prerender/zh-TW/terms.html"
+    },
+    {
+      "source": "/zh-CN/",
+      "destination": "/_prerender/zh-CN/index.html"
+    },
+    {
+      "source": "/zh-CN/guides",
+      "destination": "/_prerender/zh-CN/guides.html"
+    },
+    {
+      "source": "/zh-CN/how-it-works",
+      "destination": "/_prerender/zh-CN/how-it-works.html"
+    },
+    {
+      "source": "/zh-CN/guides/palmistry-basics",
+      "destination": "/_prerender/zh-CN/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/zh-CN/guides/science-and-limitations",
+      "destination": "/_prerender/zh-CN/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/zh-CN/guides/hand-photo-guide",
+      "destination": "/_prerender/zh-CN/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/zh-CN/guides/hand-landmark-atlas",
+      "destination": "/_prerender/zh-CN/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/zh-CN/guides/creases-vs-landmarks",
+      "destination": "/_prerender/zh-CN/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/zh-CN/guides/barnum-effect-lab",
+      "destination": "/_prerender/zh-CN/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/zh-CN/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/zh-CN/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/zh-CN/about",
+      "destination": "/_prerender/zh-CN/about.html"
+    },
+    {
+      "source": "/zh-CN/privacy",
+      "destination": "/_prerender/zh-CN/privacy.html"
+    },
+    {
+      "source": "/zh-CN/terms",
+      "destination": "/_prerender/zh-CN/terms.html"
+    },
+    {
+      "source": "/en/",
+      "destination": "/_prerender/en/index.html"
+    },
+    {
+      "source": "/en/guides",
+      "destination": "/_prerender/en/guides.html"
+    },
+    {
+      "source": "/en/how-it-works",
+      "destination": "/_prerender/en/how-it-works.html"
+    },
+    {
+      "source": "/en/guides/palmistry-basics",
+      "destination": "/_prerender/en/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/en/guides/science-and-limitations",
+      "destination": "/_prerender/en/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/en/guides/hand-photo-guide",
+      "destination": "/_prerender/en/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/en/guides/hand-landmark-atlas",
+      "destination": "/_prerender/en/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/en/guides/creases-vs-landmarks",
+      "destination": "/_prerender/en/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/en/guides/barnum-effect-lab",
+      "destination": "/_prerender/en/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/en/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/en/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/en/about",
+      "destination": "/_prerender/en/about.html"
+    },
+    {
+      "source": "/en/privacy",
+      "destination": "/_prerender/en/privacy.html"
+    },
+    {
+      "source": "/en/terms",
+      "destination": "/_prerender/en/terms.html"
+    },
+    {
+      "source": "/ja/",
+      "destination": "/_prerender/ja/index.html"
+    },
+    {
+      "source": "/ja/guides",
+      "destination": "/_prerender/ja/guides.html"
+    },
+    {
+      "source": "/ja/how-it-works",
+      "destination": "/_prerender/ja/how-it-works.html"
+    },
+    {
+      "source": "/ja/guides/palmistry-basics",
+      "destination": "/_prerender/ja/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/ja/guides/science-and-limitations",
+      "destination": "/_prerender/ja/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/ja/guides/hand-photo-guide",
+      "destination": "/_prerender/ja/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/ja/guides/hand-landmark-atlas",
+      "destination": "/_prerender/ja/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/ja/guides/creases-vs-landmarks",
+      "destination": "/_prerender/ja/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/ja/guides/barnum-effect-lab",
+      "destination": "/_prerender/ja/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/ja/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/ja/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/ja/about",
+      "destination": "/_prerender/ja/about.html"
+    },
+    {
+      "source": "/ja/privacy",
+      "destination": "/_prerender/ja/privacy.html"
+    },
+    {
+      "source": "/ja/terms",
+      "destination": "/_prerender/ja/terms.html"
+    },
+    {
+      "source": "/ko/",
+      "destination": "/_prerender/ko/index.html"
+    },
+    {
+      "source": "/ko/guides",
+      "destination": "/_prerender/ko/guides.html"
+    },
+    {
+      "source": "/ko/how-it-works",
+      "destination": "/_prerender/ko/how-it-works.html"
+    },
+    {
+      "source": "/ko/guides/palmistry-basics",
+      "destination": "/_prerender/ko/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/ko/guides/science-and-limitations",
+      "destination": "/_prerender/ko/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/ko/guides/hand-photo-guide",
+      "destination": "/_prerender/ko/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/ko/guides/hand-landmark-atlas",
+      "destination": "/_prerender/ko/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/ko/guides/creases-vs-landmarks",
+      "destination": "/_prerender/ko/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/ko/guides/barnum-effect-lab",
+      "destination": "/_prerender/ko/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/ko/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/ko/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/ko/about",
+      "destination": "/_prerender/ko/about.html"
+    },
+    {
+      "source": "/ko/privacy",
+      "destination": "/_prerender/ko/privacy.html"
+    },
+    {
+      "source": "/ko/terms",
+      "destination": "/_prerender/ko/terms.html"
+    },
+    {
+      "source": "/es/",
+      "destination": "/_prerender/es/index.html"
+    },
+    {
+      "source": "/es/guides",
+      "destination": "/_prerender/es/guides.html"
+    },
+    {
+      "source": "/es/how-it-works",
+      "destination": "/_prerender/es/how-it-works.html"
+    },
+    {
+      "source": "/es/guides/palmistry-basics",
+      "destination": "/_prerender/es/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/es/guides/science-and-limitations",
+      "destination": "/_prerender/es/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/es/guides/hand-photo-guide",
+      "destination": "/_prerender/es/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/es/guides/hand-landmark-atlas",
+      "destination": "/_prerender/es/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/es/guides/creases-vs-landmarks",
+      "destination": "/_prerender/es/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/es/guides/barnum-effect-lab",
+      "destination": "/_prerender/es/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/es/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/es/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/es/about",
+      "destination": "/_prerender/es/about.html"
+    },
+    {
+      "source": "/es/privacy",
+      "destination": "/_prerender/es/privacy.html"
+    },
+    {
+      "source": "/es/terms",
+      "destination": "/_prerender/es/terms.html"
+    },
+    {
+      "source": "/pt-BR/",
+      "destination": "/_prerender/pt-BR/index.html"
+    },
+    {
+      "source": "/pt-BR/guides",
+      "destination": "/_prerender/pt-BR/guides.html"
+    },
+    {
+      "source": "/pt-BR/how-it-works",
+      "destination": "/_prerender/pt-BR/how-it-works.html"
+    },
+    {
+      "source": "/pt-BR/guides/palmistry-basics",
+      "destination": "/_prerender/pt-BR/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/pt-BR/guides/science-and-limitations",
+      "destination": "/_prerender/pt-BR/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/pt-BR/guides/hand-photo-guide",
+      "destination": "/_prerender/pt-BR/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/pt-BR/guides/hand-landmark-atlas",
+      "destination": "/_prerender/pt-BR/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/pt-BR/guides/creases-vs-landmarks",
+      "destination": "/_prerender/pt-BR/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/pt-BR/guides/barnum-effect-lab",
+      "destination": "/_prerender/pt-BR/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/pt-BR/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/pt-BR/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/pt-BR/about",
+      "destination": "/_prerender/pt-BR/about.html"
+    },
+    {
+      "source": "/pt-BR/privacy",
+      "destination": "/_prerender/pt-BR/privacy.html"
+    },
+    {
+      "source": "/pt-BR/terms",
+      "destination": "/_prerender/pt-BR/terms.html"
+    },
+    {
+      "source": "/fr/",
+      "destination": "/_prerender/fr/index.html"
+    },
+    {
+      "source": "/fr/guides",
+      "destination": "/_prerender/fr/guides.html"
+    },
+    {
+      "source": "/fr/how-it-works",
+      "destination": "/_prerender/fr/how-it-works.html"
+    },
+    {
+      "source": "/fr/guides/palmistry-basics",
+      "destination": "/_prerender/fr/guides/palmistry-basics.html"
+    },
+    {
+      "source": "/fr/guides/science-and-limitations",
+      "destination": "/_prerender/fr/guides/science-and-limitations.html"
+    },
+    {
+      "source": "/fr/guides/hand-photo-guide",
+      "destination": "/_prerender/fr/guides/hand-photo-guide.html"
+    },
+    {
+      "source": "/fr/guides/hand-landmark-atlas",
+      "destination": "/_prerender/fr/guides/hand-landmark-atlas.html"
+    },
+    {
+      "source": "/fr/guides/creases-vs-landmarks",
+      "destination": "/_prerender/fr/guides/creases-vs-landmarks.html"
+    },
+    {
+      "source": "/fr/guides/barnum-effect-lab",
+      "destination": "/_prerender/fr/guides/barnum-effect-lab.html"
+    },
+    {
+      "source": "/fr/guides/evaluating-palmistry-claims",
+      "destination": "/_prerender/fr/guides/evaluating-palmistry-claims.html"
+    },
+    {
+      "source": "/fr/about",
+      "destination": "/_prerender/fr/about.html"
+    },
+    {
+      "source": "/fr/privacy",
+      "destination": "/_prerender/fr/privacy.html"
+    },
+    {
+      "source": "/fr/terms",
+      "destination": "/_prerender/fr/terms.html"
+    },
+    {
+      "source": "/zh-TW/:path*",
+      "destination": "/api/localized-not-found?locale=zh-TW"
+    },
+    {
+      "source": "/zh-CN/:path*",
+      "destination": "/api/localized-not-found?locale=zh-CN"
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/api/localized-not-found?locale=en"
+    },
+    {
+      "source": "/ja/:path*",
+      "destination": "/api/localized-not-found?locale=ja"
+    },
+    {
+      "source": "/ko/:path*",
+      "destination": "/api/localized-not-found?locale=ko"
+    },
+    {
+      "source": "/es/:path*",
+      "destination": "/api/localized-not-found?locale=es"
+    },
+    {
+      "source": "/pt-BR/:path*",
+      "destination": "/api/localized-not-found?locale=pt-BR"
+    },
+    {
+      "source": "/fr/:path*",
+      "destination": "/api/localized-not-found?locale=fr"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=()" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
       ]
     },
     {
       "source": "/ads.txt",
       "headers": [
-        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
       ]
     },
     {
       "source": "/robots.txt",
-      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
     },
     {
       "source": "/sitemap.xml",
-      "headers": [{ "key": "Content-Type", "value": "application/xml; charset=utf-8" }]
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        }
+      ]
     }
   ]
 }

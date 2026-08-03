@@ -20,7 +20,7 @@ const privacySources = [
 ];
 
 function page(content: Omit<EditorialPage, "updatedAt">): EditorialPage {
-  return { ...content, updatedAt: "2026-07-26" };
+  return { ...content, updatedAt: "2026-08-03" };
 }
 
 export const esEditorial: LocalizedEditorialBundle = {
@@ -39,7 +39,7 @@ export const esEditorial: LocalizedEditorialBundle = {
         heading: "Localizar las articulaciones de la mano",
         paragraphs: [
           "MediaPipe busca manos en la imagen y devuelve puntos de referencia estándar e información sobre la lateralidad. HandFuture confirma que solo se haya encontrado una mano y valida que el resultado contenga exactamente 21 coordenadas articulares con valores finitos antes de considerarlo utilizable.",
-          "La interfaz conserva la foto original y comunica por escrito el estado de la detección; cuando la validación termina correctamente se habilita el botón de la tarjeta. El modelo no identifica las líneas ni los pliegues de la palma, incluidas las líneas de la vida, cabeza, corazón y destino, y tampoco obtiene conclusiones sobre la persona fotografiada.",
+          "La interfaz muestra sobre la foto original un esqueleto de 21 articulaciones unido por índices fijos y comunica por escrito el estado de la detección; tras validar se habilita la tarjeta. Los puntos no son pliegues: el modelo no identifica las líneas de vida, cabeza, corazón o destino ni obtiene conclusiones sobre la persona.",
         ],
       },
       {
@@ -113,7 +113,7 @@ export const esEditorial: LocalizedEditorialBundle = {
           heading: "Detectar no es interpretar",
           paragraphs: [
             "MediaPipe Hand Landmarker produce puntos de referencia en coordenadas de imagen y del mundo, además de la lateralidad. HandFuture confirma que haya exactamente una mano utilizable y valida que el resultado contenga exactamente 21 coordenadas articulares finitas. Es una tarea de localización por visión artificial: estima qué puntos de la imagen corresponden a articulaciones estándar.",
-            "El modelo no devuelve las líneas de la vida, cabeza, corazón o destino. Su salida no contiene nombres de pliegues, significados simbólicos, puntuaciones de personalidad ni categorías vitales. La interfaz conserva la foto y muestra el estado en texto; tras validar, permite elegir una tarjeta. Los puntos geométricos siguen siendo localización articular y cambiarles el nombre no los convierte en análisis de palma.",
+            "El modelo no devuelve las líneas de la vida, cabeza, corazón o destino. Su salida no contiene nombres de pliegues, significados simbólicos, puntuaciones de personalidad ni categorías vitales. La interfaz muestra sobre la foto original un esqueleto de 21 articulaciones con conexiones de índice fijo y el estado en texto; tras validar permite elegir una tarjeta. Los puntos siguen siendo localización articular, no análisis de palma.",
             "HandFuture usa una firma geométrica fija para seleccionar una tarjeta general. La regla solo hace que unas coordenadas idénticas produzcan la misma clave. Que un programa sea reproducible no demuestra la verdad de una interpretación; solo repite una selección. El texto de la tarjeta no se entrena con la persona ni la evalúa.",
           ],
         },

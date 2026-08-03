@@ -2,31 +2,14 @@ import { Hand, Sparkles } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import type { PublicPath } from "@/config/public-routes";
+import type { Locale } from "@/i18n/locales";
 import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
-const navigation: Array<{
-  path: Exclude<PublicPath, "/">;
-  labelKey: string;
-}> = [
-  { path: "/how-it-works", labelKey: "footer.howItWorks" },
-  {
-    path: "/guides/palmistry-basics",
-    labelKey: "guide.basics.title",
-  },
-  {
-    path: "/guides/science-and-limitations",
-    labelKey: "guide.science.title",
-  },
-  {
-    path: "/guides/hand-photo-guide",
-    labelKey: "guide.photo.title",
-  },
-  { path: "/about", labelKey: "nav.about" },
-  { path: "/privacy", labelKey: "nav.privacy" },
-  { path: "/terms", labelKey: "nav.terms" },
-];
+const learnLabel: Record<Locale, string> = {
+  "zh-TW": "學習中心", "zh-CN": "学习中心", en: "Learn", ja: "学ぶ", ko: "학습",
+  es: "Aprender", "pt-BR": "Aprender", fr: "Apprendre",
+};
 
 export default function SiteHeader() {
   const { currentLanguage, t } = useLanguageStore();
@@ -53,8 +36,11 @@ export default function SiteHeader() {
           className="ml-auto flex flex-wrap items-center justify-end gap-x-4 gap-y-3 text-sm"
           aria-label={t("nav.primaryAria")}
         >
-          <span className="sr-only">{t("nav.guidesLabel")}</span>
-          {navigation.map(({ path, labelKey }) => (
+          {[
+            { path: "/guides" as const, label: learnLabel[currentLanguage] },
+            { path: "/how-it-works" as const, label: t("footer.howItWorks") },
+            { path: "/about" as const, label: t("nav.about") },
+          ].map(({ path, label }) => (
             <NavLink
               key={path}
               to={buildLocalizedPath(currentLanguage, path)}
@@ -64,7 +50,7 @@ export default function SiteHeader() {
                 }`
               }
             >
-              {t(labelKey)}
+              {label}
             </NavLink>
           ))}
           <LanguageSwitcher />

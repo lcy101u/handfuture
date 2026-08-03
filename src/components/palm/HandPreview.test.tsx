@@ -81,6 +81,12 @@ describe("HandPreview", () => {
 
     expect(await screen.findByText(/21 hand joints detected/i)).toBeVisible();
     expect(usePalmStore.getState().detection?.landmarks).toHaveLength(21);
+    expect(screen.getAllByTestId("detected-landmark")).toHaveLength(21);
+    expect(screen.getByText(/coordinate estimates, not palm creases/i)).toBeVisible();
+    expect(screen.getByRole("link", { name: /open the 21-point atlas/i })).toHaveAttribute(
+      "href",
+      "/en/guides/hand-landmark-atlas",
+    );
   });
 
   it.each([

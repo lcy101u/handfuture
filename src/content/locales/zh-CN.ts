@@ -20,7 +20,7 @@ const privacySources = [
 ];
 
 function page(content: Omit<EditorialPage, "updatedAt">): EditorialPage {
-  return { ...content, updatedAt: "2026-07-26" };
+  return { ...content, updatedAt: "2026-08-03" };
 }
 
 export const zhCNEditorial: LocalizedEditorialBundle = {
@@ -39,7 +39,7 @@ export const zhCNEditorial: LocalizedEditorialBundle = {
         heading: "定位手部关节",
         paragraphs: [
           "MediaPipe 会在图像中寻找手部，并返回标准手部关键点与左右手信息。HandFuture 会确认只找到一只手，并验证单个结果恰好包含 21 个有限数值的关节坐标，之后才将检测视为可用。",
-          "界面会保留原始选取的照片，并用文字显示检测状态；验证成功后，反思卡按钮才可使用。关键点模型不会识别生命线、智慧线、感情线、命运线或其他掌纹，也不会从照片得出个人特质或人生结论。",
+          "界面会在原始照片上显示由固定索引连接的 21 点关节骨架，并用文字显示检测状态；验证成功后，反思卡按钮才可使用。这些点不是掌纹，关键点模型不会识别生命线、智慧线、感情线、命运线或其他掌褶，也不会从照片得出个人特质或人生结论。",
         ],
       },
       {
@@ -113,7 +113,7 @@ export const zhCNEditorial: LocalizedEditorialBundle = {
           heading: "检测不等于解读",
           paragraphs: [
             "MediaPipe Hand Landmarker 会输出图像坐标、世界坐标和左右手信息。HandFuture 会确认恰好找到一只可用的手，并验证结果含有恰好 21 个有限数值的关节坐标。这是计算机视觉的定位任务，用来估计图像中哪些点对应标准手部关节。",
-            "模型不会返回生命线、智慧线、感情线或命运线，输出中也没有掌纹名称、象征含义、人格分数或人生分类。界面保留原始照片并以文字报告检测状态；验证成功后才能选择反思卡。几何点始终只是关节定位输出，换个名称也不会成为手相分析。",
+            "模型不会返回生命线、智慧线、感情线或命运线，输出中也没有掌纹名称、象征含义、人格分数或人生分类。界面会在原始照片上显示 21 点关节骨架和固定索引连线，并以文字报告检测状态；验证成功后才能选择反思卡。几何点始终只是关节定位输出，换个名称也不会成为手相分析。",
             "HandFuture 使用固定的几何签名选择通用反思卡，这条规则只让相同坐标产生相同键值。可重复的程序规则不能证明某种解读为真，它只是稳定的选卡方式；卡片文字不会训练或评估照片中的人。",
           ],
         },

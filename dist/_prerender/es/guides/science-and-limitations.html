@@ -50,7 +50,7 @@
   <meta name="twitter:image" content="https://www.handfortune.com/og-image.jpg" />
   <meta name="twitter:image:alt" content="Guía sobre ciencia, límites y uso seguro de la quiromancia" />
 
-  <script id="route-structured-data" type="application/ld+json">{"@context":"https://schema.org","name":"Quiromancia, ciencia y limitaciones | HandFuture","description":"Comprende la diferencia entre detectar articulaciones y leer la palma, cómo influye el efecto Barnum y por qué la quiromancia no debe guiar decisiones médicas, financieras o vitales.","url":"https://www.handfortune.com/es/guides/science-and-limitations","inLanguage":"es","@type":"Article","dateModified":"2026-07-26","publisher":{"@type":"Organization","name":"HandFuture"}}</script>
+  <script id="route-structured-data" type="application/ld+json">{"@context":"https://schema.org","name":"Quiromancia, ciencia y limitaciones | HandFuture","description":"Comprende la diferencia entre detectar articulaciones y leer la palma, cómo influye el efecto Barnum y por qué la quiromancia no debe guiar decisiones médicas, financieras o vitales.","url":"https://www.handfortune.com/es/guides/science-and-limitations","inLanguage":"es","@type":"Article","dateModified":"2026-08-03","author":{"@type":"Person","name":"Young LIN"},"publisher":{"@type":"Organization","name":"HandFuture"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":"https://www.handfortune.com/es/"},{"@type":"ListItem","position":2,"item":"https://www.handfortune.com/es/guides"},{"@type":"ListItem","position":3,"item":"https://www.handfortune.com/es/guides/science-and-limitations"}]}}</script>
   <!-- handfuture-route-head:end -->
 
   <script
@@ -63,8 +63,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap"></noscript>
-  <script type="module" crossorigin src="/assets/index-DGLn48Rl.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DDFLN09m.css">
+  <script type="module" crossorigin src="/assets/index-DiHm66P-.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-CA1w4FnS.js">
+  <link rel="stylesheet" crossorigin href="/assets/index-q1nlKDd4.css">
 </head>
 
 <body>
@@ -74,27 +75,29 @@
     <p>Cultura de la quiromancia y detección de manos</p>
     <nav aria-label="Navegación principal">
         <a href="/es/">Inicio</a>
+        <a href="/es/guides">Aprender</a>
         <a href="/es/how-it-works">Cómo funciona</a>
-        <a href="/es/guides/palmistry-basics">La quiromancia como cultura</a>
-        <a href="/es/guides/science-and-limitations">Ciencia y limitaciones</a>
-        <a href="/es/guides/hand-photo-guide">Guía para fotos de manos</a>
         <a href="/es/about">Acerca de</a>
         <a href="/es/privacy">Privacidad</a>
         <a href="/es/terms">Términos</a>
     </nav>
   </header>
   <main id="prerendered-content" data-public-path="/guides/science-and-limitations">
-    <article>
+    <nav aria-label="Ruta de navegación">
+      <a href="/es/">Inicio</a>
+      <a href="/es/guides">Aprender</a>
+      <span aria-current="page">Quiromancia, ciencia y limitaciones</span>
+    </nav><article>
     <header>
       <p>Guía cultural y tecnológica</p>
       <h1>Quiromancia, ciencia y limitaciones</h1>
       <p>Distingue la detección de articulaciones de la interpretación de la palma, comprende por qué las descripciones generales parecen personales y aparta el entretenimiento de las decisiones con consecuencias.</p>
-      <p>Publicado por: HandFuture · Actualizado: <time datetime="2026-07-26">2026-07-26</time></p>
+      <p>Young LIN — desarrollador independiente y editor de contenidos de HandFuture · Actualizado: <time datetime="2026-08-03">2026-08-03</time></p>
     </header>
     <section>
         <h2>Detectar no es interpretar</h2>
         <p>MediaPipe Hand Landmarker produce puntos de referencia en coordenadas de imagen y del mundo, además de la lateralidad. HandFuture confirma que haya exactamente una mano utilizable y valida que el resultado contenga exactamente 21 coordenadas articulares finitas. Es una tarea de localización por visión artificial: estima qué puntos de la imagen corresponden a articulaciones estándar.</p>
-<p>El modelo no devuelve las líneas de la vida, cabeza, corazón o destino. Su salida no contiene nombres de pliegues, significados simbólicos, puntuaciones de personalidad ni categorías vitales. La interfaz conserva la foto y muestra el estado en texto; tras validar, permite elegir una tarjeta. Los puntos geométricos siguen siendo localización articular y cambiarles el nombre no los convierte en análisis de palma.</p>
+<p>El modelo no devuelve las líneas de la vida, cabeza, corazón o destino. Su salida no contiene nombres de pliegues, significados simbólicos, puntuaciones de personalidad ni categorías vitales. La interfaz muestra sobre la foto original un esqueleto de 21 articulaciones con conexiones de índice fijo y el estado en texto; tras validar permite elegir una tarjeta. Los puntos siguen siendo localización articular, no análisis de palma.</p>
 <p>HandFuture usa una firma geométrica fija para seleccionar una tarjeta general. La regla solo hace que unas coordenadas idénticas produzcan la misma clave. Que un programa sea reproducible no demuestra la verdad de una interpretación; solo repite una selección. El texto de la tarjeta no se entrena con la persona ni la evalúa.</p>
 
       </section>
@@ -129,10 +132,8 @@
     <p>Proyecto web independiente de exploración cultural</p>
     <nav aria-label="Navegación del pie">
         <a href="/es/">Inicio</a>
+        <a href="/es/guides">Aprender</a>
         <a href="/es/how-it-works">Cómo funciona</a>
-        <a href="/es/guides/palmistry-basics">La quiromancia como cultura</a>
-        <a href="/es/guides/science-and-limitations">Ciencia y limitaciones</a>
-        <a href="/es/guides/hand-photo-guide">Guía para fotos de manos</a>
         <a href="/es/about">Acerca de</a>
         <a href="/es/privacy">Privacidad</a>
         <a href="/es/terms">Términos</a>

@@ -1,17 +1,11 @@
 import { Link } from "react-router-dom";
-import { PUBLIC_PATHS, type PublicPath } from "@/config/public-routes";
+import type { Locale } from "@/i18n/locales";
 import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 
-const labelKeys: Record<PublicPath, string> = {
-  "/": "nav.home",
-  "/how-it-works": "footer.howItWorks",
-  "/guides/palmistry-basics": "guide.basics.title",
-  "/guides/science-and-limitations": "guide.science.title",
-  "/guides/hand-photo-guide": "guide.photo.title",
-  "/about": "nav.about",
-  "/privacy": "nav.privacy",
-  "/terms": "nav.terms",
+const learnLabel: Record<Locale, string> = {
+  "zh-TW": "學習中心", "zh-CN": "学习中心", en: "Learn", ja: "学ぶ", ko: "학습",
+  es: "Aprender", "pt-BR": "Aprender", fr: "Apprendre",
 };
 
 export default function SiteFooter() {
@@ -30,9 +24,16 @@ export default function SiteFooter() {
           className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
           aria-label={t("nav.footerAria")}
         >
-          {PUBLIC_PATHS.map((path) => (
+          {[
+            { path: "/" as const, label: t("nav.home") },
+            { path: "/guides" as const, label: learnLabel[currentLanguage] },
+            { path: "/how-it-works" as const, label: t("footer.howItWorks") },
+            { path: "/about" as const, label: t("nav.about") },
+            { path: "/privacy" as const, label: t("nav.privacy") },
+            { path: "/terms" as const, label: t("nav.terms") },
+          ].map(({ path, label }) => (
             <Link key={path} to={buildLocalizedPath(currentLanguage, path)} className="rounded-sm hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-              {t(labelKeys[path])}
+              {label}
             </Link>
           ))}
         </nav>

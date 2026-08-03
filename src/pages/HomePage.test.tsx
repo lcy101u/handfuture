@@ -42,20 +42,23 @@ describe("HomePage truthful reflection flow", () => {
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /start a cultural exploration with one hand photo/i,
+      /understand hand detection—and the limits of a claim/i,
     );
     expect(screen.getByRole("link", { name: /handfuture home/i })).toBeVisible();
-    expect(document.body).toHaveTextContent(/non-scientific entertainment/i);
+    expect(document.body).toHaveTextContent(/non-scientific.*(?:cultural )?entertainment/i);
     expect(document.body.textContent).not.toMatch(
-      /\b(?:palm lines?|life line|heart line|fortune|future|health|personality|confidence|prediction)\b/i,
+      /(?:predicts? your future|diagnoses? health|reveals? your personality|scientifically proven palm reading)/i,
     );
   });
 
-  it("presents the real-value sections in order and links every public route", () => {
+  it("puts original learning content before the tool and links the featured guides", () => {
     renderHome();
 
     const hero = screen.getByRole("heading", {
-      name: /start a cultural exploration with one hand photo/i,
+      name: /understand hand detection—and the limits of a claim/i,
+    }).closest("section");
+    const continueReading = screen.getByRole("heading", {
+      name: /continue reading/i,
     }).closest("section");
     const disclosure = screen.getByText(
       /please review and accept the disclaimer before starting an analysis/i,
@@ -64,12 +67,12 @@ describe("HomePage truthful reflection flow", () => {
     const features = screen.getByRole("heading", {
       name: /in-browser detection/i,
     }).closest("section");
-    const continueReading = screen.getByRole("heading", {
-      name: /continue reading/i,
-    }).closest("section");
     const faq = screen.getByRole("heading", { name: /frequently asked questions/i }).closest("section");
 
-    expect(hero?.compareDocumentPosition(disclosure as Node)).toBe(
+    expect(hero?.compareDocumentPosition(continueReading as Node)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(continueReading?.compareDocumentPosition(disclosure as Node)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
     expect(disclosure?.compareDocumentPosition(tool)).toBe(
@@ -78,10 +81,7 @@ describe("HomePage truthful reflection flow", () => {
     expect(tool.compareDocumentPosition(features as Node)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
-    expect(features?.compareDocumentPosition(continueReading as Node)).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
-    expect(continueReading?.compareDocumentPosition(faq as Node)).toBe(
+    expect(features?.compareDocumentPosition(faq as Node)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
 
@@ -89,9 +89,11 @@ describe("HomePage truthful reflection flow", () => {
       .getAllByRole("link")
       .map((link) => link.getAttribute("href"));
     expect(guideLinks).toEqual([
-      "/en/guides/palmistry-basics",
-      "/en/guides/science-and-limitations",
-      "/en/guides/hand-photo-guide",
+      "/en/guides",
+      "/en/guides/hand-landmark-atlas",
+      "/en/guides/creases-vs-landmarks",
+      "/en/guides/barnum-effect-lab",
+      "/en/guides/evaluating-palmistry-claims",
     ]);
 
     const footerLinks = within(screen.getByRole("contentinfo"))
@@ -99,10 +101,8 @@ describe("HomePage truthful reflection flow", () => {
       .map((link) => link.getAttribute("href"));
     expect(footerLinks).toEqual([
       "/en/",
+      "/en/guides",
       "/en/how-it-works",
-      "/en/guides/palmistry-basics",
-      "/en/guides/science-and-limitations",
-      "/en/guides/hand-photo-guide",
       "/en/about",
       "/en/privacy",
       "/en/terms",
@@ -114,7 +114,7 @@ describe("HomePage truthful reflection flow", () => {
     renderHome();
 
     expect(
-      screen.getByRole("heading", { name: "從一張手部照片，開始一段文化探索" }),
+      screen.getByRole("heading", { name: "看懂手部偵測，也看懂說法的界線" }),
     ).toBeVisible();
     expect(screen.getByRole("heading", { name: "瀏覽器內偵測" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "文化反思卡" })).toBeVisible();

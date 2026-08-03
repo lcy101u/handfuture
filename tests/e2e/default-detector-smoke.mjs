@@ -16,6 +16,7 @@ const mediaPipeDirectory = path.join(
   "node_modules/@mediapipe/hands",
 );
 const baseUrl = "http://127.0.0.1:4178";
+const localizedTestUrl = `${baseUrl}/zh-TW/`;
 const pinnedCdnPrefix =
   "/npm/@mediapipe/hands@0.4.1675469240/";
 const expectedAssets = [
@@ -173,7 +174,7 @@ async function main() {
       await route.abort("blockedbyclient");
     });
 
-    const response = await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+    const response = await page.goto(localizedTestUrl, { waitUntil: "domcontentloaded" });
     requireCondition(response?.status() === 200, "Built home route was not HTTP 200.");
 
     await page.locator('input[type="file"]').first().setInputFiles(fixturePath);
@@ -193,7 +194,7 @@ async function main() {
       JSON.stringify(
         {
           result: "default detector produced one validated 21-landmark hand",
-          builtUrl: baseUrl,
+          builtUrl: localizedTestUrl,
           fixture: {
             file: path.relative(projectRoot, fixturePath),
             sha256: fixtureHash,

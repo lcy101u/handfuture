@@ -1,12 +1,28 @@
-import { ExternalLink } from "lucide-react";
+import { ChevronRight, ExternalLink } from "lucide-react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import BarnumLab from "@/components/education/BarnumLab";
+import ConceptComparison from "@/components/education/ConceptComparison";
+import LandmarkAtlas from "@/components/education/LandmarkAtlas";
 import SocialShare from "@/components/social/SocialShare";
 import type { EditorialPage } from "@/content/guides";
 import { GUIDE_CONTENT, HOW_IT_WORKS_CONTENT } from "@/content/guides";
 import type { GuidePath, Locale, PublicPath } from "@/config/public-routes";
 import { getTranslation } from "@/i18n/catalogs";
+import { BREADCRUMB_COPY } from "@/i18n/breadcrumbs";
 import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
+
+const authorRole: Record<Locale, string> = {
+  "zh-TW": "HandFuture 獨立開發者與內容編輯",
+  "zh-CN": "HandFuture 独立开发者与内容编辑",
+  en: "HandFuture independent developer and content editor",
+  ja: "HandFuture 個人開発者・コンテンツ編集者",
+  ko: "HandFuture 독립 개발자 및 콘텐츠 편집자",
+  es: "desarrollador independiente y editor de contenidos de HandFuture",
+  "pt-BR": "desenvolvedor independente e editor de conteúdo do HandFuture",
+  fr: "développeur indépendant et éditeur de contenu de HandFuture",
+};
 
 const guidePaths = Object.keys(GUIDE_CONTENT) as GuidePath[];
 
@@ -19,6 +35,7 @@ interface EditorialArticleProps {
   locale: Locale;
   relatedPaths: PublicPath[];
   eyebrow?: string;
+  interactive?: ReactNode;
 }
 
 function isInternalPath(url: string): url is PublicPath {
@@ -30,6 +47,7 @@ export function EditorialArticle({
   locale,
   relatedPaths,
   eyebrow,
+  interactive,
 }: EditorialArticleProps) {
   const relatedLabel = (path: PublicPath) => {
     if (path === "/how-it-works") {
@@ -48,8 +66,8 @@ export function EditorialArticle({
         <h1 className="text-3xl font-bold leading-tight md:text-5xl">{content.title}</h1>
         <p className="text-lg leading-8 text-muted-foreground">{content.summary}</p>
         <p className="flex flex-wrap gap-x-2 text-sm text-muted-foreground">
-          <span>{getTranslation(locale, "editorial.publisher")}:</span>
-          <span className="font-medium text-foreground">HandFuture</span>
+          <span className="font-medium text-foreground">Young LIN</span>
+          <span>— {authorRole[locale]}</span>
           <span aria-hidden="true">·</span>
           <span>{getTranslation(locale, "editorial.updated")}:</span>
           <time dateTime={content.updatedAt}>{content.updatedAt}</time>
@@ -77,6 +95,8 @@ export function EditorialArticle({
           </section>
         ))}
       </div>
+
+      {interactive}
 
       {content.sources.length > 0 && (
         <section className="space-y-4 border-t border-border/70 pt-8" aria-labelledby="article-sources">
@@ -142,16 +162,39 @@ interface GuidePageProps {
 
 export default function GuidePage({ path }: GuidePageProps) {
   const locale = useLanguageStore((state) => state.currentLanguage);
+  const breadcrumb = BREADCRUMB_COPY[locale];
   const relatedPaths: PublicPath[] = [
     "/how-it-works",
     ...guidePaths.filter((guidePath) => guidePath !== path),
   ];
+  const interactive = path === "/guides/hand-landmark-atlas"
+    ? <LandmarkAtlas />
+    : path === "/guides/barnum-effect-lab"
+      ? <BarnumLab />
+      : path === "/guides/creases-vs-landmarks"
+        ? <ConceptComparison />
+      : null;
 
   return (
-    <EditorialArticle
+    <>
+      <nav
+        aria-label={breadcrumb.ariaLabel}
+        className="container mx-auto max-w-4xl px-4 pt-8 text-sm text-muted-foreground"
+      >
+        <ol className="flex flex-wrap items-center gap-2">
+          <li><Link className="hover:text-primary hover:underline" to={buildLocalizedPath(locale, "/")}>{breadcrumb.home}</Link></li>
+          <li aria-hidden="true"><ChevronRight className="h-4 w-4" /></li>
+          <li><Link className="hover:text-primary hover:underline" to={buildLocalizedPath(locale, "/guides")}>{breadcrumb.learn}</Link></li>
+          <li aria-hidden="true"><ChevronRight className="h-4 w-4" /></li>
+          <li className="font-medium text-foreground" aria-current="page">{GUIDE_CONTENT[path][locale].title}</li>
+        </ol>
+      </nav>
+      <EditorialArticle
       content={GUIDE_CONTENT[path][locale]}
       locale={locale}
       relatedPaths={relatedPaths}
-    />
+      interactive={interactive}
+      />
+    </>
   );
 }

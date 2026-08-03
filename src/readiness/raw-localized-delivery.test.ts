@@ -61,7 +61,7 @@ describe("raw localized delivery", () => {
     ).sort();
 
     expect(files).toEqual(expectedFiles);
-    expect(files).toHaveLength(64);
+    expect(files).toHaveLength(104);
     for (const relativePath of files) {
       const html = fs.readFileSync(path.join(outputDirectory, relativePath), "utf8");
       expect(html, relativePath).toContain('<main id="prerendered-content"');
@@ -77,10 +77,10 @@ describe("raw localized delivery", () => {
     {
       locale: "zh-CN",
       publicPath: "/",
-      title: "HandFuture｜手相文化探索与手部检测体验",
+      title: "HandFuture｜手部文化、21 点图谱与证据思考",
       description:
-        "从文化角度认识手相传统，使用浏览器内的手部检测获得一张非科学、仅供娱乐与自我反思的提示卡；照片不会上传到 HandFuture 服务器。",
-      bodyFragments: ["从一张手部照片，开始一段文化探索", "常见问题"],
+        "通过 Young LIN 制作的互动图谱和有来源指南，区分手部关节、掌褶、手相传统与科学证据；照片演示只在浏览器内处理。",
+      bodyFragments: ["看懂手部检测，也看懂说法的边界", "巴纳姆效应互动实验室"],
     },
     {
       locale: "ja",

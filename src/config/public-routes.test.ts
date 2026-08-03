@@ -1,23 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { PUBLIC_PATHS } from "./public-routes";
+import { INDEXABLE_CONTENT_PATHS, PUBLIC_PATHS } from "./public-routes";
 import { SITE_ORIGIN, buildStructuredData, getRouteMetadata } from "./site-metadata";
 import { SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
 
 const expectedPaths = [
   "/",
+  "/guides",
   "/how-it-works",
   "/guides/palmistry-basics",
   "/guides/science-and-limitations",
   "/guides/hand-photo-guide",
+  "/guides/hand-landmark-atlas",
+  "/guides/creases-vs-landmarks",
+  "/guides/barnum-effect-lab",
+  "/guides/evaluating-palmistry-claims",
   "/about",
   "/privacy",
   "/terms",
 ] as const;
 
 describe("public route contract", () => {
-  it("contains exactly the eight approved public paths", () => {
+  it("contains the 13 approved public paths and 11 indexable content paths", () => {
     expect(PUBLIC_PATHS).toEqual(expectedPaths);
     expect(new Set(PUBLIC_PATHS).size).toBe(PUBLIC_PATHS.length);
+    expect(INDEXABLE_CONTENT_PATHS).toEqual(
+      expectedPaths.filter((path) => path !== "/privacy" && path !== "/terms"),
+    );
   });
 
   it.each(SUPPORTED_LOCALES)("has unique complete %s metadata", (locale) => {
@@ -34,12 +42,12 @@ describe("public route contract", () => {
     }
   });
 
-  it("publishes complete metadata for all 64 localized public routes", () => {
+  it("publishes complete metadata for all 104 localized public routes", () => {
     const records = SUPPORTED_LOCALES.flatMap((locale) =>
       PUBLIC_PATHS.map((path) => ({ locale, path, meta: getRouteMetadata(path, locale) })),
     );
 
-    expect(records).toHaveLength(64);
+    expect(records).toHaveLength(104);
     for (const { locale, path, meta } of records) {
       expect(meta.title.trim()).not.toBe("");
       expect(meta.description.trim()).not.toBe("");
@@ -54,13 +62,13 @@ describe("public route contract", () => {
   });
 
   it.each([
-    ["zh-TW", "手相文化探索"],
-    ["zh-CN", "手相文化探索"],
-    ["ja", "手相文化"],
-    ["ko", "손금 문화"],
-    ["es", "cultura de la quiromancia"],
-    ["pt-BR", "cultura da quiromancia"],
-    ["fr", "culture de la chiromancie"],
+    ["zh-TW", "手部文化"],
+    ["zh-CN", "手部文化"],
+    ["ja", "手の文化"],
+    ["ko", "손 문화"],
+    ["es", "tradición quiromántica"],
+    ["pt-BR", "tradição da quiromancia"],
+    ["fr", "tradition chiromantique"],
   ] as const)("uses native home metadata in %s", (locale, phrase) => {
     const metadata = getRouteMetadata("/", locale as Locale);
     expect(`${metadata.title} ${metadata.description}`.toLocaleLowerCase()).toContain(
@@ -81,8 +89,9 @@ describe("public route contract", () => {
     expect(localized.ogImageAlt).not.toBe(english.ogImageAlt);
   });
 
-  it("uses WebApplication only for home and Article only for guides", () => {
+  it("uses WebApplication for home, CollectionPage for the hub, and Article for guides", () => {
     expect(buildStructuredData("/", "zh-TW")["@type"]).toBe("WebApplication");
+    expect(buildStructuredData("/guides", "en")["@type"]).toBe("CollectionPage");
     expect(buildStructuredData("/guides/palmistry-basics", "en")["@type"]).toBe("Article");
     expect(JSON.stringify(buildStructuredData("/", "zh-TW"))).not.toContain("aggregateRating");
   });

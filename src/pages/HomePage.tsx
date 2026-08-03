@@ -21,31 +21,17 @@ import DisclaimerModal from "@/components/palm/DisclaimerModal";
 import HandPreview from "@/components/palm/HandPreview";
 import ImageUploader from "@/components/palm/ImageUploader";
 import ReflectionResult from "@/components/palm/ReflectionResult";
+import { GUIDE_CONTENT } from "@/content/guides";
 import type { GuidePath } from "@/config/public-routes";
 import { buildLocalizedPath } from "@/i18n/locales";
 import { useLanguageStore } from "@/store/language-store";
 import { usePalmStore } from "@/store/palm-store";
 
-const guideLinks: Array<{
-  path: GuidePath;
-  titleKey: string;
-  summaryKey: string;
-}> = [
-  {
-    path: "/guides/palmistry-basics",
-    titleKey: "guide.basics.title",
-    summaryKey: "guide.basics.summary",
-  },
-  {
-    path: "/guides/science-and-limitations",
-    titleKey: "guide.science.title",
-    summaryKey: "guide.science.summary",
-  },
-  {
-    path: "/guides/hand-photo-guide",
-    titleKey: "guide.photo.title",
-    summaryKey: "guide.photo.summary",
-  },
+const guideLinks: GuidePath[] = [
+  "/guides/hand-landmark-atlas",
+  "/guides/creases-vs-landmarks",
+  "/guides/barnum-effect-lab",
+  "/guides/evaluating-palmistry-claims",
 ];
 
 const features = [
@@ -101,6 +87,28 @@ function HomePage() {
           <p className="text-base leading-8 text-muted-foreground md:text-lg">
             {t("hero.description")}
           </p>
+        </section>
+
+        <section className="space-y-6">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <BookOpen className="h-6 w-6 text-primary" aria-hidden="true" />
+              <h2 className="text-2xl font-bold md:text-3xl">{t("home.continue.title")}</h2>
+            </div>
+            <Link className="font-medium text-primary underline-offset-4 hover:underline" to={buildLocalizedPath(currentLanguage, "/guides")}>Young LIN · HandFuture</Link>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            {guideLinks.map((path) => {
+              const guide = GUIDE_CONTENT[path][currentLanguage];
+              return (
+                <Link key={path} to={buildLocalizedPath(currentLanguage, path)} className="group rounded-xl border border-border/70 bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md">
+                  <h3 className="text-lg font-semibold group-hover:text-primary">{guide.title}</h3>
+                  <p className="mt-3 leading-7 text-muted-foreground">{guide.summary}</p>
+                  <ArrowRight className="mt-4 h-5 w-5 text-primary" aria-hidden="true" />
+                </Link>
+              );
+            })}
+          </div>
         </section>
 
         <section className="mx-auto max-w-4xl" aria-label={t("disclaimer.prompt")}>
@@ -191,35 +199,6 @@ function HomePage() {
               </CardContent>
             </Card>
           ))}
-        </section>
-
-        <section className="space-y-6">
-          <div className="flex items-center gap-3">
-            <BookOpen className="h-6 w-6 text-primary" aria-hidden="true" />
-            <h2 className="text-2xl font-bold md:text-3xl">
-              {t("home.continue.title")}
-            </h2>
-          </div>
-          <div className="grid gap-5 md:grid-cols-3">
-            {guideLinks.map((guide) => (
-              <Link
-                key={guide.path}
-                to={buildLocalizedPath(currentLanguage, guide.path)}
-                className="group rounded-xl border border-border/70 bg-card p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md"
-              >
-                <h3 className="text-lg font-semibold group-hover:text-primary">
-                  {t(guide.titleKey)}
-                </h3>
-                <p className="mt-3 leading-7 text-muted-foreground">
-                  {t(guide.summaryKey)}
-                </p>
-                <ArrowRight
-                  className="mt-4 h-5 w-5 text-primary"
-                  aria-hidden="true"
-                />
-              </Link>
-            ))}
-          </div>
         </section>
 
         <section className="mx-auto max-w-4xl space-y-6">

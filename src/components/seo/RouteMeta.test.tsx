@@ -80,9 +80,21 @@ describe("RouteMeta", () => {
       JSON.parse(document.querySelector("#route-structured-data")?.textContent ?? "{}"),
     ).toMatchObject({
       "@type": "Article",
-      dateModified: "2026-07-26",
+      dateModified: "2026-08-03",
+      author: { "@type": "Person", name: "Young LIN" },
       inLanguage: "zh-TW",
       publisher: { name: "HandFuture" },
+      breadcrumb: {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { position: 1, item: "https://www.handfortune.com/zh-TW/" },
+          { position: 2, item: "https://www.handfortune.com/zh-TW/guides" },
+          {
+            position: 3,
+            item: "https://www.handfortune.com/zh-TW/guides/science-and-limitations",
+          },
+        ],
+      },
       url: "https://www.handfortune.com/zh-TW/guides/science-and-limitations",
     });
   });

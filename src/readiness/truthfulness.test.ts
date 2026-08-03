@@ -101,7 +101,7 @@ describe("public source truthfulness", () => {
     }
   });
 
-  it("keeps obsolete routes out of App and links every guide from Home", () => {
+  it("keeps obsolete routes out of App and links the learning hub and featured guides from Home", () => {
     const appSource = fs.readFileSync(path.join(root, "src/App.tsx"), "utf8");
     const homeSource = fs.readFileSync(
       path.join(root, "src/pages/HomePage.tsx"),
@@ -110,9 +110,11 @@ describe("public source truthfulness", () => {
 
     expect(appSource).not.toMatch(/\/batch|BatchPage|AnalyticsDashboard/i);
     for (const guidePath of [
-      "/guides/palmistry-basics",
-      "/guides/science-and-limitations",
-      "/guides/hand-photo-guide",
+      'buildLocalizedPath(currentLanguage, "/guides")',
+      "/guides/hand-landmark-atlas",
+      "/guides/creases-vs-landmarks",
+      "/guides/barnum-effect-lab",
+      "/guides/evaluating-palmistry-claims",
     ]) {
       expect(homeSource, guidePath).toContain(guidePath);
     }

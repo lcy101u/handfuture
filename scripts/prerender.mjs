@@ -28,8 +28,12 @@ export function generatePrerenderedPages({ templatePath, outputDirectory }) {
       html: renderPrerenderedDocument(template, locale, publicPath),
     })),
   );
-  if (documents.length !== 64 || new Set(documents.map(({ relativeFile }) => relativeFile)).size !== 64) {
-    throw new Error("Prerender matrix must contain exactly 64 unique files.");
+  const expectedCount = SUPPORTED_LOCALES.length * PUBLIC_PATHS.length;
+  if (
+    documents.length !== expectedCount ||
+    new Set(documents.map(({ relativeFile }) => relativeFile)).size !== expectedCount
+  ) {
+    throw new Error(`Prerender matrix must contain exactly ${expectedCount} unique files.`);
   }
 
   fs.rmSync(resolvedOutput, { recursive: true, force: true });

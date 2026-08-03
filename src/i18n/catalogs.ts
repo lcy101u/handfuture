@@ -35,8 +35,8 @@ const baseCatalogs = defineCompleteCatalogs({
     "app.title": "HandFuture",
     "app.subtitle": "手相文化探索與手部偵測",
     "nav.home": "首頁", "nav.about": "關於", "nav.privacy": "隱私政策", "nav.terms": "使用條款", "language.switch": "切換語言",
-    "hero.title": "從一張手部照片，開始一段文化探索",
-    "hero.description": "照片會在你的瀏覽器內進行手部關節偵測；結果是一張用於文化探索與自我反思的非科學娛樂提示卡。",
+    "hero.title": "看懂手部偵測，也看懂說法的界線",
+    "hero.description": "從 21 點互動圖譜、掌褶比較到巴納姆效應實驗，分開理解手部結構、手相文化與科學證據；照片示範只在瀏覽器內處理。",
     "disclaimer.prompt": "開始分析前請先閱讀並同意免責聲明。", "button.viewDisclaimer": "閱讀免責聲明",
     "tool.uploadTitle": "選擇手部照片", "tool.uploadDescription": "請使用單純背景，讓一隻手完整出現在畫面中。", "tool.previewTitle": "手部關節偵測", "tool.previewDescription": "偵測成功後，你可以主動選擇一張反思卡。", "tool.reset": "更換照片", "tool.choose": "選擇反思卡",
     "upload.drag": "拖放照片至此處，或點擊選擇檔案", "upload.formats": "支援 JPG、PNG、WebP 格式", "upload.open_camera": "開啟相機", "upload.select_file": "選擇檔案", "upload.tip1": "讓一隻手完整出現在畫面中", "upload.tip2": "使用均勻且充足的光線", "upload.tip3": "選擇單純背景並避免模糊",
@@ -49,7 +49,7 @@ const baseCatalogs = defineCompleteCatalogs({
   "zh-CN": {
     "app.title": "HandFuture", "app.subtitle": "手相文化探索与手部检测",
     "nav.home": "首页", "nav.about": "关于", "nav.privacy": "隐私政策", "nav.terms": "使用条款", "language.switch": "切换语言",
-    "hero.title": "从一张手部照片，开始一段文化探索", "hero.description": "照片会在你的浏览器内进行手部关节检测；结果是一张用于文化探索与自我反思的非科学娱乐提示卡。",
+    "hero.title": "看懂手部检测，也看懂说法的边界", "hero.description": "从 21 点互动图谱、掌褶比较到巴纳姆效应实验，分别理解手部结构、手相文化与科学证据；照片演示只在浏览器内处理。",
     "disclaimer.prompt": "开始分析前请先阅读并同意免责声明。", "button.viewDisclaimer": "阅读免责声明",
     "tool.uploadTitle": "选择手部照片", "tool.uploadDescription": "请使用简单背景，让一只手完整出现在画面中。", "tool.previewTitle": "手部关节检测", "tool.previewDescription": "检测成功后，你可以主动选择一张反思卡。", "tool.reset": "更换照片", "tool.choose": "选择反思卡",
     "upload.drag": "将照片拖放到此处，或点击选择文件", "upload.formats": "支持 JPG、PNG 和 WebP 格式", "upload.open_camera": "打开相机", "upload.select_file": "选择文件", "upload.tip1": "让一只手完整出现在画面中", "upload.tip2": "使用均匀且充足的光线", "upload.tip3": "选择简单背景并避免模糊",
@@ -62,7 +62,7 @@ const baseCatalogs = defineCompleteCatalogs({
   en: {
     "app.title": "HandFuture", "app.subtitle": "Palmistry culture and hand detection",
     "nav.home": "Home", "nav.about": "About", "nav.privacy": "Privacy", "nav.terms": "Terms", "language.switch": "Switch language",
-    "hero.title": "Start a cultural exploration with one hand photo", "hero.description": "Your photo is used for hand-joint detection in your browser. The result is a non-scientific entertainment prompt for cultural exploration and self-reflection.",
+    "hero.title": "Understand hand detection—and the limits of a claim", "hero.description": "Use a 21-point atlas, crease comparison, and Barnum effect lab to separate hand structure, palmistry culture, and scientific evidence. The optional photo demo stays in your browser.",
     "disclaimer.prompt": "Please review and accept the disclaimer before starting an analysis.", "button.viewDisclaimer": "View Disclaimer",
     "tool.uploadTitle": "Choose a hand photo", "tool.uploadDescription": "Use a plain background and keep one full hand visible in the frame.", "tool.previewTitle": "Hand-joint detection", "tool.previewDescription": "After detection succeeds, you can explicitly choose a reflection card.", "tool.reset": "Choose another photo", "tool.choose": "Choose reflection card",
     "upload.drag": "Drop a photo here, or click to choose a file", "upload.formats": "Supports JPG, PNG, and WebP", "upload.open_camera": "Open Camera", "upload.select_file": "Select File", "upload.tip1": "Keep one full hand visible in the frame", "upload.tip2": "Use bright, even lighting", "upload.tip3": "Choose a plain background and avoid blur",
@@ -75,7 +75,7 @@ const baseCatalogs = defineCompleteCatalogs({
   ja: {
     "app.title": "HandFuture", "app.subtitle": "手相文化の探究と手の検出",
     "nav.home": "ホーム", "nav.about": "概要", "nav.privacy": "プライバシー", "nav.terms": "利用規約", "language.switch": "言語を切り替える",
-    "hero.title": "1枚の手の写真から、文化を探る旅へ", "hero.description": "写真はブラウザー内で手の関節を検出するために使われます。結果は、文化の探究と自己省察のための非科学的な娯楽用プロンプトカードです。",
+    "hero.title": "手の検出と、主張の限界を理解する", "hero.description": "21点図鑑、しわの比較、バーナム効果実験で、手の構造、手相文化、科学的証拠を分けて学びます。写真デモはブラウザー内だけで処理されます。",
     "disclaimer.prompt": "分析を始める前に、免責事項を確認して同意してください。", "button.viewDisclaimer": "免責事項を読む",
     "tool.uploadTitle": "手の写真を選択", "tool.uploadDescription": "無地の背景を使い、片手全体がフレームに入るようにしてください。", "tool.previewTitle": "手の関節検出", "tool.previewDescription": "検出に成功した後、リフレクションカードを自分で選べます。", "tool.reset": "別の写真を選ぶ", "tool.choose": "リフレクションカードを選ぶ",
     "upload.drag": "ここに写真をドロップするか、クリックしてファイルを選択", "upload.formats": "JPG、PNG、WebP に対応", "upload.open_camera": "カメラを開く", "upload.select_file": "ファイルを選択", "upload.tip1": "片手全体をフレームに入れる", "upload.tip2": "明るく均一な照明を使う", "upload.tip3": "無地の背景を選び、ぼやけを避ける",
@@ -88,7 +88,7 @@ const baseCatalogs = defineCompleteCatalogs({
   ko: {
     "app.title": "HandFuture", "app.subtitle": "손금 문화 탐구와 손 감지",
     "nav.home": "홈", "nav.about": "소개", "nav.privacy": "개인정보 처리방침", "nav.terms": "이용 약관", "language.switch": "언어 전환",
-    "hero.title": "손 사진 한 장으로 문화 탐구를 시작하세요", "hero.description": "사진은 브라우저에서 손 관절을 감지하는 데 사용됩니다. 결과는 문화 탐구와 자기 성찰을 위한 비과학적 오락용 프롬프트 카드입니다.",
+    "hero.title": "손 감지와 주장의 한계를 함께 이해하세요", "hero.description": "21점 지도, 주름 비교와 바넘 효과 실험으로 손 구조, 손금 문화와 과학 증거를 구분합니다. 선택적 사진 시연은 브라우저에서만 처리됩니다.",
     "disclaimer.prompt": "분석을 시작하기 전에 면책 조항을 읽고 동의해 주세요.", "button.viewDisclaimer": "면책 조항 보기",
     "tool.uploadTitle": "손 사진 선택", "tool.uploadDescription": "단순한 배경을 사용하고 한 손 전체가 프레임 안에 보이게 해 주세요.", "tool.previewTitle": "손 관절 감지", "tool.previewDescription": "감지에 성공하면 성찰 카드를 직접 선택할 수 있습니다.", "tool.reset": "다른 사진 선택", "tool.choose": "성찰 카드 선택",
     "upload.drag": "사진을 이곳에 놓거나 클릭하여 파일 선택", "upload.formats": "JPG, PNG, WebP 지원", "upload.open_camera": "카메라 열기", "upload.select_file": "파일 선택", "upload.tip1": "한 손 전체가 프레임에 보이게 하기", "upload.tip2": "밝고 고른 조명 사용", "upload.tip3": "단순한 배경을 선택하고 흐림 피하기",
@@ -101,7 +101,7 @@ const baseCatalogs = defineCompleteCatalogs({
   es: {
     "app.title": "HandFuture", "app.subtitle": "Cultura de la quiromancia y detección de manos",
     "nav.home": "Inicio", "nav.about": "Acerca de", "nav.privacy": "Privacidad", "nav.terms": "Términos", "language.switch": "Cambiar idioma",
-    "hero.title": "Empieza una exploración cultural con una foto de una mano", "hero.description": "Tu foto se usa en el navegador para detectar articulaciones de la mano. El resultado es una tarjeta de sugerencias de entretenimiento no científico para la exploración cultural y la autorreflexión.",
+    "hero.title": "Comprende la detección y los límites de una afirmación", "hero.description": "Usa el atlas de 21 puntos, la comparación de pliegues y el laboratorio Barnum para separar estructura, cultura quiromántica y evidencia. La foto opcional queda en el navegador.",
     "disclaimer.prompt": "Revisa y acepta el descargo de responsabilidad antes de iniciar un análisis.", "button.viewDisclaimer": "Ver descargo de responsabilidad",
     "tool.uploadTitle": "Elige una foto de una mano", "tool.uploadDescription": "Usa un fondo liso y mantén una mano completa visible en el encuadre.", "tool.previewTitle": "Detección de articulaciones de la mano", "tool.previewDescription": "Cuando la detección tenga éxito, podrás elegir explícitamente una tarjeta de reflexión.", "tool.reset": "Elegir otra foto", "tool.choose": "Elegir tarjeta de reflexión",
     "upload.drag": "Suelta una foto aquí o haz clic para elegir un archivo", "upload.formats": "Compatible con JPG, PNG y WebP", "upload.open_camera": "Abrir cámara", "upload.select_file": "Seleccionar archivo", "upload.tip1": "Mantén una mano completa visible en el encuadre", "upload.tip2": "Usa una iluminación brillante y uniforme", "upload.tip3": "Elige un fondo liso y evita el desenfoque",
@@ -114,7 +114,7 @@ const baseCatalogs = defineCompleteCatalogs({
   "pt-BR": {
     "app.title": "HandFuture", "app.subtitle": "Cultura da quiromancia e detecção de mãos",
     "nav.home": "Início", "nav.about": "Sobre", "nav.privacy": "Privacidade", "nav.terms": "Termos", "language.switch": "Trocar idioma",
-    "hero.title": "Comece uma exploração cultural com uma foto de uma mão", "hero.description": "Sua foto é usada no navegador para detectar articulações da mão. O resultado é um cartão de sugestão de entretenimento não científico para exploração cultural e autorreflexão.",
+    "hero.title": "Entenda a detecção e os limites de uma afirmação", "hero.description": "Use o atlas de 21 pontos, a comparação de pregas e o laboratório Barnum para separar estrutura, cultura da quiromancia e evidência. A foto opcional fica no navegador.",
     "disclaimer.prompt": "Leia e aceite o aviso de isenção antes de iniciar uma análise.", "button.viewDisclaimer": "Ver aviso de isenção",
     "tool.uploadTitle": "Escolha uma foto de uma mão", "tool.uploadDescription": "Use um fundo simples e mantenha uma mão inteira visível no enquadramento.", "tool.previewTitle": "Detecção de articulações da mão", "tool.previewDescription": "Depois que a detecção for bem-sucedida, você poderá escolher explicitamente um cartão de reflexão.", "tool.reset": "Escolher outra foto", "tool.choose": "Escolher cartão de reflexão",
     "upload.drag": "Solte uma foto aqui ou clique para escolher um arquivo", "upload.formats": "Compatível com JPG, PNG e WebP", "upload.open_camera": "Abrir câmera", "upload.select_file": "Selecionar arquivo", "upload.tip1": "Mantenha uma mão inteira visível no enquadramento", "upload.tip2": "Use iluminação clara e uniforme", "upload.tip3": "Escolha um fundo simples e evite desfoque",
@@ -127,7 +127,7 @@ const baseCatalogs = defineCompleteCatalogs({
   fr: {
     "app.title": "HandFuture", "app.subtitle": "Culture de la chiromancie et détection de la main",
     "nav.home": "Accueil", "nav.about": "À propos", "nav.privacy": "Confidentialité", "nav.terms": "Conditions", "language.switch": "Changer de langue",
-    "hero.title": "Commencez une exploration culturelle avec une photo de main", "hero.description": "Votre photo est utilisée dans votre navigateur pour détecter les articulations de la main. Le résultat est une carte d'invite de divertissement non scientifique pour l'exploration culturelle et l'autoréflexion.",
+    "hero.title": "Comprendre la détection et les limites d’une affirmation", "hero.description": "Utilisez l’atlas des 21 points, la comparaison des plis et le laboratoire Barnum pour séparer structure, culture chiromantique et preuves. La photo facultative reste dans le navigateur.",
     "disclaimer.prompt": "Veuillez lire et accepter l'avertissement avant de commencer une analyse.", "button.viewDisclaimer": "Voir l'avertissement",
     "tool.uploadTitle": "Choisir une photo de main", "tool.uploadDescription": "Utilisez un arrière-plan uni et gardez une main entière visible dans le cadre.", "tool.previewTitle": "Détection des articulations de la main", "tool.previewDescription": "Une fois la détection réussie, vous pouvez choisir explicitement une carte de réflexion.", "tool.reset": "Choisir une autre photo", "tool.choose": "Choisir une carte de réflexion",
     "upload.drag": "Déposez une photo ici ou cliquez pour choisir un fichier", "upload.formats": "Compatible avec JPG, PNG et WebP", "upload.open_camera": "Ouvrir l'appareil photo", "upload.select_file": "Sélectionner un fichier", "upload.tip1": "Gardez une main entière visible dans le cadre", "upload.tip2": "Utilisez un éclairage clair et homogène", "upload.tip3": "Choisissez un arrière-plan uni et évitez le flou",

@@ -6,6 +6,7 @@ import { jaEditorial } from "./locales/ja";
 import { koEditorial } from "./locales/ko";
 import { ptBREditorial } from "./locales/pt-BR";
 import { zhCNEditorial } from "./locales/zh-CN";
+import { NEW_GUIDE_CONTENT } from "./new-guides";
 
 export interface SourceLink {
   label: string;
@@ -21,7 +22,7 @@ export interface ContentSection {
 export interface EditorialPage {
   title: string;
   summary: string;
-  updatedAt: "2026-07-26";
+  updatedAt: string;
   sections: ContentSection[];
   sources: SourceLink[];
 }
@@ -64,7 +65,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
     title: "HandFuture 如何運作",
     summary:
       "從選擇照片、定位手部關節到產生反思卡，逐步了解資料如何在目前的瀏覽器工作階段中流動，以及這項工具刻意不做哪些推論。",
-    updatedAt: "2026-07-26",
+    updatedAt: "2026-08-03",
     sections: [
       {
         heading: "選擇照片",
@@ -77,7 +78,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
         heading: "尋找手部關節",
         paragraphs: [
           "MediaPipe 會在影像中尋找手部，回傳標準手部關節座標與左右手資訊。HandFuture 會確認只找到一隻手，並確認單一結果包含恰好 21 個有限數值的關節座標，才把它視為可用的偵測結果。",
-          "介面會保留原始上傳照片，並以文字顯示偵測狀態；驗證成功後，反思卡按鈕才可供選擇。關節模型不會辨識生命線、智慧線、感情線、命運線或其他掌褶，也不會從照片得到個人特質或人生結論。",
+          "介面會在原始上傳照片上顯示由固定索引連接的 21 點關節骨架，並以文字顯示偵測狀態；驗證成功後，反思卡按鈕才可供選擇。這些點不是掌褶，關節模型不會辨識生命線、智慧線、感情線、命運線或其他掌褶，也不會從照片得到個人特質或人生結論。",
         ],
       },
       {
@@ -101,7 +102,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
     title: "How HandFuture works",
     summary:
       "Follow the data from choosing a photo through hand-joint detection and reflection-card selection, including what remains in the current browser session and what the tool deliberately does not infer.",
-    updatedAt: "2026-07-26",
+    updatedAt: "2026-08-03",
     sections: [
       {
         heading: "Choose a photo",
@@ -114,7 +115,7 @@ export const HOW_IT_WORKS_CONTENT: Record<Locale, EditorialPage> = {
         heading: "Locate hand joints",
         paragraphs: [
           "MediaPipe looks for hands and returns standard hand landmarks plus handedness information. HandFuture first confirms that only one hand was found, then validates that one result contains exactly 21 finite joint coordinates before treating the detection as usable.",
-          "The interface keeps the original uploaded photo and reports the detection status in text; after validation succeeds, the reflection-card button becomes available. The landmark model does not identify the life, head, heart, or fate creases, and it supplies no conclusion about the person in the photo.",
+          "The interface shows a 21-point joint skeleton over the original uploaded photo using fixed-index connections and reports the detection status in text; after validation succeeds, the reflection-card button becomes available. These points are not palm creases: the landmark model does not identify the life, head, heart, or fate creases, and it supplies no conclusion about the person in the photo.",
         ],
       },
       {
@@ -151,7 +152,7 @@ export const GUIDE_CONTENT: Record<
       title: "手相文化入門：傳統名稱與歷史脈絡",
       summary:
         "認識手相作為占卜傳統的定義、不同時代與社群中的差異，以及如何在不把傳統說法當成事實判斷的前提下閱讀常見掌線名稱。",
-      updatedAt: "2026-07-26",
+      updatedAt: "2026-08-03",
       sections: [
         {
           heading: "手相是什麼",
@@ -198,7 +199,7 @@ export const GUIDE_CONTENT: Record<
       title: "Palmistry basics: traditional names and historical context",
       summary:
         "Learn how palmistry is defined as a divinatory tradition, why practices differ across communities and periods, and how to read familiar line names without treating folklore as factual assessment.",
-      updatedAt: "2026-07-26",
+      updatedAt: "2026-08-03",
       sections: [
         {
           heading: "What palmistry is",
@@ -253,13 +254,13 @@ export const GUIDE_CONTENT: Record<
       title: "手相、科學與限制：安全看待解讀",
       summary:
         "分辨手部關節偵測與掌紋詮釋，認識一般敘述為何容易帶來貼身感，並建立不讓娛樂內容介入重大決策的清楚界線。",
-      updatedAt: "2026-07-26",
+      updatedAt: "2026-08-03",
       sections: [
         {
           heading: "偵測不是解讀",
           paragraphs: [
             "MediaPipe Hand Landmarker 的輸出是手部關節座標、世界座標與左右手資訊。HandFuture 會先確認只找到一隻可用的手，並驗證單一結果包含恰好 21 個有限數值的關節座標，才把它視為可用的偵測結果。這是電腦視覺的定位工作，目標是回答影像中哪些點可能對應手部關節。",
-            "模型不會回傳生命線、智慧線、感情線或命運線，也沒有掌褶名稱、象徵意義、人格分數或人生分類。介面會保留原始上傳照片，並以文字顯示偵測狀態；驗證成功後，使用者才可選擇反思卡。幾何點仍只是關節定位輸出，不能換個名稱就當成手相分析。",
+            "模型不會回傳生命線、智慧線、感情線或命運線，也沒有掌褶名稱、象徵意義、人格分數或人生分類。介面會在原始上傳照片上呈現 21 點關節骨架與固定索引連線，同時以文字顯示偵測狀態；驗證成功後，使用者才可選擇反思卡。幾何點仍只是關節定位輸出，不能換個名稱就當成手相分析。",
             "HandFuture 由固定幾何簽章選擇一般反思卡，這個規則只讓相同座標產生相同鍵值。穩定的程式規則不等於詮釋已被證實；它只是可重現的選卡方式。反思卡的文字也沒有回頭訓練或評估照片中的人。",
           ],
         },
@@ -294,13 +295,13 @@ export const GUIDE_CONTENT: Record<
       title: "Palmistry, science, and limitations",
       summary:
         "Separate hand-joint detection from palm interpretation, learn why general descriptions can feel unusually personal, and keep entertainment content out of consequential decisions.",
-      updatedAt: "2026-07-26",
+      updatedAt: "2026-08-03",
       sections: [
         {
           heading: "Detection is not interpretation",
           paragraphs: [
             "MediaPipe Hand Landmarker outputs hand landmarks in image and world coordinates along with handedness. HandFuture confirms that exactly one usable hand was found and validates that the result contains exactly 21 finite joint coordinates before accepting it as usable. This is a computer-vision localization task: it estimates which image points correspond to standard hand joints.",
-            "The model does not return life, head, heart, or fate creases. Its output has no crease names, symbolic meanings, personality scores, or life categories. The interface keeps the original uploaded photo and reports the detection status in text; after validation succeeds, users can choose a reflection card. Geometric points remain joint-localization output and cannot become palm analysis merely by being relabeled.",
+            "The model does not return life, head, heart, or fate creases. Its output has no crease names, symbolic meanings, personality scores, or life categories. The interface displays a 21-point joint skeleton with fixed-index connections over the original uploaded photo and reports the detection status in text; after validation succeeds, users can choose a reflection card. Geometric points remain joint-localization output and cannot become palm analysis merely by being relabeled.",
             "HandFuture uses a fixed geometry signature to select a general reflection card. That rule only makes identical coordinates produce the same key. A reproducible program rule does not establish the truth of an interpretation; it is simply a repeatable card-selection method. The card text neither trains on nor evaluates the person in the photo.",
           ],
         },
@@ -343,7 +344,7 @@ export const GUIDE_CONTENT: Record<
       title: "手部照片指南：光線、取景與隱私",
       summary:
         "用均勻光線、完整單手與單純背景準備較容易偵測的照片，同時理解檔案限制、目前瀏覽器工作階段的處理方式與常見失敗狀態。",
-      updatedAt: "2026-07-26",
+      updatedAt: "2026-08-03",
       sections: [
         {
           heading: "使用均勻的正面光線",
@@ -391,7 +392,7 @@ export const GUIDE_CONTENT: Record<
       title: "Hand photo guide: lighting, framing, and privacy",
       summary:
         "Prepare a more detectable image with even light, one complete hand, and a plain background while understanding file limits, current-session processing, and common detector states.",
-      updatedAt: "2026-07-26",
+      updatedAt: "2026-08-03",
       sections: [
         {
           heading: "Use even front light",
@@ -442,4 +443,5 @@ export const GUIDE_CONTENT: Record<
     "pt-BR": ptBREditorial.guides["/guides/hand-photo-guide"],
     fr: frEditorial.guides["/guides/hand-photo-guide"],
   },
+  ...NEW_GUIDE_CONTENT,
 };

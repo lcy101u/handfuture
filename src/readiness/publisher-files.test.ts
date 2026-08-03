@@ -6,7 +6,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 import { ADS_TXT_RECORD, LAST_UPDATED, PUBLISHER_ID, SITE_ORIGIN } from "@/config/site-metadata";
-import { PUBLIC_PATHS } from "@/config/public-routes";
+import { INDEXABLE_CONTENT_PATHS, PUBLIC_PATHS } from "@/config/public-routes";
 import { buildLocalizedPath, SUPPORTED_LOCALES } from "@/i18n/locales";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -101,7 +101,7 @@ describe("publisher and crawl files", () => {
     expect(read("public/ads.txt")).toBe(`${ADS_TXT_RECORD}\n`);
   });
 
-  it("regenerates exactly the 64 localized canonical URLs in deterministic order", () => {
+  it("regenerates exactly the 88 localized content URLs in deterministic order", () => {
     const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "handfuture-sitemap-"));
     const generatedPath = path.join(temporaryDirectory, "sitemap.xml");
     const generation = spawnSync("npm", ["run", "generate:sitemap"], {
@@ -121,13 +121,15 @@ describe("publisher and crawl files", () => {
     const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
     expect(locations).toEqual(
       SUPPORTED_LOCALES.flatMap((locale) =>
-        PUBLIC_PATHS.map((route) => `${SITE_ORIGIN}${buildLocalizedPath(locale, route)}`),
+        INDEXABLE_CONTENT_PATHS.map((route) => `${SITE_ORIGIN}${buildLocalizedPath(locale, route)}`),
       ),
     );
-    expect(locations).toHaveLength(64);
-    expect(new Set(locations).size).toBe(64);
+    expect(locations).toHaveLength(88);
+    expect(new Set(locations).size).toBe(88);
     expect(locations.every((location) => !location.includes("?") && !location.includes("#"))).toBe(true);
-    expect(sitemap.match(new RegExp(`<lastmod>${LAST_UPDATED}<\\/lastmod>`, "g"))).toHaveLength(64);
+    expect(sitemap.match(new RegExp(`<lastmod>${LAST_UPDATED}<\\/lastmod>`, "g"))).toHaveLength(88);
+    expect(sitemap).not.toContain("/privacy");
+    expect(sitemap).not.toContain("/terms");
     expect(sitemap).not.toContain("/batch");
   });
 
@@ -219,8 +221,8 @@ describe("publisher and crawl files", () => {
     expect(config.rewrites).toEqual(
       [...exactPrerenders, ...localizedNotFoundCatchalls],
     );
-    expect(exactPrerenders).toHaveLength(64);
-    expect(new Set(exactPrerenders.map(({ source }) => source)).size).toBe(64);
+    expect(exactPrerenders).toHaveLength(104);
+    expect(new Set(exactPrerenders.map(({ source }) => source)).size).toBe(104);
     for (const excluded of [
       "/api/locale",
       "/api/localized-not-found",

@@ -7,7 +7,7 @@ const loadTypeScript = createJiti(import.meta.url);
 const { SUPPORTED_LOCALES, buildLocalizedPath } = loadTypeScript(
   "../src/i18n/locales.ts",
 );
-const { PUBLIC_PATHS } = loadTypeScript("../src/config/public-routes.ts");
+const { INDEXABLE_CONTENT_PATHS } = loadTypeScript("../src/config/public-routes.ts");
 const { LAST_UPDATED, SITE_ORIGIN } = loadTypeScript(
   "../src/config/site-metadata.ts",
 );
@@ -39,7 +39,7 @@ ${urls.join("\n")}
 
 export function generateSitemap() {
   const locations = SUPPORTED_LOCALES.flatMap((locale) =>
-    PUBLIC_PATHS.map((publicPath) => `${SITE_ORIGIN}${buildLocalizedPath(locale, publicPath)}`),
+    INDEXABLE_CONTENT_PATHS.map((publicPath) => `${SITE_ORIGIN}${buildLocalizedPath(locale, publicPath)}`),
   );
 
   if (new Set(locations).size !== locations.length) {
