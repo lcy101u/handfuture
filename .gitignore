@@ -9,6 +9,12 @@ lerna-debug.log*
 # Build outputs
 build/
 out/
+# Vercel rebuilds dist/ from source on every deploy and ignores whatever is
+# committed here, so tracking it only produced noisy diffs — and this repo
+# lives under an iCloud-synced Desktop, which corrupted the committed assets
+# (og-image.jpg was replaced by a 265-byte placeholder, real files shunted
+# into "og-image 2.jpg"). Run `npm run build` before tests that read dist/.
+dist/
 
 # Environment variables
 .env
