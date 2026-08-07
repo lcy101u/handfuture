@@ -1,0 +1,1 @@
+import{i as e,n as t,t as n}from"./jsx-runtime-CA1w4FnS.js";import{r}from"./policies-CruO-Mb4.js";import{EditorialArticle as i}from"./GuidePage-C7hXZOMX.js";var a=n();function o(){let n=t(e=>e.currentLanguage);return(0,a.jsx)(i,{content:r[n],locale:n,relatedPaths:[`/how-it-works`,`/guides/science-and-limitations`],eyebrow:e(n,`editorial.eyebrow.terms`)})}export{o as default};

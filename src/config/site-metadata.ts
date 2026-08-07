@@ -1,4 +1,5 @@
 import type { Locale, PublicPath } from "./public-routes";
+import { BREADCRUMB_COPY } from "../i18n/breadcrumbs";
 import { buildLocalizedPath } from "../i18n/locales";
 
 export const SITE_ORIGIN = "https://www.handfortune.com";
@@ -226,14 +227,29 @@ export function buildStructuredData(path: PublicPath, locale: Locale): Record<st
   return { ...base, "@type": "WebPage", publisher: { "@type": "Organization", name: SITE_NAME } };
 }
 
+const SITE_NAME_SUFFIX = /\s*[|｜]\s*HandFuture\s*$/;
+
+function breadcrumbLeafName(path: PublicPath, locale: Locale): string {
+  return getRouteMetadata(path, locale).title.replace(SITE_NAME_SUFFIX, "");
+}
+
 function buildBreadcrumbData(path: "/guides" | `/guides/${string}`, locale: Locale) {
-  const paths: PublicPath[] = path === "/guides" ? ["/", "/guides"] : ["/", "/guides", path as PublicPath];
+  const copy = BREADCRUMB_COPY[locale];
+  const trail: { path: PublicPath; name: string }[] = [
+    { path: "/", name: copy.home },
+    { path: "/guides", name: copy.learn },
+  ];
+  if (path !== "/guides") {
+    trail.push({ path: path as PublicPath, name: breadcrumbLeafName(path as PublicPath, locale) });
+  }
+
   return {
     "@type": "BreadcrumbList",
-    itemListElement: paths.map((itemPath, index) => ({
+    itemListElement: trail.map((entry, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      item: buildLocalizedPublicUrl(itemPath, locale),
+      name: entry.name,
+      item: buildLocalizedPublicUrl(entry.path, locale),
     })),
   };
 }

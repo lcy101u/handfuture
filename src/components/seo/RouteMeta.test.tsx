@@ -87,10 +87,11 @@ describe("RouteMeta", () => {
       breadcrumb: {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { position: 1, item: "https://www.handfortune.com/zh-TW/" },
-          { position: 2, item: "https://www.handfortune.com/zh-TW/guides" },
+          { position: 1, name: "首頁", item: "https://www.handfortune.com/zh-TW/" },
+          { position: 2, name: "學習中心", item: "https://www.handfortune.com/zh-TW/guides" },
           {
             position: 3,
+            name: "手相、科學與限制：如何安全看待解讀",
             item: "https://www.handfortune.com/zh-TW/guides/science-and-limitations",
           },
         ],

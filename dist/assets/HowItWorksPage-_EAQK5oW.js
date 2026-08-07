@@ -1,0 +1,1 @@
+import{n as e,t}from"./jsx-runtime-CA1w4FnS.js";import{n}from"./guides-DSdXa3KR.js";import{EditorialArticle as r}from"./GuidePage-C7hXZOMX.js";var i=t();function a(){let t=e(e=>e.currentLanguage);return(0,i.jsx)(r,{content:n[t],locale:t,relatedPaths:[`/guides/palmistry-basics`,`/guides/science-and-limitations`,`/guides/hand-photo-guide`]})}export{a as default};
