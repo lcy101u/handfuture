@@ -7,6 +7,7 @@ import RouteMeta from "@/components/seo/RouteMeta";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { useLanguageStore } from "@/store/language-store";
 
 function LoadingFallback() {
@@ -47,6 +48,7 @@ function App() {
       </BrowserRouter>
       <Toaster />
       <Analytics />
+      <SpeedInsights />
     </TooltipProvider>
   );
 }
