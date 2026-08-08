@@ -12,6 +12,37 @@ import { buildLocalizedPath, SUPPORTED_LOCALES } from "@/i18n/locales";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
+// "/" negotiates a locale at the edge instead of serving the SPA shell, which
+// used to make it a self-canonical duplicate of /zh-TW/. Spelled out literally
+// so a reordering — which changes which locale a visitor lands on, because
+// Vercel stops at the first match — fails here.
+const rootLanguageRedirects: readonly (readonly [string, string])[] = [
+  ["^[zZ][hH]-[hH][aA][nN][tT].*", "/zh-TW/"],
+  ["^[zZ][hH]-[tT][wW].*", "/zh-TW/"],
+  ["^[zZ][hH]-[hH][kK].*", "/zh-TW/"],
+  ["^[zZ][hH]-[mM][oO].*", "/zh-TW/"],
+  ["^[zZ][hH]-[hH][aA][nN][sS].*", "/zh-CN/"],
+  ["^[zZ][hH]-[cC][nN].*", "/zh-CN/"],
+  ["^[zZ][hH]-[sS][gG].*", "/zh-CN/"],
+  ["^[zZ][hH].*", "/zh-TW/"],
+  ["^[jJ][aA].*", "/ja/"],
+  ["^[kK][oO].*", "/ko/"],
+  ["^[eE][sS].*", "/es/"],
+  ["^[pP][tT].*", "/pt-BR/"],
+  ["^[fF][rR].*", "/fr/"],
+  ["^[eE][nN].*", "/en/"],
+];
+
+const rootLocaleRedirects = [
+  ...rootLanguageRedirects.map(([value, destination]) => ({
+    source: "/",
+    has: [{ type: "header", key: "accept-language", value }],
+    destination,
+    permanent: false,
+  })),
+  { source: "/", destination: "/en/", permanent: false },
+];
+
 function collectRelativeFiles(directory: string, base = directory): string[] {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const absolutePath = path.join(directory, entry.name);
@@ -186,6 +217,40 @@ describe("publisher and crawl files", () => {
     expect(fs.existsSync(path.join(root, "public/_headers"))).toBe(false);
   });
 
+  it("negotiates a locale at the root instead of serving a duplicate homepage", () => {
+    const config = JSON.parse(read("vercel.json"));
+    const rootRules = config.redirects.filter(
+      (entry: { source: string }) => entry.source === "/",
+    );
+
+    // Every locale has to be reachable, or its speakers land on a language
+    // they did not ask for.
+    expect(new Set(rootRules.map((entry: { destination: string }) => entry.destination))).toEqual(
+      new Set(SUPPORTED_LOCALES.map((locale) => buildLocalizedPath(locale, "/"))),
+    );
+
+    // A permanent redirect would let caches pin every later visitor to
+    // whichever locale the first one negotiated.
+    expect(
+      rootRules.every((entry: { permanent: boolean }) => entry.permanent === false),
+    ).toBe(true);
+
+    // Last rule carries no condition, so a request without Accept-Language
+    // still leaves "/" rather than falling through to the SPA shell.
+    const last = rootRules.at(-1);
+    expect(last.has).toBeUndefined();
+    expect(last.destination).toBe(buildLocalizedPath("en", "/"));
+
+    // Bare "zh" must be ranked after the script and region variants, otherwise
+    // it swallows zh-CN and every Simplified reader gets Traditional.
+    const patterns = rootRules
+      .filter((entry: { has?: unknown }) => entry.has)
+      .map((entry: { has: { value: string }[] }) => entry.has[0].value);
+    expect(patterns.indexOf("^[zZ][hH].*")).toBeGreaterThan(
+      patterns.indexOf("^[zZ][hH]-[cC][nN].*"),
+    );
+  });
+
   it("redirects every legacy route and orders exact prerenders before locale 404s", () => {
     const config = JSON.parse(read("vercel.json"));
     const legacyRedirects = PUBLIC_PATHS.filter((route) => route !== "/").map(
@@ -203,6 +268,7 @@ describe("publisher and crawl files", () => {
         permanent: true,
       },
       ...legacyRedirects,
+      ...rootLocaleRedirects,
     ]);
 
     const exactPrerenders = SUPPORTED_LOCALES.flatMap((locale) =>

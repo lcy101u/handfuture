@@ -71,6 +71,179 @@
       "source": "/terms",
       "destination": "/zh-TW/terms",
       "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH]-[hH][aA][nN][tT].*"
+        }
+      ],
+      "destination": "/zh-TW/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH]-[tT][wW].*"
+        }
+      ],
+      "destination": "/zh-TW/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH]-[hH][kK].*"
+        }
+      ],
+      "destination": "/zh-TW/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH]-[mM][oO].*"
+        }
+      ],
+      "destination": "/zh-TW/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH]-[hH][aA][nN][sS].*"
+        }
+      ],
+      "destination": "/zh-CN/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH]-[cC][nN].*"
+        }
+      ],
+      "destination": "/zh-CN/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH]-[sS][gG].*"
+        }
+      ],
+      "destination": "/zh-CN/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[zZ][hH].*"
+        }
+      ],
+      "destination": "/zh-TW/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[jJ][aA].*"
+        }
+      ],
+      "destination": "/ja/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[kK][oO].*"
+        }
+      ],
+      "destination": "/ko/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[eE][sS].*"
+        }
+      ],
+      "destination": "/es/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[pP][tT].*"
+        }
+      ],
+      "destination": "/pt-BR/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[fF][rR].*"
+        }
+      ],
+      "destination": "/fr/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^[eE][nN].*"
+        }
+      ],
+      "destination": "/en/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "destination": "/en/",
+      "permanent": false
     }
   ],
   "rewrites": [

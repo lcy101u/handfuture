@@ -6,6 +6,54 @@ const loadTypeScript = createJiti(import.meta.url);
 const { PUBLIC_PATHS } = loadTypeScript("../src/config/public-routes.ts");
 const { SUPPORTED_LOCALES, buildLocalizedPath } = loadTypeScript("../src/i18n/locales.ts");
 
+// Accept-Language prefixes mapped the way normalizeLocale() in
+// src/i18n/locales.ts maps them, ordered most specific first because Vercel
+// stops at the first matching redirect. Without this, "/" was the only public
+// path with no edge redirect: it served the SPA shell as a self-canonical
+// zh-TW duplicate of /zh-TW/ while all eight locales pointed x-default at it,
+// so Google picked "/" as the canonical over the sitemap's locale homepages.
+const ROOT_LANGUAGE_RULES = [
+  ["zh-Hant", "zh-TW"],
+  ["zh-TW", "zh-TW"],
+  ["zh-HK", "zh-TW"],
+  ["zh-MO", "zh-TW"],
+  ["zh-Hans", "zh-CN"],
+  ["zh-CN", "zh-CN"],
+  ["zh-SG", "zh-CN"],
+  ["zh", "zh-TW"],
+  ["ja", "ja"],
+  ["ko", "ko"],
+  ["es", "es"],
+  ["pt", "pt-BR"],
+  ["fr", "fr"],
+  ["en", "en"],
+];
+
+// Header matching is case sensitive, so spell each letter as a class rather
+// than relying on an inline flag the matcher may not support.
+const caseInsensitive = (value) =>
+  value.replace(/[a-z]/gi, (letter) => `[${letter.toLowerCase()}${letter.toUpperCase()}]`);
+
+// Temporary, never permanent: the destination varies per request, and a 308
+// would let browsers and shared caches pin every visitor to one locale.
+const rootLocaleRedirects = [
+  ...ROOT_LANGUAGE_RULES.map(([languageTag, locale]) => ({
+    source: "/",
+    has: [
+      {
+        type: "header",
+        key: "accept-language",
+        value: `^${caseInsensitive(languageTag)}.*`,
+      },
+    ],
+    destination: buildLocalizedPath(locale, "/"),
+    permanent: false,
+  })),
+  // No Accept-Language, or none we serve: same fallback resolveInitialLocale()
+  // lands on in src/i18n/locale-detection.ts.
+  { source: "/", destination: buildLocalizedPath("en", "/"), permanent: false },
+];
+
 const redirects = [
   {
     source: "/:path*",
@@ -18,6 +66,7 @@ const redirects = [
     destination: buildLocalizedPath("zh-TW", source),
     permanent: true,
   })),
+  ...rootLocaleRedirects,
 ];
 
 const rewrites = [
