@@ -5,9 +5,11 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
-import { ADS_TXT_RECORD, LAST_UPDATED, PUBLISHER_ID, SITE_ORIGIN } from "@/config/site-metadata";
+import { ADS_TXT_RECORD, PUBLISHER_ID, SITE_ORIGIN } from "@/config/site-metadata";
 import { INDEXABLE_CONTENT_PATHS, PUBLIC_PATHS } from "@/config/public-routes";
 import { buildLocalizedPath, SUPPORTED_LOCALES } from "@/i18n/locales";
+import { GUIDE_CONTENT, HOW_IT_WORKS_CONTENT } from "@/content/guides";
+import { ABOUT_CONTENT } from "@/content/policies";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
@@ -158,7 +160,38 @@ describe("publisher and crawl files", () => {
     expect(locations).toHaveLength(88);
     expect(new Set(locations).size).toBe(88);
     expect(locations.every((location) => !location.includes("?") && !location.includes("#"))).toBe(true);
-    expect(sitemap.match(new RegExp(`<lastmod>${LAST_UPDATED}<\\/lastmod>`, "g"))).toHaveLength(88);
+    // Each URL reports the date its own content was last edited. A single
+    // site-wide constant went stale the moment anyone shipped without bumping
+    // it, and Google discards lastmod site-wide once it looks unreliable.
+    const entries = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)].map(
+      (match) => [match[1], match[2]] as const,
+    );
+    expect(entries).toHaveLength(88);
+    expect(entries.every(([, date]) => /^\d{4}-\d{2}-\d{2}$/.test(date))).toBe(true);
+
+    const dateFor = (locale: (typeof SUPPORTED_LOCALES)[number], route: string) =>
+      entries.find(([loc]) => loc === `${SITE_ORIGIN}${buildLocalizedPath(locale, route as never)}`)?.[1];
+
+    for (const locale of SUPPORTED_LOCALES) {
+      expect(dateFor(locale, "/about")).toBe(ABOUT_CONTENT[locale].updatedAt);
+      expect(dateFor(locale, "/how-it-works")).toBe(HOW_IT_WORKS_CONTENT[locale].updatedAt);
+
+      const guideRoutes = INDEXABLE_CONTENT_PATHS.filter((route) => route.startsWith("/guides/"));
+      for (const route of guideRoutes) {
+        expect(dateFor(locale, route)).toBe(
+          GUIDE_CONTENT[route as keyof typeof GUIDE_CONTENT][locale].updatedAt,
+        );
+      }
+
+      // The home page and the hub only index the guides, so they are as fresh
+      // as the newest guide they list.
+      const newestGuide = guideRoutes
+        .map((route) => GUIDE_CONTENT[route as keyof typeof GUIDE_CONTENT][locale].updatedAt)
+        .reduce((newest, date) => (date > newest ? date : newest));
+      expect(dateFor(locale, "/")).toBe(newestGuide);
+      expect(dateFor(locale, "/guides")).toBe(newestGuide);
+    }
+
     expect(sitemap).not.toContain("/privacy");
     expect(sitemap).not.toContain("/terms");
     expect(sitemap).not.toContain("/batch");
@@ -168,7 +201,7 @@ describe("publisher and crawl files", () => {
     const moduleUrl = pathToFileURL(path.join(root, "scripts/generate-sitemap.mjs")).href;
     const probe = [
       `import { renderSitemap } from ${JSON.stringify(moduleUrl)};`,
-      `process.stdout.write(renderSitemap([${JSON.stringify('https://example.test/a?x=1&label=<Palm "Guide">')}], ${JSON.stringify("2026-07-26&later")}));`,
+      `process.stdout.write(renderSitemap([{ location: ${JSON.stringify('https://example.test/a?x=1&label=<Palm "Guide">')}, lastModified: ${JSON.stringify("2026-07-26&later")} }]));`,
     ].join("\n");
     const result = spawnSync(process.execPath, ["--input-type=module", "--eval", probe], {
       cwd: root,
