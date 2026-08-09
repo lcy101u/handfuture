@@ -194,6 +194,43 @@ function editorialContent(publicPath: Exclude<PublicPath, "/" | "/guides">, loca
   return TERMS_CONTENT[locale];
 }
 
+type EditorialPath = Exclude<PublicPath, "/" | "/guides">;
+
+const guidePaths = Object.keys(GUIDE_CONTENT) as GuidePath[];
+
+// Mirrors the relatedPaths each page hands to EditorialArticle. Until this
+// existed the crawlable HTML linked guides only from the locale hub, giving
+// every guide a single internal inbound link — the client added the rest after
+// hydration, which Google discovers late and weights less.
+function relatedPathsFor(publicPath: EditorialPath): EditorialPath[] {
+  if (publicPath === "/how-it-works") {
+    return [
+      "/guides/palmistry-basics",
+      "/guides/science-and-limitations",
+      "/guides/hand-photo-guide",
+    ];
+  }
+  if (publicPath === "/about") return ["/how-it-works", "/guides/palmistry-basics"];
+  if (publicPath === "/privacy") return ["/how-it-works", "/guides/hand-photo-guide"];
+  if (publicPath === "/terms") return ["/how-it-works", "/guides/science-and-limitations"];
+  return ["/how-it-works", ...guidePaths.filter((guidePath) => guidePath !== publicPath)];
+}
+
+function renderRelated(publicPath: EditorialPath, locale: Locale): string {
+  const heading = getTranslation(locale, "editorial.related");
+  const items = relatedPathsFor(publicPath)
+    .map(
+      (relatedPath) =>
+        `<li><a href="${escapeAttribute(buildLocalizedPath(locale, relatedPath))}">${escapeHtml(editorialContent(relatedPath, locale).title)}</a></li>`,
+    )
+    .join("");
+
+  return `<nav aria-label="${escapeAttribute(heading)}">
+      <h2>${escapeHtml(heading)}</h2>
+      <ul>${items}</ul>
+    </nav>`;
+}
+
 function editorialEyebrow(publicPath: Exclude<PublicPath, "/" | "/guides">, locale: Locale): string {
   if (publicPath === "/about") return getTranslation(locale, "editorial.eyebrow.about");
   if (publicPath === "/privacy") return getTranslation(locale, "editorial.eyebrow.privacy");
@@ -249,6 +286,7 @@ function renderEditorial(publicPath: Exclude<PublicPath, "/" | "/guides">, local
     </header>
     ${sections}
     ${sources}
+    ${renderRelated(publicPath, locale)}
   </article>`;
 }
 
